@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class Core\Database\Cache | คชสาร</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-Core.html">
+						Core<span></span>
+					</a>
+
+						<ul>
+				<li class="active">
+					<a href="namespace-Core.Database.html">
+						Database					</a>
+
+						</li>
+				<li>
+					<a href="namespace-Core.Orm.html">
+						Orm					</a>
+
+						</li>
+							</ul></li>
+				<li>
+					<a href="namespace-None.html">
+						None					</a>
+
+						</li>
+				<li>
+					<a href="namespace-PHP.html">
+						PHP					</a>
+
+						</li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-Core.Database.Cache.html">Cache</a></li>
+				<li><a href="class-Core.Database.Driver.html">Driver</a></li>
+				<li><a href="class-Core.Database.Query.html">Query</a></li>
+				<li><a href="class-Core.Database.QueryBuilder.html">QueryBuilder</a></li>
+				<li><a href="class-Core.Database.Schema.html">Schema</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Core.Database.html" title="Summary of Core\Database"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Cache</h1>
+
+
+	<div class="description">
+	<p>Database Cache Class</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-Core.html">Core</a>\<a href="namespace-Core.Database.html">Database</a><br>
+		
+
+				<b>Author:</b>
+				Goragod Wiriya <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#x61;&#100;&#x6d;&#105;&#x6e;&#64;&#x67;&#111;&#x72;&#97;&#x67;&#111;&#x64;&#46;&#x63;&#111;&#x6d;">&#x61;&#100;&#x6d;&#105;&#x6e;&#64;&#x67;&#111;&#x72;&#97;&#x67;&#111;&#x64;&#46;&#x63;&#111;&#x6d;</a><br>
+				<b>Since:</b>
+				1.0<br>
+			<b>Located at</b> <a href="source-class-Core.Database.Cache.html#11-181" title="Go to source code">core/database/cache.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#56-81" title="Go to source code">__construct</a>( )</code>
+
+		<div class="description short">
+			<p>Class constructor</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Class constructor</p>
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="get" id="_get">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#83-101" title="Go to source code">get</a>( <span>string <var>$sql</var></span>, <span>array <var>$values</var></span> )</code>
+
+		<div class="description short">
+			<p>อ่านข้อมูลจากแคช</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>อ่านข้อมูลจากแคช</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$sql</var></dt>
+					<dd>$key</dd>
+					<dt><var>$values</var></dt>
+					<dd>(options)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="save" id="_save">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_save">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#103-122" title="Go to source code">save</a>( <span>array <var>$datas</var></span> )</code>
+
+		<div class="description short">
+			<p>บันทึก cache เมื่อบันทึกแล้วจะปิดการใช้งาน cache อัตโนมัติ
+จะใช้คำสั่งนี้เมื่อมีการเรียกใช้แคชด้วยคำสั่ง cacheOn(false) เท่านั้น
+query ครั้งต่อไปถ้าจะใช้ cache ต้อง เปิดการใช้งาน cache ก่อนทุกครั้ง</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>บันทึก cache เมื่อบันทึกแล้วจะปิดการใช้งาน cache อัตโนมัติ
+จะใช้คำสั่งนี้เมื่อมีการเรียกใช้แคชด้วยคำสั่ง cacheOn(false) เท่านั้น
+query ครั้งต่อไปถ้าจะใช้ cache ต้อง เปิดการใช้งาน cache ก่อนทุกครั้ง</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$datas</var></dt>
+					<dd>ข้อมูลที่จะบันทึก</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="cacheOn" id="_cacheOn">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_cacheOn">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#124-133" title="Go to source code">cacheOn</a>( <span>boolean <var>$auto_save</var> = <span class="php-keyword1">true</span></span> )</code>
+
+		<div class="description short">
+			<p>เปิดการใช้งานแคช
+จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>เปิดการใช้งานแคช
+จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$auto_save</var></dt>
+					<dd>(options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="usedCache" id="_usedCache">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_usedCache">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#135-143" title="Go to source code">usedCache</a>( )</code>
+
+		<div class="description short">
+			<p>ตรวจสอบว่าข้อมูลมาจาก cache หรือไม่</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ตรวจสอบว่าข้อมูลมาจาก cache หรือไม่</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="clear" id="_clear">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_clear">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#145-157" title="Go to source code">clear</a>( )</code>
+
+		<div class="description short">
+			<p>เคลียร์แคช</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>เคลียร์แคช</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br>true ถ้าลบเรียบร้อย, หรือ array ของรายการที่ไม่สำเร็จ
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="clearCache" id="_clearCache">
+
+		<td class="attributes"><code>
+			 private 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_clearCache">#</a>
+		<code><a href="source-class-Core.Database.Cache.html#159-180" title="Go to source code">clearCache</a>( <span>string <var>$dir</var></span>, <span>array <var>&amp; $error</var></span> )</code>
+
+		<div class="description short">
+			<p>ลบไฟล์ทั้งหมดในไดเร็คทอรี่ (cache)</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ลบไฟล์ทั้งหมดในไดเร็คทอรี่ (cache)</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$dir</var></dt>
+					<dd></dd>
+					<dt><var>$error</var></dt>
+					<dd>เก็บรายชื่อไฟล์ที่ไม่สามารถลบได้</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="cache_dir" id="$cache_dir">
+		<td class="attributes"><code>
+			private  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.Cache.html#20-25" title="Go to source code"><var>$cache_dir</var></a>
+
+			<div class="description short">
+				<p>ไดเร็คทอรี่แคช</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>ไดเร็คทอรี่แคช</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$cache_dir" class="anchor">#</a>
+				<code><span class="php-keyword1">null</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="cache_expire" id="$cache_expire">
+		<td class="attributes"><code>
+			private  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.Cache.html#26-31" title="Go to source code"><var>$cache_expire</var></a>
+
+			<div class="description short">
+				<p>อายุของแคช</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>อายุของแคช</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$cache_expire" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="action" id="$action">
+		<td class="attributes"><code>
+			public  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.Cache.html#32-40" title="Go to source code"><var>$action</var></a>
+
+			<div class="description short">
+				<p>กำหนดการโหลดข้อมูลจากแคชอัตโนมัติ
+0 ไม่ใช้แคช
+1 โหลดและบันทึกแคชอัตโนมัติ
+2 โหลดข้อมูลจากแคชได้ แต่ไม่บันทึกแคชอัตโนมัติ</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>กำหนดการโหลดข้อมูลจากแคชอัตโนมัติ
+0 ไม่ใช้แคช
+1 โหลดและบันทึกแคชอัตโนมัติ
+2 โหลดข้อมูลจากแคชได้ แต่ไม่บันทึกแคชอัตโนมัติ</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$action" class="anchor">#</a>
+				<code><span class="php-num">0</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="used_cache" id="$used_cache">
+		<td class="attributes"><code>
+			private  
+			boolean
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.Cache.html#41-48" title="Go to source code"><var>$used_cache</var></a>
+
+			<div class="description short">
+				<p>ตัวแปรบอกว่ามีการอ่านข้อมูลจาก cache หรือไม่
+true อ่านข้อมูลมาจาก cache
+false อ่านข้อมูลจาก database</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>ตัวแปรบอกว่ามีการอ่านข้อมูลจาก cache หรือไม่
+true อ่านข้อมูลมาจาก cache
+false อ่านข้อมูลจาก database</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$used_cache" class="anchor">#</a>
+				<code><span class="php-keyword1">false</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="file" id="$file">
+		<td class="attributes"><code>
+			private  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.Cache.html#49-54" title="Go to source code"><var>$file</var></a>
+
+			<div class="description short">
+				<p>ชื่อไฟล์แคช รวม path</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>ชื่อไฟล์แคช รวม path</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$file" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		คชสาร API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

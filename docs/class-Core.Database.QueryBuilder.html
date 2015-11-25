@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class Core\Database\QueryBuilder | คชสาร</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-Core.html">
+						Core<span></span>
+					</a>
+
+						<ul>
+				<li class="active">
+					<a href="namespace-Core.Database.html">
+						Database					</a>
+
+						</li>
+				<li>
+					<a href="namespace-Core.Orm.html">
+						Orm					</a>
+
+						</li>
+							</ul></li>
+				<li>
+					<a href="namespace-None.html">
+						None					</a>
+
+						</li>
+				<li>
+					<a href="namespace-PHP.html">
+						PHP					</a>
+
+						</li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Core.Database.Cache.html">Cache</a></li>
+				<li><a href="class-Core.Database.Driver.html">Driver</a></li>
+				<li><a href="class-Core.Database.Query.html">Query</a></li>
+				<li class="active"><a href="class-Core.Database.QueryBuilder.html">QueryBuilder</a></li>
+				<li><a href="class-Core.Database.Schema.html">Schema</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Core.Database.html" title="Summary of Core\Database"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class QueryBuilder</h1>
+
+
+	<div class="description">
+	<p>SQL Query builder</p>
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-Core.Database.Query.html"><span>Core\Database\Query</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by">
+<b><span>Core\Database\QueryBuilder</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-Core.html">Core</a>\<a href="namespace-Core.Database.html">Database</a><br>
+		
+
+				<b>Author:</b>
+				Goragod Wiriya <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#x61;&#100;&#x6d;&#105;&#x6e;&#64;&#x67;&#111;&#x72;&#97;&#x67;&#111;&#x64;&#46;&#x63;&#111;&#x6d;">&#x61;&#100;&#x6d;&#105;&#x6e;&#64;&#x67;&#111;&#x72;&#97;&#x67;&#111;&#x64;&#46;&#x63;&#111;&#x6d;</a><br>
+				<b>Since:</b>
+				1.0<br>
+				<b>Setupparam:</b>
+				new Query<br>
+			<b>Located at</b> <a href="source-class-Core.Database.QueryBuilder.html#13-385" title="Go to source code">core/database/querybuilder.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#31-42" title="Go to source code">__construct</a>( <span>object <var>&amp; $db</var></span>, <span><code><a href="class-Core.Database.Cache.html">Core\Database\Cache</a></code> <var>&amp; $cache</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Class constructor</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Class constructor</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$db</var></dt>
+					<dd>database driver</dd>
+					<dt><var>$cache</var></dt>
+					<dd>database cache class default null</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="cacheOn" id="_cacheOn">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_cacheOn">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#44-53" title="Go to source code">cacheOn</a>( <span>boolean <var>$auto_save</var> = <span class="php-keyword1">true</span></span> )</code>
+
+		<div class="description short">
+			<p>เปิดการใช้งานแคช
+จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>เปิดการใช้งานแคช
+จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$auto_save</var></dt>
+					<dd>(options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="count" id="_count">
+
+		<td class="attributes"><code>
+			 public 
+
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_count">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#55-67" title="Go to source code">count</a>( )</code>
+
+		<div class="description short">
+			<p>ประมวลผลคำสั่ง SQL และคืนค่าจำนวนแถวของผลลัพท์</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ประมวลผลคำสั่ง SQL และคืนค่าจำนวนแถวของผลลัพท์</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					integer<br>จำนวนแถว
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="delete" id="_delete">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_delete">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#69-76" title="Go to source code">delete</a>( <span>type <var>$table</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="execute" id="_execute">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_execute">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#78-94" title="Go to source code">execute</a>( )</code>
+
+		<div class="description short">
+			<p>ประมวลผลคำสั่ง SQL</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ประมวลผลคำสั่ง SQL</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>ของผลลัพท์ ไม่พบข้อมูล คืนค่าแอเรย์ว่าง
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="first" id="_first">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Object.html">Object</a></code>|boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_first">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#96-119" title="Go to source code">first</a>( <span>string <var>$fields</var> = <span class="php-quote">'*'</span></span> )</code>
+
+		<div class="description short">
+			<p>ฟังก์ชั่นประมวลผลคำสั่ง SQL ข้อมูลต้องการผลลัพท์เพียงรานการเดียว</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ฟังก์ชั่นประมวลผลคำสั่ง SQL ข้อมูลต้องการผลลัพท์เพียงรานการเดียว</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$fields</var></dt>
+					<dd>(option) รายชื่อฟิลด์ field1, field2, field3, ....</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Object.html">Object</a></code>|boolean<br>คืนค่า Object ของผลลัพท์ที่พบเพียงรายการเดียว ไม่พบข้อมูลคืนค่า false
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="from" id="_from">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_from">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#121-139" title="Go to source code">from</a>( <span>string <var>$tables</var></span> )</code>
+
+		<div class="description short">
+			<p>ฟังก์ชั่นสร้างคำสั่ง FROM</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ฟังก์ชั่นสร้างคำสั่ง FROM</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$tables</var></dt>
+					<dd>ชื่อตาราง table1, table2, table3, ....</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						select()->from('user')->text() [==] "SELECT * FROM <code>user</code>"<br>
+						select()->from('user a', 'user b')->text() [==] "SELECT * FROM <code>user</code> AS <code>a</code>, <code>user</code> AS <code>b</code>"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="groupBy" id="_groupBy">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_groupBy">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#141-159" title="Go to source code">groupBy</a>( <span>array <var>$fields</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$fields</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="having" id="_having">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_having">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#161-164" title="Go to source code">having</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="insert" id="_insert">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_insert">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#166-183" title="Go to source code">insert</a>( <span>string <var>$table</var></span>, <span>array <var>$datas</var></span> )</code>
+
+		<div class="description short">
+			<p>ฟังก์ชั่นสร้างคำสั่ง insert into</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ฟังก์ชั่นสร้างคำสั่ง insert into</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table</var></dt>
+					<dd>ชื่อตาราง</dd>
+					<dt><var>$datas</var></dt>
+					<dd>รูปแบบ array(key1=>value1, key2=>value2)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						insert('user', array('id' => 1, 'name' => 'test'))->text() [==] "INSERT INTO <code>user</code> (<code>id</code>, <code>name</code>) VALUES (:id, :name)"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="join" id="_join">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_join">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#185-208" title="Go to source code">join</a>( <span>string <var>$table</var></span>, <span>string <var>$type</var></span>, <span>mixed <var>$on</var></span> )</code>
+
+		<div class="description short">
+			<p>สร้างคำสั่ง JOIN</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>สร้างคำสั่ง JOIN</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table</var></dt>
+					<dd>ชื่อตารางที่ต้องการ join เช่น table alias</dd>
+					<dt><var>$type</var></dt>
+					<dd>เข่น INNER OUTER LEFT RIGHT</dd>
+					<dt><var>$on</var></dt>
+					<dd>query string หรือ array</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						join('user U', 'INNER', 1)->text() [==] " INNER JOIN <code>user</code> AS U ON <code>id</code>=1"<br>
+						join('user U', 'INNER', array('U.id', 'A.id'))->text() [==] " INNER JOIN <code>user</code> AS U ON U.<code>id</code>=A.<code>id</code>"<br>
+						join('user U', 'INNER', array('U.id', '=', 'A.id'))->text() [==] " INNER JOIN <code>user</code> AS U ON U.<code>id</code>=A.<code>id</code>"<br>
+						join('user U', 'INNER', array('id', '=', 1))->text() [==] " INNER JOIN <code>user</code> AS U ON <code>id</code>=1"<br>
+						join('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id')))->text() [==] " INNER JOIN <code>user</code> AS U ON U.<code>id</code>=A.<code>id</code> AND U.<code>id</code>=A.<code>id</code>"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="limit" id="_limit">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_limit">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#210-226" title="Go to source code">limit</a>( <span>integer <var>$count</var></span>, <span>integer <var>$start</var> = <span class="php-num">0</span></span> )</code>
+
+		<div class="description short">
+			<p>จำกัดผลลัพท์ และกำหนดรายการเริ่มต้น</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>จำกัดผลลัพท์ และกำหนดรายการเริ่มต้น</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$count</var></dt>
+					<dd>จำนวนผลลัท์ที่ต้องการ</dd>
+					<dt><var>$start</var></dt>
+					<dd>รายการเริ่มต้น</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						limit(10)->text() [==] " LIMIT 10"<br>
+						limit(10, 1)->text() [==] " LIMIT 1,10"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="order" id="_order">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_order">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#228-246" title="Go to source code">order</a>( <span>mixed <var>$sorts</var></span> )</code>
+
+		<div class="description short">
+			<p>สร้าง query เรียงลำดับ</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>สร้าง query เรียงลำดับ</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$sorts</var></dt>
+					<dd>$sort array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						order('id', 'id ASC')->text() [==] " ORDER BY <code>id</code>, <code>id</code> ASC"<br>
+						order('id ASC')->text() [==] " ORDER BY <code>id</code> ASC"<br>
+						order('user.id DESC')->text() [==] " ORDER BY <code>user</code>.<code>id</code> DESC"<br>
+						order('id ASCD')->text() [==] ""<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="select" id="_select">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_select">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#248-271" title="Go to source code">select</a>( <span>string <var>$fields</var> = <span class="php-quote">'*'</span></span> )</code>
+
+		<div class="description short">
+			<p>SELECT <code>field1</code>, <code>field2</code>, <code>field3</code>, ....</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>SELECT <code>field1</code>, <code>field2</code>, <code>field3</code>, ....</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$fields</var></dt>
+					<dd>(option) รายชื่อฟิลด์ field1, field2, field3, ....</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						select('id', 'email name')->from('user')->where('<code>id</code>=1')->text() [==] "SELECT <code>id</code>,<code>email</code> AS <code>name</code> FROM <code>user</code> WHERE <code>id</code>=1"<br>
+						select()->text()  [==] "SELECT *"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="selectCount" id="_selectCount">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_selectCount">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#273-296" title="Go to source code">selectCount</a>( <span>mixed <var>$fileds</var> = <span class="php-quote">'* count'</span></span> )</code>
+
+		<div class="description short">
+			<p>สร้าง query สำหรับการนับจำนวน record</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>สร้าง query สำหรับการนับจำนวน record</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$fileds</var></dt>
+					<dd>(option) 'field alias'</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						selectCount()->from('user')->text() [==] "SELECT COUNT(*) AS <code>count</code> FROM <code>user</code>"<br>
+						selectCount('id ids')->from('user')->text() [==] "SELECT COUNT(<code>id</code>) AS <code>ids</code> FROM <code>user</code>"<br>
+						selectCount('id ids', 'field alias')->from('user')->text() [==] "SELECT COUNT(<code>id</code>) AS <code>ids</code>, COUNT(<code>field</code>) AS <code>alias</code> FROM <code>user</code>"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="selectDistinct" id="_selectDistinct">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_selectDistinct">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#298-310" title="Go to source code">selectDistinct</a>( <span>string <var>$fields</var> = <span class="php-quote">'*'</span></span> )</code>
+
+		<div class="description short">
+			<p>SELECT DISTINCT <code>field1</code>, <code>field2</code>, <code>field3</code>, ....</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>SELECT DISTINCT <code>field1</code>, <code>field2</code>, <code>field3</code>, ....</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$fields</var></dt>
+					<dd>(option) รายชื่อฟิลด์ field1, field2, field3, ....</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						selectDistinct('id')->from('user')->text() [==] "SELECT DISTINCT <code>id</code> FROM <code>user</code>"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="set" id="_set">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_set">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#312-327" title="Go to source code">set</a>( <span>array <var>$datas</var></span> )</code>
+
+		<div class="description short">
+			<p>UPDATE ..... SET</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>UPDATE ..... SET</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$datas</var></dt>
+					<dd>รูปแบบ array(key1=>value1, key2=>value2)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(1)->text() [==] "UPDATE <code>user</code> SET <code>key1</code>=:key1, <code>key2</code>=:key2 WHERE <code>id</code>=1"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="toArray" id="_toArray">
+
+		<td class="attributes"><code>
+			 public 
+
+			Core\Orm\Model
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_toArray">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#329-339" title="Go to source code">toArray</a>( )</code>
+
+		<div class="description short">
+			<p>คืนค่าข้อมูลเป็น Array
+ฟังก์ชั่นนี้ใช้เรียกก่อนการสอบถามข้อมูล</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>คืนค่าข้อมูลเป็น Array
+ฟังก์ชั่นนี้ใช้เรียกก่อนการสอบถามข้อมูล</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					Core\Orm\Model
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="union" id="_union">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_union">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#341-344" title="Go to source code">union</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="update" id="_update">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_update">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#346-358" title="Go to source code">update</a>( <span>string <var>$table</var></span> )</code>
+
+		<div class="description short">
+			<p>UPDATE</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>UPDATE</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table</var></dt>
+					<dd>ชื่อตาราง</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE <code>user</code> SET <code>key1</code>=:key1, <code>key2</code>=:key2 WHERE <code>id</code>=1 AND <code>id</code>=1"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="where" id="_where">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_where">#</a>
+		<code><a href="source-class-Core.Database.QueryBuilder.html#360-384" title="Go to source code">where</a>( <span>mixed <var>$where</var></span>, <span> <var>$oprator</var> = <span class="php-quote">'AND'</span></span>, <span> <var>$id</var> = <span class="php-quote">'id'</span></span> )</code>
+
+		<div class="description short">
+			<p>ฟังก์ชั่นสร้างคำสั่ง WHERE</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>ฟังก์ชั่นสร้างคำสั่ง WHERE</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$where</var></dt>
+					<dd>query string หรือ array</dd>
+					<dt><var>$oprator</var></dt>
+					<dd></dd>
+					<dt><var>$id</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Core.Database.QueryBuilder.html">Core\Database\QueryBuilder</a></code>
+				</div>
+
+
+				<h4>Assert</h4>
+				<div class="list">
+						where(1)->text() [==] " WHERE <code>id</code>=1"<br>
+						where(array('id', 1))->text() [==] " WHERE <code>id</code>=1"<br>
+						where(array('id', '1'))->text() [==] " WHERE <code>id</code>='1'"<br>
+						where(array('date', '2015-1-1 30:30'))->text() [==] " WHERE <code>date</code>='2015-1-1 30:30'"<br>
+						where(array('id', '=', 1))->text() [==] " WHERE <code>id</code>=1"<br>
+						where('<code>id</code>=1 OR (SELECT ....)')->text() [==] " WHERE <code>id</code>=1 OR (SELECT ....)"<br>
+						where(array('id', '=', 1))->text() [==] " WHERE <code>id</code>=1"<br>
+						where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE <code>id</code> IN (:id0, :id1, :id2)"<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Core.Database.Query.html#methods">Core\Database\Query</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Core.Database.Query.html#_buildJoin">buildJoin()</a>, 
+			<a href="class-Core.Database.Query.html#_buildOrder">buildOrder()</a>, 
+			<a href="class-Core.Database.Query.html#_buildSelect">buildSelect()</a>, 
+			<a href="class-Core.Database.Query.html#_buildValue">buildValue()</a>, 
+			<a href="class-Core.Database.Query.html#_buildWhere">buildWhere()</a>, 
+			<a href="class-Core.Database.Query.html#_buildWhereValues">buildWhereValues()</a>, 
+			<a href="class-Core.Database.Query.html#_fieldName">fieldName()</a>, 
+			<a href="class-Core.Database.Query.html#_fieldValue">fieldValue()</a>, 
+			<a href="class-Core.Database.Query.html#_groupAnd">groupAnd()</a>, 
+			<a href="class-Core.Database.Query.html#_groupOr">groupOr()</a>, 
+			<a href="class-Core.Database.Query.html#_makeQuery">makeQuery()</a>, 
+			<a href="class-Core.Database.Query.html#_quoteTableName">quoteTableName()</a>, 
+			<a href="class-Core.Database.Query.html#_tableWithPrefix">tableWithPrefix()</a>, 
+			<a href="class-Core.Database.Query.html#_text">text()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="toArray" id="$toArray">
+		<td class="attributes"><code>
+			private  
+			boolean
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Core.Database.QueryBuilder.html#24-29" title="Go to source code"><var>$toArray</var></a>
+
+			<div class="description short">
+				<p>ส่งออกผลลัพท์เป็น Array</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>ส่งออกผลลัพท์เป็น Array</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$toArray" class="anchor">#</a>
+				<code><span class="php-keyword1">false</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Core.Database.Query.html#properties">Core\Database\Query</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Core.Database.Query.html#$cache"><var>$cache</var></a>, 
+			<a href="class-Core.Database.Query.html#$db"><var>$db</var></a>, 
+			<a href="class-Core.Database.Query.html#$values"><var>$values</var></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		คชสาร API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
