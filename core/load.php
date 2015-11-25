@@ -8,7 +8,9 @@
 /**
  *  เวลาเริ่มต้นในการประมวลผลเว็บไซต์
  */
-define('BEGIN_TIME', microtime(true));
+if (!defined('DOC_ROOT')) {
+	define('BEGIN_TIME', microtime(true));
+}
 /**
  *  document root (Server)
  */

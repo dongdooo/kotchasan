@@ -1,4 +1,5 @@
 <?php
+define('BEGIN_TIME', microtime(true));
 /**
  * @filesource projects/benchmark/index.php.
  *
@@ -17,5 +18,5 @@ Kotchasan::createWebApplication()->run();
 printf(
 		"\n%' 8d:%f",
 		memory_get_peak_usage(true),
-		microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']
+		microtime(true) - BEGIN_TIME
 );
