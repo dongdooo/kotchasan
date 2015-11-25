@@ -192,7 +192,7 @@ class Config
 		$this->demo_mode = false;
 		$this->web_title = 'Kotchasan PHP Framework';
 		$this->web_description = 'PHP Framework พัฒนาโดยคนไทย';
-		$this->cache_expire = 5;
+		$this->cache_expire = 0;
 		$this->user_icon_h = 50;
 		$this->user_icon_w = 50;
 		$this->user_icon_typies = array('jpg', 'gif', 'png');

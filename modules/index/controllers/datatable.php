@@ -28,7 +28,7 @@ class Controller extends \Controller
 		// ตรวจสอบการ login
 		\Login::create();
 		// front end
-		self::$view = $this->createView('Index\Index\View');
+		self::$view = $this->createClass('Index\Index\View');
 		// รายการเมนูทั้งหมด
 		self::$menu = new \Index\Menu\Model();
 		// โหลดเมนู

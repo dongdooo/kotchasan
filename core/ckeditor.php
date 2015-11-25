@@ -48,7 +48,7 @@ class CKEditor extends Html
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
 				$innerHTML = \String::detail_to_text($value);
-			} elseif ($key !== 'label') {
+			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}
 		}
@@ -59,12 +59,28 @@ class CKEditor extends Html
 		$_SESSION['CKEDITOR'] = $_SESSION['login']['id'];
 		if (isset($this->attributes['id'])) {
 			$script = array();
-			$script[] = 'CKEDITOR.replace("'.$this->attributes['id'].'", {';
 			foreach ($attributes as $key => $value) {
-				$script[] = $key.':'.(is_int($value) ? $value : '"'.$value.'"').',';
+				$script[] = $key.':'.(is_int($value) ? $value : '"'.$value.'"');
 			}
-			$script[] = '});';
-			self::$form->javascript[] = implode("\n", $script);
+			if (isset($this->attributes['upload']) && $this->attributes['upload'] == true) {
+				if (is_dir(ROOT_PATH.'ckfinder')) {
+					$script[] = 'filebrowserBrowseUrl:"'.WEB_URL.'ckfinder/ckfinder.html"';
+					$script[] = 'filebrowserImageBrowseUrl:"'.WEB_URL.'ckfinder/ckfinder.html?Type=Images"';
+					$script[] = 'filebrowserFlashBrowseUrl:"'.WEB_URL.'ckfinder/ckfinder.html?Type=Flash"';
+					$script[] = 'filebrowserUploadUrl:"'.WEB_URL.'ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files"';
+					$script[] = 'filebrowserImageUploadUrl:"'.WEB_URL.'ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images"';
+					$script[] = 'filebrowserFlashUploadUrl:"'.WEB_URL.'ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash"';
+				} else {
+					$connector = urlencode(WEB_URL.'ckeditor/filemanager/connectors/php/connector.php');
+					$script[] = 'filebrowserBrowseUrl:"'.WEB_URL.'ckeditor/filemanager/browser/default/browser.html?Connector='.$connector.'"';
+					$script[] = 'filebrowserImageBrowseUrl:"'.WEB_URL.'ckeditor/filemanager/browser/default/browser.html?Type=Image&Connector='.$connector.'"';
+					$script[] = 'filebrowserFlashBrowseUrl:"'.WEB_URL.'ckeditor/filemanager/browser/default/browser.html?Type=Flash&Connector='.$connector.'"';
+					$script[] = 'filebrowserUploadUrl:"'.WEB_URL.'ckeditor/filemanager/connectors/php/upload.php"';
+					$script[] = 'filebrowserImageUploadUrl:"'.WEB_URL.'ckeditor/filemanager/connectors/php/upload.php?Type=Image"';
+					$script[] = 'filebrowserFlashUploadUrl:"'.WEB_URL.'ckeditor/filemanager/connectors/php/upload.phpType=Flash"';
+				}
+			}
+			self::$form->javascript[] = "CKEDITOR.replace(\"".$this->attributes['id']."\", {\n".implode(",\n", $script)."\n});";
 		}
 		return implode('', $content);
 	}

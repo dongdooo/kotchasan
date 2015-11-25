@@ -28,7 +28,7 @@ class Controller extends \Controller
 		// ตรวจสอบการ login
 		\Login::create();
 		// front end
-		\Gcms::$view = $this->createView('Index\Index\View');
+		\Gcms::$view = $this->createClass('Index\Index\View');
 		// รายการเมนูทั้งหมด
 		\Gcms::$menu = new \Index\Menu\Model();
 		// โหลดเมนู

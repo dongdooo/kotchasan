@@ -87,7 +87,7 @@ class PdoMysqlDriver extends Driver
 				}
 			} catch (PDOException $e) {
 				$this->error_message = $e->getMessage();
-				$result = false;
+				$result = array();
 			}
 			$this->used_cache = false;
 		} else {

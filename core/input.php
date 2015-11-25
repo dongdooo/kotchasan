@@ -392,7 +392,7 @@ class Input
 	{
 		$result = array();
 		foreach ($array as $key => $value) {
-			if (preg_match('/^(text|topic|detail|textarea|email|url|boolean|number|int|float|double|date)_([a-zA-Z0-9_]+)/', $key, $match)) {
+			if (preg_match('/^(text|topic|detail|textarea|email|url|bool|number|int|float|double|date)_([a-zA-Z0-9_]+)/', $key, $match)) {
 				if (is_array($value)) {
 					foreach ($value as $k => $v) {
 						$result[$match[2]][$k] = self::filterByType($match[1], $v);
@@ -432,7 +432,7 @@ class Input
 		} elseif ($key === 'url' || $key === 'email') {
 			// http://www.domain.tld และ email
 			return \String::htmlspecialchars(trim($value), false);
-		} elseif ($key === 'boolean') {
+		} elseif ($key === 'bool') {
 			// true หรือ false เท่านั้น
 			return empty($value) ? 0 : 1;
 		} elseif ($key === 'number') {

@@ -162,13 +162,13 @@ class Login extends \Model
 			// ตรวจสอบการ login กับฐานข้อมูล
 			$login_result = false;
 			$qs = array();
-			$datas = array();
+			$where = array();
 			foreach (\Kotchasan::$config->login_fields AS $field) {
 				$qs[] = "`$field`=:$field";
-				$datas[":$field"] = $user;
+				$where[":$field"] = $user;
 			}
 			$sql = "SELECT * FROM `".$this->tableWithPrefix('user')."` WHERE ".implode(' OR ', $qs)." ORDER BY `status` DESC";
-			foreach ($this->db->customQuery($sql, true, $datas) AS $item) {
+			foreach ($this->db->customQuery($sql, true, $where) AS $item) {
 				if ($item['password'] == md5($password.$item['email'])) {
 					$login_result = $item;
 					break;
@@ -190,7 +190,7 @@ class Login extends \Model
 					$sql = "SELECT * FROM `".$this->tableWithPrefix('useronline')."`";
 					$sql .= " WHERE `member_id`='$login_result[id]' AND `ip`!='$ip' AND `ip`!=''";
 					$sql .= " ORDER BY `time` DESC LIMIT 1";
-					$online = $this->db->customQuery($sql, true);
+					$online = $this->db->customQuery($sql);
 					if (sizeof($online) == 1 && \Kotchasan::$mktime - $online[0]['time'] < \Kotchasan::$settings->count_gap) {
 						// login ต่าง ip กัน
 						return 'Members of this system already';

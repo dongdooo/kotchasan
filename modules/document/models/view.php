@@ -27,17 +27,17 @@ class Model extends \Model
 		$sql .= " INNER JOIN `".$obj->tableWithPrefix('index_detail')."` AS D ON D.`id`=I.`id` AND D.`module_id`=I.`module_id` AND D.`language` IN (:language,'')";
 		$sql .= " INNER JOIN `".$obj->tableWithPrefix('user')."` AS U ON U.`id`=I.`member_id`";
 		$sql .= " WHERE ";
-		$datas = array(':language' => \Language::name());
+		$where = array(':language' => \Language::name());
 		if (empty($_GET['document'])) {
-			$datas[':id'] = (int)$_GET['id'];
+			$where[':id'] = (int)$_GET['id'];
 			$sql .= "I.`id`=:id";
 		} else {
-			$datas[':alias'] = $_GET['document'];
+			$where[':alias'] = $_GET['document'];
 			$sql .= "I.`alias`=:alias";
 		}
 		$sql .= " AND I.`index`=0 LIMIT 1";
 		$obj->cache->cacheOn(false);
-		$result = $obj->db->customQuery($sql, true, $datas, $obj->cache);
+		$result = $obj->db->customQuery($sql, true, $where, $obj->cache);
 		if (sizeof($result) == 1) {
 			$result[0]['visited'] ++;
 			$obj->db->update($obj->tableWithPrefix('index'), array('id', $result[0]['id']), array('visited' => $result[0]['visited']));

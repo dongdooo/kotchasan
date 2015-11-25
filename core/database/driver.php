@@ -81,12 +81,12 @@ class Driver extends Query
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL สำหรับสอบถามข้อมูล คืนค่าผลลัพท์เป็นแอเรย์ของข้อมูลที่ตรงตามเงื่อนไข.
 	 *
 	 * @param string $sql query string
-	 * @param boolean $toArray (option) default false คืนค่าเป็น Object, true คืนค่าผลลัทเป็น Array
+	 * @param boolean $toArray (option) default true คืนค่าเป็น Array, false คืนค่าผลลัทเป็น Object
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
 	 * @param \Core\Database\Cache $cache  database cache class default null
 	 * @return array|object คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข
 	 */
-	public function customQuery($sql, $toArray = false, $values = array(), $cache = null)
+	public function customQuery($sql, $toArray = true, $values = array(), $cache = null)
 	{
 		$result = $this->doCustomQuery($sql, $values, $cache);
 		if ($result === false) {
@@ -358,7 +358,7 @@ class Driver extends Query
 	 */
 	public function update($table, $condition, $recArr)
 	{
-		
+
 	}
 
 	/**

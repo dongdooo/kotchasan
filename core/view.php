@@ -26,7 +26,7 @@ class View extends KBase
 	 *
 	 * @var \Controller
 	 */
-	private $controller;
+	public $controller;
 	/**
 	 * ลิสต์รายการ breadcrumb
 	 *

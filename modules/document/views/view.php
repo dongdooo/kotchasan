@@ -75,10 +75,9 @@ class View extends \View
 			$result->description = $story->description;
 			$result->keywords = $story->keywords;
 			// breadcrumb
-			$menu = $this->controller->menu()->moduleMenu($index->module);
-			$view = $this->controller->view();
-			$view->addBreadcrumb(\Url::create($index->module), $menu->menu_text, $menu->menu_tooltip);
-			$view->addBreadcrumb($result->canonical, $result->topic, $result->description);
+			$menu = \Gcms::$menu->moduleMenu($index->module);
+			\GCms::$view->addBreadcrumb(\Url::create($index->module), $menu->menu_text, $menu->menu_tooltip);
+			\GCms::$view->addBreadcrumb($result->canonical, $result->topic, $result->description);
 		}
 		return $result;
 	}

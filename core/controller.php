@@ -27,15 +27,4 @@ class Controller extends KBase
 	 * @var array
 	 */
 	public $contents = array();
-
-	/**
-	 * สร้าง view สำหรับ controller นี้
-	 *
-	 * @param string $view ชื่อ View ที่ต้องการสร้าง
-	 * @return \View
-	 */
-	public function createView($view)
-	{
-		return new $view($this);
-	}
 }
