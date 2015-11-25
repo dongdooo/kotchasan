@@ -1,5 +1,3 @@
-*
 !.gitignore
-/datas/
 !/datas/*
 !/settings/*
