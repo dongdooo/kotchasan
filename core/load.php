@@ -45,29 +45,27 @@ define('WEB_URL', HOST_NAME.str_replace(DOC_ROOT, '', APP_ROOT));
  */
 function log_message($erargs, $errstr, $errfile, $errline)
 {
-	if (\File::makeDirectory(ROOT_PATH.\Kotchasan::$data_folder)) {
-		// ข้อความ error
-		$error_msg = '<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>';
-		// ไฟล์ debug
-		$debug = ROOT_PATH.\Kotchasan::$data_folder.'debug.php';
-		$exists = false;
-		if (file_exists($debug)) {
-			if (filesize($debug) > \Kotchasan::$log_file_size) {
-				rename($debug, $debug = ROOT_PATH.\Kotchasan::$data_folder.date('Ymd', \Kotchasan::$mktime).'.log');
-			} else {
-				$exists = true;
-			}
-		}
-		// save
-		if ($exists) {
-			$f = fopen($debug, 'a');
+	// ข้อความ error
+	$error_msg = '<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>';
+	// ไฟล์ debug
+	$debug = ROOT_PATH.\Kotchasan::$data_folder.'debug.php';
+	$exists = false;
+	if (file_exists($debug)) {
+		if (filesize($debug) > \Kotchasan::$log_file_size) {
+			rename($debug, $debug = ROOT_PATH.\Kotchasan::$data_folder.date('Ymd', \Kotchasan::$mktime).'.log');
 		} else {
-			$f = fopen($debug, 'w');
-			fwrite($f, '<'.'?php exit() ?'.'>');
+			$exists = true;
 		}
-		fwrite($f, "\n".\Kotchasan::$mktime.'|'.preg_replace('/[\s\n\t\r]+/', ' ', $error_msg));
-		fclose($f);
 	}
+	// save
+	if ($exists) {
+		$f = fopen($debug, 'a');
+	} else {
+		$f = fopen($debug, 'w');
+		fwrite($f, '<'.'?php exit() ?'.'>');
+	}
+	fwrite($f, "\n".\Kotchasan::$mktime.'|'.preg_replace('/[\s\n\t\r]+/', ' ', $error_msg));
+	fclose($f);
 }
 
 /**
