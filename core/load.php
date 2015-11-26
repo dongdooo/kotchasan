@@ -8,7 +8,7 @@
 /**
  *  เวลาเริ่มต้นในการประมวลผลเว็บไซต์
  */
-if (!defined('DOC_ROOT')) {
+if (!defined('BEGIN_TIME')) {
 	define('BEGIN_TIME', microtime(true));
 }
 /**
@@ -39,6 +39,13 @@ define('HOST_NAME', URL_SCHEME.(empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_
  * URL ของเว็บไซต์รวม path เช่น http://domain.tld/folder
  */
 define('WEB_URL', HOST_NAME.str_replace(DOC_ROOT, '', APP_ROOT));
+/**
+ * โฟลเดอร์ของเว็บ ตั้งแต่ DOCUMENT_ROOT
+ * เช่น kotchasan/
+ */
+if (!defined('BASE_PATH')) {
+	define('BASE_PATH', str_replace(DOC_ROOT, '', APP_ROOT));
+}
 
 /**
  * จัดการข้อความผิดพลาด.

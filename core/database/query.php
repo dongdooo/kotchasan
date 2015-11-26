@@ -49,6 +49,19 @@ class Query
 	}
 
 	/**
+	 * อ่านค่ากำหนดของฐานข้อมูล
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function getSetting($key)
+	{
+		if (isset($this->db->settings->$key)) {
+			return $this->db->settings->$key;
+		}
+	}
+
+	/**
 	 * ฟังก์ชั่นสำหรับจัดกลุ่มคำสั่ง และ เชื่อมแต่ละกลุ่มด้วย AND
 	 *
 	 * @param array $params คำสั่ง รูปแบบ array('field1', 'condition', 'field2')

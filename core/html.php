@@ -174,7 +174,7 @@ class Html
 		$ajax = false;
 		$prop = array('method' => 'post');
 		foreach ($attributes as $key => $value) {
-			if (in_array($key, array('ajax', 'action', 'onsubmit', 'elements', 'script'))) {
+			if (in_array($key, array('ajax', 'action', 'onsubmit', 'confirmsubmit', 'elements', 'script'))) {
 				$$key = $value;
 			} else {
 				$prop[$key] = $value;
@@ -185,6 +185,9 @@ class Html
 			if (isset($action)) {
 				if ($ajax) {
 					$script .= ', "'.$action.'"';
+					if (isset($confirmsubmit)) {
+						$script .= ',null ,false , function(){return '.$confirmsubmit.'}';
+					}
 				} else {
 					$prop['action'] = $action;
 				}

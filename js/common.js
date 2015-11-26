@@ -302,3 +302,13 @@ function showDebug() {
 		}
 	});
 }
+function setSelect(id, value) {
+	forEach($E(id).getElementsByTagName('input'), function () {
+		if (this.type.toLowerCase() == 'checkbox') {
+			this.checked = value;
+		}
+	});
+}
+var doCustomConfirm = function (value) {
+	return confirm(value);
+};

@@ -267,7 +267,7 @@ class Language
 				fwrite($f, $content);
 				fclose($f);
 			} else {
-				return str_replace('%s', $lang.'.'.$type, \Kotchasan::trans('Your file or folder %s is not writable, please CHMOD it to 775 or 777'));
+				return str_replace('%s', $lang.'.'.$type, \Language::get('Your file or folder %s is not writable, please CHMOD it to 775 or 777'));
 			}
 		}
 		return '';

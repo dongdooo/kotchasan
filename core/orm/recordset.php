@@ -31,7 +31,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * คลาส Schema
 	 *
-	 * @var \Core\Database\Schema
+	 * @var Core\Database\Schema
 	 */
 	protected $schema;
 	/**
@@ -43,7 +43,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * คลาส Model
 	 *
-	 * @var \Core\Orm\Field
+	 * @var Core\Orm\Field
 	 */
 	protected $model;
 	/**
@@ -139,6 +139,19 @@ class Recordset extends Query implements \Iterator
 			$this->sqls['start'] = $start;
 		}
 		return $this->db->makeQuery($this->sqls);
+	}
+
+	/**
+	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL สำหรับสอบถามข้อมูล คืนค่าผลลัพท์เป็นแอเรย์ของข้อมูลที่ตรงตามเงื่อนไข.
+	 *
+	 * @param string $sql query string
+	 * @param boolean $toArray (option) default true คืนค่าเป็น Array, false คืนค่าผลลัทเป็น Object
+	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
+	 * @return array|object คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข
+	 */
+	public function customQuery($sql, $toArray = true, $values = array())
+	{
+		return $this->db->customQuery($sql, $toArray, $values, $this->cache);
 	}
 
 	/**
@@ -276,7 +289,7 @@ class Recordset extends Query implements \Iterator
 	 * เรียกข้อมูลที่ $primaryKey
 	 *
 	 * @param int $id
-	 * @return \Core\Orm\Field
+	 * @return Core\Orm\Field
 	 */
 	public function find($id)
 	{
@@ -288,7 +301,7 @@ class Recordset extends Query implements \Iterator
 	 * SELECT .... LIMIT 1
 	 *
 	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
-	 * @return boolean|array|\Core\Orm\Field ไม่พบคืนค่า false พบคืนค่า record ของข้อมูลรายการเดียว
+	 * @return boolean|array|Core\Orm\Field ไม่พบคืนค่า false พบคืนค่า record ของข้อมูลรายการเดียว
 	 */
 	public function first($fields = null)
 	{
@@ -383,7 +396,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * insert ข้อมูล
 	 *
-	 * @param \Core\Orm\Field $model
+	 * @param Core\Orm\Field $model
 	 * @return int|boolean สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
 	public function insert($model)
@@ -435,6 +448,18 @@ class Recordset extends Query implements \Iterator
 	}
 
 	/**
+	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL ที่ไม่ต้องการผลลัพท์ เช่น CREATE INSERT UPDATE.
+	 *
+	 * @param string $sql
+	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
+	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 */
+	public function query($sql, $values = array())
+	{
+		$this->db->query($sql, $values);
+	}
+
+	/**
 	 * สร้าง query จาก config
 	 *
 	 * @param string $func
@@ -458,6 +483,16 @@ class Recordset extends Query implements \Iterator
 				}
 			}
 		}
+	}
+
+	/**
+	 * ฟังก์ชั่นอ่านชื่อตาราง
+	 * 
+	 * @return string
+	 */
+	public function tableName()
+	{
+		return $this->table_name;
 	}
 
 	/**
@@ -516,23 +551,32 @@ class Recordset extends Query implements \Iterator
 	/**
 	 *
 	 * @param array $condition
-	 * @param \Core\Orm\Field $model
+	 * @param array|Core\Orm\Field $save
 	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function update($condition, $model)
+	public function update($condition, $save)
 	{
-		$save = array();
-		foreach ($this->schema->fields($this->cache) as $field) {
-			if (isset($model->$field)) {
-				$save[$field] = $model->$field;
+		$datas = array();
+		$fields = $this->schema->fields($this->cache);
+		if (is_array($save)) {
+			foreach ($fields as $field) {
+				if (isset($save[$field])) {
+					$datas[$field] = $save[$field];
+				}
+			}
+		} else {
+			foreach ($fields as $field) {
+				if (isset($save->$field)) {
+					$datas[$field] = $save->$field;
+				}
 			}
 		}
-		if (empty($save)) {
+		if (empty($datas)) {
 			$result = false;
 		} else {
-			$result = $this->db->update($this->table_name, $condition, $save);
+			$result = $this->db->update($this->table_name, $condition, $datas);
 			if (isset($this->cache)) {
-				$this->cache->save(array($save));
+				$this->cache->save(array($datas));
 			}
 		}
 		return $result;
@@ -579,7 +623,7 @@ class Recordset extends Query implements \Iterator
 	 * Magic method สำหรับการอ่านรายการ Model
 	 *
 	 * @param (int) $id
-	 * @return array|\Core\Orm\Field
+	 * @return array|Core\Orm\Field
 	 */
 	public function __get($id)
 	{
@@ -590,7 +634,7 @@ class Recordset extends Query implements \Iterator
 	 * อ่านข้อมูลที่ $id
 	 *
 	 * @param (int) $id
-	 * @return array|\Core\Orm\Field
+	 * @return array|Core\Orm\Field
 	 */
 	public function get($id)
 	{
@@ -603,7 +647,7 @@ class Recordset extends Query implements \Iterator
 	 * Magic method สำหรับการกำหนดค่า Model ลงใน recordset
 	 *
 	 * @param (int) $id
-	 * @param array|\Core\Orm\Field $value
+	 * @param array|Core\Orm\Field $value
 	 */
 	public function __set($id, $value)
 	{
@@ -614,7 +658,7 @@ class Recordset extends Query implements \Iterator
 	 * กำหนดค่า Model ลงใน recordset
 	 *
 	 * @param (int) $id
-	 * @param array|\Core\Orm\Field $value
+	 * @param array|Core\Orm\Field $value
 	 */
 	public function set($id, $value)
 	{
