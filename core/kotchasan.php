@@ -99,12 +99,6 @@ class Kotchasan extends KBase
 	 */
 	public static $month;
 	/**
-	 * กฏของ Router สำหรับการแยกหน้าเว็บไซต์
-	 *
-	 * @var array
-	 */
-	public static $router_rules;
-	/**
 	 * ชื่อ template ที่กำลังใช้งานอยู่ รวมโฟลเดอร์ที่เก็บ template ด้วย
 	 * เช่น skin/default/
 	 *
@@ -169,26 +163,6 @@ class Kotchasan extends KBase
 		self::$urls = array(
 			'index.php?module={module}-{document}&amp;cat={catid}&amp;id={id}',
 			'{module}/{catid}/{id}/{document}.html'
-		);
-		self::$router_rules = array(
-			// index/model/page/function
-			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
-			// index/model/action
-			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'method', 'page'),
-			// module/action/cat/id
-			'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),
-			// module/action/cat
-			'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
-			// module/cat/id
-			'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
-			// module/cat
-			'/^([a-z]+)\/([0-9]+)$/' => array('module', 'cat'),
-			// module/document
-			'/^([a-z]+)\/(.*)?$/' => array('module', 'document'),
-			// module, module.php
-			'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
-			// document
-			'/^(.*)$/' => array('document')
 		);
 		/* inint Input */
 		Input::normalizeRequest();

@@ -15,6 +15,39 @@
  */
 class Router extends KBase
 {
+	/**
+	 * กฏของ Router สำหรับการแยกหน้าเว็บไซต์
+	 *
+	 * @var array
+	 */
+	public $router_rules;
+
+	/**
+	 * class constructer
+	 */
+	public function __construct()
+	{
+		$this->router_rules = array(
+			// index/model/page/function
+			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
+			// index/model/action
+			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'method', 'page'),
+			// module/action/cat/id
+			'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),
+			// module/action/cat
+			'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
+			// module/cat/id
+			'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
+			// module/cat
+			'/^([a-z]+)\/([0-9]+)$/' => array('module', 'cat'),
+			// module/document
+			'/^([a-z]+)\/(.*)?$/' => array('module', 'document'),
+			// module, module.php
+			'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
+			// document
+			'/^(.*)$/' => array('document')
+		);
+	}
 
 	/**
 	 * inint Router
@@ -77,7 +110,7 @@ class Router extends KBase
 			$my_path = $match[1];
 		}
 		if (isset($my_path) && !preg_match('/^index\.php$/i', $my_path)) {
-			foreach (\Kotchasan::$router_rules AS $patt => $items) {
+			foreach ($this->router_rules AS $patt => $items) {
 				if (preg_match($patt, $my_path, $match)) {
 					foreach ($items AS $i => $key) {
 						if (isset($match[$i + 1])) {
