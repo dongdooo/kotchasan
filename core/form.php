@@ -56,7 +56,7 @@ class Form
 				if (!empty($v)) {
 					$prop[$v] = $v;
 				}
-				continue 2;
+				continue;
 			}
 			switch ($k) {
 				case 'autofocus':
@@ -69,10 +69,10 @@ class Form
 					if ($v) {
 						$prop[$k] = $k;
 					}
-					continue 2;
+					continue;
 				case 'result':
 					$prop[$k] = 'data-'.$k.'="'.$v.'"';
-					continue 2;
+					continue;
 				case 'itemClass':
 				case 'labelClass':
 				case 'label':
@@ -87,7 +87,7 @@ class Form
 				default:
 					if (preg_match('/^on([a-z]+)/', $k, $match)) {
 						$event[$match[1]] = $v;
-						continue 2;
+						continue;
 					}
 					$prop[$k] = $k.'="'.$v.'"';
 					break;
