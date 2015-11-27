@@ -149,12 +149,21 @@ include ROOT_PATH.'core/config.php';
 function autoload($className)
 {
 	$className = str_replace('\\', '/', strtolower($className));
-	if (preg_match('/([a-z]+)\/([a-z0-9]+)\/([a-z]+)/i', $className, $match) && is_file(APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
-		include APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
-	} elseif (preg_match('/[a-z]+/i', $className) && is_file(ROOT_PATH.'core/'.$className.'.php')) {
-		include ROOT_PATH.'core/'.$className.'.php';
-	} elseif (preg_match('/[\a-z0-9]+/i', $className) && is_file(ROOT_PATH.$className.'.php')) {
-		include ROOT_PATH.$className.'.php';
+	if (preg_match('/([a-z]+)\/([a-z0-9]+)\/([a-z]+)/i', $className, $match)) {
+		if (is_file(APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
+			include APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
+			unset($className);
+		} elseif (is_file(ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
+			include ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
+			unset($className);
+		}
+	}
+	if (isset($className)) {
+		if (preg_match('/[a-z]+/i', $className) && is_file(ROOT_PATH.'core/'.$className.'.php')) {
+			include ROOT_PATH.'core/'.$className.'.php';
+		} elseif (preg_match('/[\a-z0-9]+/i', $className) && is_file(ROOT_PATH.$className.'.php')) {
+			include ROOT_PATH.$className.'.php';
+		}
 	}
 }
 spl_autoload_register('autoload');

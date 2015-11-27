@@ -30,7 +30,7 @@ class Router extends KBase
 		$this->router_rules = array(
 			// index/model/page/function
 			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
-			// index/model/action
+			// index/model/page
 			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'method', 'page'),
 			// module/action/cat/id
 			'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),

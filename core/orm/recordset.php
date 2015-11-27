@@ -11,7 +11,6 @@ namespace Core\Orm;
 use \Core\Database\Query as Query;
 use \Core\Database\Schema as Schema;
 use \Core\Database\Cache as Cache;
-use \Core\Orm\Recordset as Recordset;
 
 /**
  * ORM model base class
@@ -29,35 +28,47 @@ class Recordset extends Query implements \Iterator
 	 */
 	private $datas;
 	/**
-	 * คลาส Schema
-	 *
-	 * @var Core\Database\Schema
+	 * รายการเริ่มต้นสำหรับการ query เพื่อแบ่งหน้า
+	 * 
+	 * @var int
 	 */
-	protected $schema;
-	/**
-	 * ตัวแปรเก็บคำสั่ง SQL
-	 *
-	 * @var array
-	 */
-	protected $sqls;
+	private $firstRecord;
 	/**
 	 * คลาส Model
 	 *
 	 * @var Core\Orm\Field
 	 */
-	protected $model;
+	private $model;
+	/**
+	 * จำนวนรายการต่อหน้า สำหรับใช้ในการแบ่งหน้า
+	 *
+	 * @var int
+	 */
+	private $perPage;
+	/**
+	 * คลาส Schema
+	 *
+	 * @var Core\Database\Schema
+	 */
+	private $schema;
+	/**
+	 * ตัวแปรเก็บคำสั่ง SQL
+	 *
+	 * @var array
+	 */
+	private $sqls;
 	/**
 	 * ชื่อรองของตาราง
 	 *
 	 * @var string
 	 */
-	protected $table_alias;
+	private $table_alias;
 	/**
 	 * ชื่อตาราง
 	 *
 	 * @var string
 	 */
-	protected $table_name;
+	private $table_name;
 	/**
 	 * กำหนดผลลัพท์ของ Recordset
 	 * true ผลลัพท์เป็น Array
@@ -65,7 +76,7 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @var boolean
 	 */
-	protected $toArray = false;
+	private $toArray = false;
 
 	/**
 	 * create new Recordset
@@ -487,7 +498,7 @@ class Recordset extends Query implements \Iterator
 
 	/**
 	 * ฟังก์ชั่นอ่านชื่อตาราง
-	 * 
+	 *
 	 * @return string
 	 */
 	public function tableName()

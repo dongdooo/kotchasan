@@ -25,8 +25,8 @@ class Password
 	public static function encode($string)
 	{
 		$key = sha1((string)\Kotchasan::$config->password_key);
-		$str_len = mb_strlen($string);
-		$key_len = mb_strlen($key);
+		$str_len = strlen($string);
+		$key_len = strlen($key);
 		$j = 0;
 		$hash = '';
 		for ($i = 0; $i < $str_len; $i++) {
@@ -43,15 +43,15 @@ class Password
 	 * ฟังก์ชั่น ถอดรหัสข้อความ
 	 *
 	 * @param string $string ข้อความที่เข้ารหัสจาก gcms::encode()
-	 * @assert (\Password::encode("1234")) [==] "1234"
+	 * @assert (\Password::encode("ทดสอบภาษาไทย")) [==] "ทดสอบภาษาไทย"
 	 * @assert (\Password::encode(1234)) [==] 1234
 	 * @return string ข้อความที่ถอดรหัสแล้ว
 	 */
 	public static function decode($string)
 	{
 		$key = sha1((string)\Kotchasan::$config->password_key);
-		$str_len = mb_strlen($string);
-		$key_len = mb_strlen($key);
+		$str_len = strlen($string);
+		$key_len = strlen($key);
 		$j = 0;
 		$hash = '';
 		for ($i = 0; $i < $str_len; $i+=2) {

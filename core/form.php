@@ -56,24 +56,36 @@ class Form
 				if (!empty($v)) {
 					$prop[$v] = $v;
 				}
-			} elseif (in_array($k, array('checked', 'readonly'))) {
-				if ($v) {
-					$prop[$k] = $k;
-				}
-			} elseif (in_array($k, array('result'))) {
-				$prop[$k] = 'data-'.$k.'="'.$v.'"';
-			} elseif (preg_match('/^on([a-z]+)/', $k, $match)) {
-				$event[$match[1]] = $v;
-			} else {
-				if (!in_array($k, array('itemClass', 'labelClass', 'label', 'comment', 'value', 'dataPreview', 'previewSrc', 'options', 'optgroup', 'validator'))) {
-					if (is_int($v) || is_bool($v)) {
-						$prop[$k] = $k.'='.$v;
-					} else {
-						$prop[$k] = $k.'="'.$v.'"';
-					}
-				}
-				$$k = $v;
+				continue 2;
 			}
+			switch ($k) {
+				case 'checked':
+				case 'readonly':
+					$prop[$k] = $k;
+					continue 2;
+				case 'result':
+					$prop[$k] = 'data-'.$k.'="'.$v.'"';
+					continue 2;
+				case 'itemClass':
+				case 'labelClass':
+				case 'label':
+				case 'comment':
+				case 'value':
+				case 'dataPreview':
+				case 'previewSrc':
+				case 'options':
+				case 'optgroup':
+				case 'validator':
+					break;
+				default:
+					if (preg_match('/^on([a-z]+)/', $k, $match)) {
+						$event[$match[1]] = $v;
+						continue 2;
+					}
+					$prop[$k] = $k.'="'.$v.'"';
+					break;
+			}
+			$$k = $v;
 		}
 		if (isset($id) && empty($name)) {
 			$name = $id;
