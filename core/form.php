@@ -59,9 +59,16 @@ class Form
 				continue 2;
 			}
 			switch ($k) {
+				case 'autofocus':
 				case 'checked':
+				case 'disabled':
+				case 'formnovalidate':
+				case 'multiple':
 				case 'readonly':
-					$prop[$k] = $k;
+				case 'required':
+					if ($v) {
+						$prop[$k] = $k;
+					}
 					continue 2;
 				case 'result':
 					$prop[$k] = 'data-'.$k.'="'.$v.'"';
