@@ -28,7 +28,7 @@ class File
 	{
 		$f = opendir($dir);
 		while (false !== ($text = readdir($f))) {
-			if (!in_array($text, array('.', '..'))) {
+			if ($text !== '.' && $text !== '..') {
 				if (is_dir($dir.$text)) {
 					self::listFiles($dir.$text.'/', $result, $filter);
 				} elseif (empty($filter) || in_array(self::ext($text), $filter)) {
@@ -49,7 +49,7 @@ class File
 	{
 		$f = opendir($dir);
 		while (false !== ($text = readdir($f))) {
-			if (!in_array($text, array('.', '..'))) {
+			if ($text !== '.' && $text !== '..') {
 				if (is_dir($dir.$text)) {
 					self::copyDirectory($dir.$text.'/', $todir.$text.'/');
 				} else {

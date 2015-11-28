@@ -252,8 +252,9 @@ class Driver extends Query
 			$datas[] = $type.' : <em>'.\String::replaceAll($sql, $values).'</em>';
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
-					if (in_array($item['function'], array('all', 'first', 'count', 'save', 'find', 'execute'))) {
-						$datas[] = '<br>['.$a.'] <b>'.$item['function'].'</b> in <b>'.$item['file'].'</b> line <b>'.$item['line'].'</b>';
+					$f = $item['function'];
+					if ($f == 'all' || $f == 'first' || $f == 'count' || $f == 'save' || $f == 'find' || $f == 'execute') {
+						$datas[] = '<br>['.$a.'] <b>'.$f.'</b> in <b>'.$item['file'].'</b> line <b>'.$item['line'].'</b>';
 						break;
 					}
 				}

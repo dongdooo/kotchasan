@@ -114,14 +114,10 @@ class Form
 				$value = implode('', $datas);
 			}
 		} elseif (isset($value)) {
-			if ($this->tag == 'textarea') {
+			if ($this->tag === 'textarea') {
 				$value = str_replace(array('{', '}', '&amp;'), array('&#x007B;', '&#x007D;', '&'), htmlspecialchars($value));
 			} else {
-				if (is_int($value) || is_bool($value)) {
-					$prop['value'] = 'value='.$value;
-				} else {
-					$prop['value'] = 'value="'.$value.'"';
-				}
+				$prop['value'] = 'value="'.$value.'"';
 			}
 		}
 		if (!empty($comment) && empty($prop['title'])) {
@@ -142,12 +138,12 @@ class Form
 			$input = empty($comment) ? '' : '<div class="item">';
 			if (empty($labelClass) && empty($label)) {
 				$input .= $element;
-			} elseif (isset($type) && $type == 'checkbox') {
+			} elseif (isset($type) && $type === 'checkbox') {
 				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.$element.'&nbsp;'.$label.'</label>';
 			} else {
 				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>';
 				if (!empty($label)) {
-					$input .= $label.(isset($type) && in_array($type, array('checkbox', 'radio')) ? '&nbsp;' : '&nbsp;:&nbsp;');
+					$input .= $label.(isset($type) && ($type === 'checkbox' || $type === 'radio') ? '&nbsp;' : '&nbsp;:&nbsp;');
 				}
 				$input .= $element.'</label>';
 			}
@@ -156,7 +152,7 @@ class Form
 			}
 		} else {
 			$input = '<div class="'.$itemClass.'">';
-			if (isset($type) && $type == 'checkbox') {
+			if (isset($type) && $type === 'checkbox') {
 				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.$element.'&nbsp;'.$label.'</label>';
 			} else {
 				if (isset($dataPreview)) {

@@ -61,7 +61,7 @@ function log_message($erargs, $errstr, $errfile, $errline)
 	$exists = false;
 	if (file_exists($debug)) {
 		if (filesize($debug) > \Kotchasan::$log_file_size) {
-			rename($debug, $debug = ROOT_PATH.\Kotchasan::$data_folder.date('Ymd', \Kotchasan::$mktime).'.log');
+			rename($debug, $debug = ROOT_PATH.\Kotchasan::$data_folder.date('Ymd', \Kotchasan::$mktime).'.php');
 		} else {
 			$exists = true;
 		}

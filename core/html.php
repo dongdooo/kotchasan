@@ -174,7 +174,7 @@ class Html
 		$ajax = false;
 		$prop = array('method' => 'post');
 		foreach ($attributes as $key => $value) {
-			if (in_array($key, array('ajax', 'action', 'onsubmit', 'confirmsubmit', 'elements', 'script'))) {
+			if ($key === 'ajax' || $key === 'action' || $key === 'onsubmit' || $key === 'confirmsubmit' || $key === 'elements' || $key === 'script') {
 				$$key = $value;
 			} else {
 				$prop[$key] = $value;

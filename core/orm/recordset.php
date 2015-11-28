@@ -29,7 +29,7 @@ class Recordset extends Query implements \Iterator
 	private $datas;
 	/**
 	 * รายการเริ่มต้นสำหรับการ query เพื่อแบ่งหน้า
-	 * 
+	 *
 	 * @var int
 	 */
 	private $firstRecord;
@@ -190,7 +190,7 @@ class Recordset extends Query implements \Iterator
 		$this->sqls = array();
 		$this->sqls['select'] = 'COUNT(*) AS `count`';
 		foreach ($old_sqls as $key => $value) {
-			if (!in_array($key, array('order', 'limit', 'select'))) {
+			if ($key !== 'order' && $key !== 'limit' && $key !== 'select') {
 				$this->sqls[$key] = $value;
 			}
 		}

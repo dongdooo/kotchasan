@@ -274,7 +274,7 @@ class Datatable
 			$value = rawurlencode($value);
 			$url_query[$key] = $key.'='.$value;
 			// แอเรย์เก็บรายการ input ที่ไม่ต้องสร้าง
-			if (!in_array($key, array('search', 'count', 'page'))) {
+			if ($key !== 'search' && $key !== 'count' && $key !== 'page') {
 				$hidden_fields[$key] = '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 			}
 		}
@@ -589,7 +589,7 @@ class Datatable
 			$properties['class'] = 'sort_'.$sort.' '.$column.(empty($properties['class']) ? '' : ' '.$properties['class']);
 		}
 		foreach ($properties as $key => $value) {
-			if (!in_array($key, array('sort', 'text'))) {
+			if ($key !== 'sort' && $key !== 'text') {
 				$c[$key] = $key.'="'.$value.'"';
 			}
 		}
