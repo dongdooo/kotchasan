@@ -46,36 +46,76 @@ class Htmltable
 	 */
 	private $properties;
 
+	/**
+	 * class constructure
+	 *
+	 * @param array $properties
+	 */
+	public function __construct($properties = array())
+	{
+		$this->tbody = array();
+		$this->tfoot = array();
+		$this->thead = array();
+		$this->properties = $properties;
+	}
+
+	/**
+	 * สร้างตาราง
+	 *
+	 * @param array $properties
+	 * @return \Htmltable
+	 */
 	public static function create($properties = array())
 	{
-		$obj = new static;
-		$obj->tbody = array();
-		$obj->tfoot = array();
-		$obj->thead = array();
-		$obj->properties = $properties;
+		$obj = new static($properties);
 		return $obj;
 	}
 
+	/**
+	 * กำหนด caption ของตาราง
+	 *
+	 * @param string $text
+	 */
 	public function addCaption($text)
 	{
 		$this->caption = $text;
 	}
 
+	/**
+	 * แทรกแถวของ thead
+	 *
+	 * @param array $headers
+	 */
 	public function addHeader($headers)
 	{
 		$this->thead[] = $headers;
 	}
 
+	/**
+	 * แทรกแถวของ tbody
+	 *
+	 * @param \Tablerow $row
+	 */
 	public function addRow(\Tablerow $row)
 	{
 		$this->tbody[] = $row;
 	}
 
+	/**
+	 * แทรกแถวของ tfoot
+	 *
+	 * @param \Tablerow $row
+	 */
 	public function addFooter(\Tablerow $row)
 	{
 		$this->tfoot[] = $row;
 	}
 
+	/**
+	 * แสดงผลตาราง
+	 *
+	 * @return string
+	 */
 	public function render()
 	{
 		$prop = array();
@@ -133,40 +173,90 @@ class Htmltable
 	}
 }
 
+/**
+ * HTML table row
+ *
+ * @author Goragod Wiriya <admin@goragod.com>
+ *
+ * @since 1.0
+ */
 class Tablerow
 {
-	private $id;
+	/**
+	 * property ของแถว
+	 *
+	 * @var array
+	 */
+	private $properties;
+	/**
+	 * แอเรย์เก็บรายการ cell ในแถว
+	 *
+	 * @var array
+	 */
 	private $tds;
 
-	public static function create($id)
+	/**
+	 * class constructure
+	 *
+	 * @param array $properties
+	 */
+	public function __construct($properties = array())
 	{
-		$obj = new static;
-		$obj->id = $id;
-		$obj->tds = array();
+		$this->properties = $properties;
+		$this->tds = array();
+	}
+
+	/**
+	 * สร้างแถวสำหรับ tbody
+	 *
+	 * @param array $properties
+	 * @return \Tablerow
+	 */
+	public static function create($properties = array())
+	{
+		$obj = new static($properties);
 		return $obj;
 	}
 
+	/**
+	 * เพิ่ม cell ลงในแถว
+	 *
+	 * @param array $td
+	 */
 	public function addCell($td)
 	{
 		$this->tds[] = $td;
 	}
 
+	/**
+	 * แสดงผลแถว
+	 *
+	 * @return string
+	 */
 	public function render()
 	{
-		$row = array('<tr>');
+		$prop = array();
+		foreach ($this->properties as $key => $value) {
+			$prop[$key] = $key.'="'.$value.'"';
+		}
+		$row = array('<tr '.implode(' ', $prop).'>');
 		foreach ($this->tds as $c => $td) {
 			$prop = array();
 			$tag = 'td';
 			foreach ($td as $key => $value) {
 				if ($key == 'scope') {
 					$tag = 'th';
-					$prop['scope'] = 'scope="'.$value.'"';
-					$prop['id'] = 'id="r'.$this->id.'"';
+					if (isset($this->properties['id'])) {
+						$prop['scope'] = 'scope="'.$value.'"';
+						$prop['id'] = 'id="r'.$this->properties['id'].'"';
+					}
 				} elseif ($key != 'text') {
 					$prop[$key] = $key.'="'.$value.'"';
 				}
 			}
-			$prop['headers'] = $tag == 'th' ? 'headers="c'.$c.'"' : 'headers="r'.$this->id.' c'.$c.'"';
+			if (isset($this->properties['id'])) {
+				$prop['headers'] = $tag == 'th' ? 'headers="c'.$c.'"' : 'headers="r'.$this->properties['id'].' c'.$c.'"';
+			}
 			$tr[] = '<'.$tag.' '.implode(' ', $prop).'>'.(isset($th['text']) ? $th['text'] : '').'</'.$tag.'>';
 			$row[] = '<'.$tag.' '.implode(' ', $prop).'>'.(empty($td['text']) ? '' : $td['text']).'</'.$tag.'>';
 		}

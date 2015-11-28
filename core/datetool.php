@@ -20,18 +20,18 @@ class Datetool
 	 * ฟังก์ชั่น แปลงเวลา (mktime) เป็นวันที่ตามรูปแบบที่กำหนด สามารถคืนค่าวันเดือนปี พศ. ได้ ขึ้นกับไฟล์ภาษา
 	 *
 	 * @param int $mktime เวลาในรูป mktime
-	 * @param string $format (optional) รูปแบบของวันที่ที่ต้องการ (default date_format)
+	 * @param string $format (optional) รูปแบบของวันที่ที่ต้องการ (default DATE_FORMAT)
 	 * @return string วันที่และเวลาตามรูปแบบที่กำหนดโดย $format
 	 */
 	public static function format($mktime, $format = '')
 	{
 		if (empty($format)) {
-			$format = \Language::get('date_format');
+			$format = \Language::get('DATE_FORMAT');
 		}
-		$date_short = \Language::get('date_short');
-		$date_long = \Language::get('date_long');
-		$month_short = \Language::get('month_short');
-		$month_long = \Language::get('month_long');
+		$date_short = \Language::get('DATE_SHORT');
+		$date_long = \Language::get('DATE_LONG');
+		$month_short = \Language::get('MONTH_SHORT');
+		$month_long = \Language::get('MONTH_LONG');
 		if (preg_match_all('/(.)/u', $format, $match)) {
 			$ret = '';
 			foreach ($match[0] AS $item) {
@@ -55,7 +55,7 @@ class Datetool
 						$ret .= $month_long[date('n', $mktime)];
 						break;
 					case 'Y':
-						$ret .= (int)date('Y', $mktime) + \Language::get('year_offset');
+						$ret .= (int)date('Y', $mktime) + \Language::get('YEAR_OFFSET');
 						break;
 					default:
 						$ret .= date($item, $mktime);

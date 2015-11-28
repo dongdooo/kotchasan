@@ -62,8 +62,8 @@ class Language
 			// default language
 			$this->language_name = 'th';
 			$this->languages = array(
-				'date_format' => 'd M Y เวลา H:i น.',
-				'date_long' => array(
+				'DATE_FORMAT' => 'd M Y เวลา H:i น.',
+				'DATE_LONG' => array(
 					0 => 'อาทิตย์',
 					1 => 'จันทร์',
 					2 => 'อังคาร',
@@ -72,7 +72,7 @@ class Language
 					5 => 'ศุกร์',
 					6 => 'เสาร์'
 				),
-				'date_short' => array(
+				'DATE_SHORT' => array(
 					0 => 'อา.',
 					1 => 'จ.',
 					2 => 'อ.',
@@ -81,8 +81,8 @@ class Language
 					5 => 'ศ.',
 					6 => 'ส.'
 				),
-				'year_offset' => 543,
-				'month_long' => array(
+				'YEAR_OFFSET' => 543,
+				'MONTH_LONG' => array(
 					1 => 'มกราคม',
 					2 => 'กุมภาพันธ์',
 					3 => 'มีนาคม',
@@ -96,7 +96,7 @@ class Language
 					11 => 'พฤศจิกายน',
 					12 => 'ธันวาคม'
 				),
-				'month_short' => array(
+				'MONTH_SHORT' => array(
 					1 => 'ม.ค.',
 					2 => 'ก.พ.',
 					3 => 'มี.ค.',

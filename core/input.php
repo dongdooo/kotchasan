@@ -45,15 +45,17 @@ class Input
 		if ($result === null) {
 			return $default;
 		} else {
-			if (is_float($default)) {
-				// จำนวนเงิน เช่น 0.0
-				$result = (double)$result;
-			} elseif (is_int($default)) {
-				// เลขจำนวนเต็ม เช่น 0
-				$result = (int)$result;
-			} elseif (is_bool($default)) {
-				// true, false
-				$result = (boolean)$result;
+			if ($default !== '') {
+				if (is_float($default)) {
+					// จำนวนเงิน เช่น 0.0
+					$result = (double)$result;
+				} elseif (is_int($default)) {
+					// เลขจำนวนเต็ม เช่น 0
+					$result = (int)$result;
+				} elseif (is_bool($default)) {
+					// true, false
+					$result = (boolean)$result;
+				}
 			}
 			return $result;
 		}
