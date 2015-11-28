@@ -52,47 +52,22 @@ class Form
 		$prop = array();
 		$event = array();
 		foreach ($this->attributes as $k => $v) {
-			if (is_int($k)) {
-				if (!empty($v)) {
-					$prop[$v] = $v;
-				}
+			if ($k === 'itemClass' || $k === 'labelClass' || $k === 'label' || $k === 'comment' || $k === 'value' || $k === 'dataPreview' || $k === 'previewSrc' || $k === 'options' || $k === 'optgroup' || $k === 'validator') {
+				$$k = $v;
+			} elseif ($k === 'result') {
+				$prop[$k] = 'data-'.$k.'="'.$v.'"';
+			} elseif (is_int($k)) {
+				$prop[$v] = $v;
+			} elseif ($v === true) {
+				$prop[$k] = $k;
+			} elseif ($v === false) {
 				continue;
+			} elseif (preg_match('/^on([a-z]+)/', $k, $match)) {
+				$event[$match[1]] = $v;
+			} else {
+				$prop[$k] = $k.'="'.$v.'"';
+				$$k = $v;
 			}
-			switch ($k) {
-				case 'autofocus':
-				case 'checked':
-				case 'disabled':
-				case 'formnovalidate':
-				case 'multiple':
-				case 'readonly':
-				case 'required':
-					if ($v) {
-						$prop[$k] = $k;
-					}
-					continue;
-				case 'result':
-					$prop[$k] = 'data-'.$k.'="'.$v.'"';
-					continue;
-				case 'itemClass':
-				case 'labelClass':
-				case 'label':
-				case 'comment':
-				case 'value':
-				case 'dataPreview':
-				case 'previewSrc':
-				case 'options':
-				case 'optgroup':
-				case 'validator':
-					break;
-				default:
-					if (preg_match('/^on([a-z]+)/', $k, $match)) {
-						$event[$match[1]] = $v;
-						continue;
-					}
-					$prop[$k] = $k.'="'.$v.'"';
-					break;
-			}
-			$$k = $v;
 		}
 		if (isset($id) && empty($name)) {
 			$name = $id;
