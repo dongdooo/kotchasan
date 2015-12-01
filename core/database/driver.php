@@ -109,26 +109,26 @@ class Driver extends Query
 	public function databaseExists($database)
 	{
 		$search = $this->doCustomQuery("SELECT 1 FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='$database'");
-		return sizeof($search) == 1 ? true : false;
+		return $search && sizeof($search) == 1 ? true : false;
 	}
 
 	/**
 	 * ฟังก์ชั่นลบ record
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @param mixed $where query WHERE
+	 * @param mixed $condition query WHERE
 	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ
 	 */
-	public function delete($table, $where, $limit = 1)
+	public function delete($table, $condition, $limit = 1)
 	{
-		$where = $this->buildWhere($where);
-		if (is_array($where)) {
-			$values = $where[1];
-			$where = $where[0];
+		$condition = $this->buildWhere($condition);
+		if (is_array($condition)) {
+			$values = $condition[1];
+			$condition = $condition[0];
 		} else {
 			$values = array();
 		}
-		$sql = 'DELETE FROM `'.$table.'` WHERE '.$where;
+		$sql = 'DELETE FROM `'.$table.'` WHERE '.$condition;
 		if (is_int($limit) && $limit > 0) {
 			$sql .= ' LIMIT '.$limit;
 		}
@@ -194,12 +194,12 @@ class Driver extends Query
 	 * ฟังก์ชั่น query ข้อมูล
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @param mixed $where query WHERE
+	 * @param mixed $condition query WHERE
 	 * @return array|bool พบคืนค่ารายการที่พบเพียงรายการเดียว ไม่พบคืนค่า false
 	 */
-	public function first($table, $where)
+	public function first($table, $condition)
 	{
-		$result = $this->select($table, $where, array(), 1);
+		$result = $this->select($table, $condition, array(), 1);
 		return sizeof($result) == 1 ? $result[0] : false;
 	}
 
@@ -233,9 +233,8 @@ class Driver extends Query
 	 */
 	public function lastId($table)
 	{
-		$sql = "SHOW TABLE STATUS LIKE '$table'";
-		$result = $this->doCustomQuery($sql);
-		return sizeof($result) == 1 ? (int)$result[0]['Auto_increment'] : 0;
+		$result = $this->doCustomQuery("SHOW TABLE STATUS LIKE '$table'");
+		return $result && sizeof($result) == 1 ? (int)$result[0]['Auto_increment'] : 0;
 	}
 
 	/**
@@ -303,13 +302,13 @@ class Driver extends Query
 	 * เรียกดูข้อมูล
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @param mixed $where query WHERE
+	 * @param mixed $condition query WHERE
 	 * @param array $sort เรียงลำดับ
 	 * @param int $limit จำนวนข้อมูลที่ต้องการ
 	 * @param \Core\Database\Cache $cache  database cache class default null
 	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
 	 */
-	public function select($table, $where, $sort = array(), $limit = 0, $cache = null)
+	public function select($table, $condition, $sort = array(), $limit = 0, $cache = null)
 	{
 
 	}

@@ -364,15 +364,16 @@ class Recordset extends Query implements \Iterator
 	 * @param string $oprator AND หรือ OR
 	 * @return string query ภายใต้ ()
 	 */
-	public static function group($params, $oprator = 'AND')
+	public function group($params, $oprator = 'AND')
 	{
-		$oprator = strtoupper($oprator);
-		$obj = self::create();
-		if ($oprator == 'AND') {
-			return $obj->groupAnd($params);
-		} elseif ($oprator == 'OR') {
-			return $obj->groupOr($params);
-		}
+		switch (strtoupper($oprator)) {
+			case 'AND':
+				return $this->groupAnd($params);
+				break;
+			case 'OR':
+				return $this->groupOr($params);
+				break;
+		};
 	}
 
 	/**

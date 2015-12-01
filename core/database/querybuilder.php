@@ -360,7 +360,7 @@ class QueryBuilder extends DbQuery
 	/**
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE
 	 *
-	 * @param mixed $where query string หรือ array
+	 * @param mixed $condition query string หรือ array
 	 * @assert where(1)->text() [==] " WHERE `id`=1"
 	 * @assert where(array('id', 1))->text() [==] " WHERE `id`=1"
 	 * @assert where(array('id', '1'))->text() [==] " WHERE `id`='1'"
@@ -371,9 +371,9 @@ class QueryBuilder extends DbQuery
 	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (:id0, :id1, :id2)"
 	 * @return \Core\Database\QueryBuilder
 	 */
-	public function where($where, $oprator = 'AND', $id = 'id')
+	public function where($condition, $oprator = 'AND', $id = 'id')
 	{
-		$ret = $this->buildWhere($where, $oprator, $id);
+		$ret = $this->buildWhere($condition, $oprator, $id);
 		if (is_array($ret)) {
 			$this->sqls['where'] = $ret[0];
 			$this->values = \Arraytool::replace($this->values, $ret[1]);

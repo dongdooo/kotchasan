@@ -146,36 +146,6 @@ class Input
 			}
 		}
 	}
-	/**
-	 * ฟังก์ชั่น ตรวจสอบสถานะที่กำหนด
-	 *
-	 * @param object $cfg ตัวแปรแอเรย์ที่มีคีย์ที่ต้องการตรวจสอบเช่น $config
-	 * @param string $key คีย์ของ $cfg ที่ต้องการตรวจสอบ
-	 * @return boolean คืนค่า true ถ้าสมาชิกที่ login มีสถานะที่กำหนดอยู่ใน $cfg[$key]
-	 */
-
-	/**
-	 *
-	 * @param type $login
-	 * @param type $cfg
-	 * @param type $key
-	 * @return boolean
-	 */
-	public static function canConfig($login, $cfg, $key)
-	{
-		if (isset($login['status'])) {
-			if ($login['status'] == 1) {
-				return true;
-			} elseif (isset($cfg->$key)) {
-				if (is_array($cfg->$key)) {
-					return in_array($login['status'], $cfg->$key);
-				} else {
-					return in_array($login['status'], explode(',', $cfg->$key));
-				}
-			}
-		}
-		return false;
-	}
 
 	/**
 	 * remove slashes (/)

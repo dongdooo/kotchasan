@@ -63,7 +63,7 @@ class PdoMysqlDriver extends Driver
 	 * @param string $sql query string
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
 	 * @param \Core\Database\Cache $cache  database cache class default null
-	 * @return array คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข
+	 * @return array|boolean คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข หรือคืนค่า false หามีข้อผิดพลาด
 	 */
 	protected function doCustomQuery($sql, $values = array(), $cache = null)
 	{
@@ -87,7 +87,7 @@ class PdoMysqlDriver extends Driver
 				}
 			} catch (PDOException $e) {
 				$this->error_message = $e->getMessage();
-				$result = array();
+				$result = false;
 			}
 			$this->used_cache = false;
 		} else {

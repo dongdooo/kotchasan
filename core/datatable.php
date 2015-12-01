@@ -222,7 +222,7 @@ class Datatable
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = \Input::get($_REQUEST, 'count', (int)$this->perPage);
+			$this->perPage = \Input::get($_REQUEST, 'count', 30);
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
@@ -325,7 +325,7 @@ class Datatable
 					foreach ($this->searchColumns as $key) {
 						$sh[] = array($key, 'LIKE', "%$search%");
 					}
-					$qs[] = $this->db->group($sh, 'OR');
+					$qs[] = $this->rs->group($sh, 'OR');
 				} elseif (isset($this->datas)) {
 					// filter ข้อมูลจาก array
 					$this->datas = \Arraytool::filter($this->datas, $search);
@@ -432,17 +432,25 @@ class Datatable
 			$row = array();
 			$i = 0;
 			$colCount = 0;
+			$colspan = 0;
 			foreach ($this->headers as $key => $attributes) {
-				if ($i == $this->checkCol) {
-					$row[] = '<th class="check-column"><a class="checkall icon-uncheck"></a></th>';
+				if ($colspan === 0) {
+					if ($i == $this->checkCol) {
+						$row[] = '<th class="check-column"><a class="checkall icon-uncheck"></a></th>';
+						$colCount++;
+					} elseif ($i == $this->dragColumn) {
+						$row[] = '<th></th>';
+						$colCount++;
+					}
+					if (isset($attributes['colspan'])) {
+						$colspan = $attributes['colspan'] - 1;
+					}
+					$row[] = $this->th($i, $key, $attributes);
 					$colCount++;
-				} elseif ($i == $this->dragColumn) {
-					$row[] = '<th></th>';
-					$colCount++;
+					$i++;
+				} else {
+					$colspan--;
 				}
-				$row[] = $this->th($i, $key, $attributes);
-				$colCount++;
-				$i++;
 			}
 			if (!empty($this->buttons)) {
 				$row[] = $this->th($i, '', array('text' => ''));
@@ -559,7 +567,8 @@ class Datatable
 						}
 					}
 					if (!empty($buttons)) {
-						$row[] = str_replace(':id', $id, $this->td($id, $i, array('class' => 'center'), implode('', $buttons), ''));
+						$module_id = isset($items['module_id']) ? $items['module_id'] : 0;
+						$row[] = str_replace(array(':id', ':module_id'), array($id, $module_id), $this->td($id, $i, array('class' => 'center'), implode('', $buttons), ''));
 					}
 				}
 				if ($this->pmButton) {

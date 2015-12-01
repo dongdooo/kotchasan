@@ -204,7 +204,7 @@ class Login extends \Model
 				}
 				// บันทึกลง db
 				if ($userupdate) {
-					$this->db->update($this->tableWithPrefix('user'), array('id', $login_result['id']), array('session_id' => $session_id, 'visited' => $login_result['visited'], 'lastvisited' => \Kotchasan::$mktime, 'ip' => $ip));
+					$this->db->update($this->tableWithPrefix('user'), $login_result['id'], array('session_id' => $session_id, 'visited' => $login_result['visited'], 'lastvisited' => \Kotchasan::$mktime, 'ip' => $ip));
 				}
 				return (object)$login_result;
 			}
@@ -247,7 +247,7 @@ class Login extends \Model
 			if (empty($err)) {
 				// อัปเดทรหัสผ่านใหม่
 				$save_password = md5($password.$user['email']);
-				$this->db->update($this->tableWithPrefix('user'), array('id', $user['id']), array('password' => $save_password));
+				$this->db->update($this->tableWithPrefix('user'), $user['id'], array('password' => $save_password));
 				// สำเร็จ
 				self::$login_message = Language::get('Your message was sent successfully');
 				// ไปหน้า login
@@ -265,21 +265,21 @@ class Login extends \Model
 	/**
 	 * ฟังก์ชั่นตรวจสอบการ Login
 	 *
-	 * @return boolean true เป็นสมาชิก, false ยังไม่ได้ login
+	 * @return array|boolean คืนค่า ข้อมูลสมาชิกที่ login (array) หรือ คืนค่า false ถ้ายังไม่ได้เข้าระบบ
 	 */
 	public static function isMember()
 	{
-		return isset($_SESSION['login']);
+		return isset($_SESSION['login']) ? $_SESSION['login'] : false;
 	}
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบสถานะแอดมิน
 	 *
-	 * @return boolean true เป็นแอดมิน, false ไม่ใช่แอดมินหรือยังไม่ได้ login
+	 * @return array|boolean คืนค่า ข้อมูลแอดมิน (array) หรือ คืนค่า false ถ้ายังไม่ใช่แอดมิน
 	 */
 	public static function isAdmin()
 	{
-		return isset($_SESSION['login']) && $_SESSION['login']['id'] > 0 && $_SESSION['login']['status'] == 1;
+		return isset($_SESSION['login']) && $_SESSION['login']['id'] > 0 && $_SESSION['login']['status'] == 1 ? $_SESSION['login'] : false;
 	}
 
 	/**

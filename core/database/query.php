@@ -68,7 +68,7 @@ class Query
 	 * @assert (array('id', 1), array('id', '=' , 1), array('id', array(1,2,'3'))) [==] "(`id` = 1 AND `id` = 1 AND `id` IN (1, 2, '3'))"
 	 * @return string query ภายใต้ ()
 	 */
-	public function groupAnd($params)
+	protected function groupAnd($params)
 	{
 		if (func_num_args() > 1) {
 			$params = func_get_args();
@@ -87,7 +87,7 @@ class Query
 	 * @assert (array('id', 1), array('id', '=' , 1), array('id', array(1,2,'3'))) [==] "(`id` = 1 OR `id` = 1 OR `id` IN (1, 2, '3'))"
 	 * @return string
 	 */
-	public function groupOr($params)
+	protected function groupOr($params)
 	{
 		if (func_num_args() > 1) {
 			$params = func_get_args();
@@ -108,7 +108,7 @@ class Query
 	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'join' => array(" INNER JOIN ..."))) [==] "SELECT * FROM `user` INNER JOIN ... WHERE `id` = 1 ORDER BY `id` LIMIT 1,10"
 	 * @return string sql command
 	 */
-	public function makeQuery($sqls)
+	protected function makeQuery($sqls)
 	{
 		$sql = '';
 		if (isset($sqls['insert'])) {
@@ -173,7 +173,7 @@ class Query
 	 * @assert ('user') [==] "`user`"
 	 * @return string
 	 */
-	public function quoteTableName($table)
+	protected function quoteTableName($table)
 	{
 		if (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
 			$table = '`'.$this->tableWithPrefix($match[1]).'` AS '.$match[4];
@@ -212,7 +212,7 @@ class Query
 	 * @assert (array('0 id', 'user', 'user.id user_id', "'document' module", '(...) name')) [==] "0 AS `id`, `user`, `user`.`id` AS `user_id`, 'document' AS `module`, (...) AS `name`"
 	 * @return string
 	 */
-	public function buildSelect($fields)
+	protected function buildSelect($fields)
 	{
 		if (is_array($fields)) {
 			// multiples
@@ -222,7 +222,7 @@ class Query
 			}
 			$ret = implode(', ', $rets);
 		} else {
-			if (preg_match('/^([\(\'"])(.*)(\\1|\))([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
+			if (preg_match('/^([\(\'"])(.*)(\\1|\))([\s]+as)?[\s`]+([a-z0-9_]+)[`]?$/i', $fields, $match)) {
 				// (...) alias
 				$ret = "$match[1]$match[2]$match[3] AS `$match[5]`";
 			} elseif (preg_match('/^([0-9]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
@@ -258,7 +258,7 @@ class Query
 	 * @assert ('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id'))) [==] " INNER JOIN `user` AS U ON U.`id`=A.`id` AND U.`id`=A.`id`"
 	 * @return string ถ้าไม่มี alias คืนค่าว่าง
 	 */
-	public function buildJoin($table, $type, $on)
+	protected function buildJoin($table, $type, $on)
 	{
 		$ret = $this->buildWhere($on);
 		$sql = is_array($ret) ? $ret[0] : $ret;
@@ -287,7 +287,7 @@ class Query
 	 * @assert ('id ASCD') [==] ""
 	 * @return string
 	 */
-	public function buildOrder($fields)
+	protected function buildOrder($fields)
 	{
 		$sqls = array();
 		foreach ((array)$fields as $item) {
@@ -321,7 +321,7 @@ class Query
 	 * @assert (array("table.field", "table.field alias")) [==] "`table`.`field`, `table`.`field` AS `alias`"
 	 * @return string
 	 */
-	public function fieldName($name)
+	protected function fieldName($name)
 	{
 		if (is_array($name)) {
 			$rets = array();
@@ -364,7 +364,7 @@ class Query
 	 * @assert (array("table.field", "table.field alias")) [==] "(`table`.`field`, `table`.`field` AS `alias`)"
 	 * @return string
 	 */
-	public function fieldValue($value)
+	protected function fieldValue($value)
 	{
 		if (is_array($value)) {
 			$rets = array();
@@ -401,7 +401,7 @@ class Query
 	 * @assert (array('id', '!=', '(...) alias')) [==] "`id` != (...) AS `alias`"
 	 * @return string
 	 */
-	public function buildValue($params)
+	protected function buildValue($params)
 	{
 		if (is_array($params)) {
 			if (sizeof($params) == 2) {
@@ -448,7 +448,7 @@ class Query
 	/**
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE
 	 *
-	 * @param mixed $where
+	 * @param mixed $condition
 	 * @param string $oprator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
 	 * @assert (1) [==] "`id`=1"
@@ -458,13 +458,13 @@ class Query
 	 * @assert (array('(...)')) [==] "(...)"
 	 * @return string|array คืนค่า string สำหรับคำสั่ง WHERE หรือคืนค่า array(where, values) สำหรับใช้กับการ bind
 	 */
-	public function buildWhere($where, $oprator = 'AND', $id = 'id')
+	protected function buildWhere($condition, $oprator = 'AND', $id = 'id')
 	{
-		if (is_array($where)) {
-			if (is_array($where[0])) {
+		if (is_array($condition)) {
+			if (is_array($condition[0])) {
 				$qs = array();
 				$ps = array();
-				foreach ($where as $item) {
+				foreach ($condition as $item) {
 					$ret = $this->whereValue($item);
 					if (is_array($ret)) {
 						$qs[] = $ret[0];
@@ -473,26 +473,26 @@ class Query
 						$qs[] = $ret;
 					}
 				}
-				$where = implode(' '.$oprator.' ', $qs);
+				$condition = implode(' '.$oprator.' ', $qs);
 				if (!empty($ps)) {
-					$where = array($where, $ps);
+					$condition = array($condition, $ps);
 				}
-			} elseif (strpos($where[0], '(') !== false) {
-				$where = $where[0];
+			} elseif (strpos($condition[0], '(') !== false) {
+				$condition = $condition[0];
 			} else {
-				$where = $this->whereValue($where);
+				$condition = $this->whereValue($condition);
 			}
-		} elseif (is_int($where)) {
+		} elseif (preg_match('/^[0-9]+$/', $condition)) {
 			// primaryKey
-			$where = $this->fieldName($id).'='.$where;
+			$condition = $this->fieldName($id).'='.$condition;
 		}
-		return $where;
+		return $condition;
 	}
 
 	/**
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE และ values ไม่ใส่ alias ให้กับชื่อฟิลด์
 	 *
-	 * @param mixed $where
+	 * @param mixed $condition
 	 * @param string $oprator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
 	 * @assert (1) [==] array("`id` = :id", array(':id' => 1))
@@ -500,49 +500,49 @@ class Query
 	 * @assert (array('user_id', 1)) [==] array("`user_id` = :user_id", array(':user_id' => 1))
 	 * @assert (array(array('id', 1), array('id', array(1, 2, '3')))) [==] array("`id` = :id AND `id` IN (:id0,:id1,:id2)", array(':id0' => 1, ':id1' => 2, ':id2' => '3', ':id' => 1))
 	 * @assert (array('(...)')) [==] array('(...)', array())
-	 * @return array ($where, $values)
+	 * @return array ($condition, $values)
 	 */
-	public function buildWhereValues($where, $oprator = 'AND', $id = 'id')
+	protected function buildWhereValues($condition, $oprator = 'AND', $id = 'id')
 	{
-		if (is_array($where)) {
+		if (is_array($condition)) {
 			$values = array();
 			$qs = array();
-			if (is_array($where[0])) {
-				foreach ($where as $item) {
+			if (is_array($condition[0])) {
+				foreach ($condition as $item) {
 					$ret = $this->buildWhereValues($item, $oprator, $id);
 					$qs[] = $ret[0];
 					$values = \Arraytool::replace($values, $ret[1]);
 				}
-				$where = implode(' '.$oprator.' ', $qs);
-			} elseif (strpos($where[0], '(') !== false) {
-				$where = $where[0];
+				$condition = implode(' '.$oprator.' ', $qs);
+			} elseif (strpos($condition[0], '(') !== false) {
+				$condition = $condition[0];
 			} else {
-				if (sizeof($where) == 2) {
-					$where = array($where[0], '=', $where[1]);
+				if (sizeof($condition) == 2) {
+					$condition = array($condition[0], '=', $condition[1]);
 				} else {
-					$where[1] = strtoupper(trim($where[1]));
+					$condition[1] = strtoupper(trim($condition[1]));
 				}
-				if (is_array($where[2])) {
-					$condition = $where[1] == '=' ? 'IN' : $where[1];
+				if (is_array($condition[2])) {
+					$operator = $condition[1] == '=' ? 'IN' : $condition[1];
 					$qs = array();
-					foreach ($where[2] as $k => $v) {
-						$qs[] = ":$where[0]$k";
-						$values[":$where[0]$k"] = $v;
+					foreach ($condition[2] as $k => $v) {
+						$qs[] = ":$condition[0]$k";
+						$values[":$condition[0]$k"] = $v;
 					}
-					$where = "`$where[0]` $condition (".implode(',', $qs).")";
+					$condition = "`$condition[0]` $operator (".implode(',', $qs).")";
 				} else {
-					$values[":$where[0]"] = $where[2];
-					$where = "`$where[0]` $where[1] :$where[0]";
+					$values[":$condition[0]"] = $condition[2];
+					$condition = "`$condition[0]` $condition[1] :$condition[0]";
 				}
 			}
-		} elseif (is_int($where)) {
+		} elseif (is_int($condition)) {
 			// primaryKey
-			$values = array(":$id" => $where);
-			$where = "`$id` = :$id";
+			$values = array(":$id" => $condition);
+			$condition = "`$id` = :$id";
 		} else {
 			$values = array();
 		}
-		return array($where, $values);
+		return array($condition, $values);
 	}
 
 	/**
@@ -556,16 +556,16 @@ class Query
 		$result = array();
 		if (is_array($params)) {
 			if (sizeof($params) == 2) {
-				$condition = '=';
+				$operator = '=';
 				$value = $params[1];
 			} else {
-				$condition = trim($params[1]);
+				$operator = trim($params[1]);
 				$value = $params[2];
 			}
 			$key = $this->fieldName($params[0]);
 			if (is_array($value)) {
-				if ($condition == '=') {
-					$condition = 'IN';
+				if ($operator == '=') {
+					$operator = 'IN';
 				}
 				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));
 				$qs = array();
@@ -574,27 +574,27 @@ class Query
 					$qs[] = $q.$i;
 					$vs[$q.$i] = $item;
 				}
-				$result = array($key.' '.$condition.' ('.implode(', ', $qs).')', $vs);
+				$result = array($key.' '.$operator.' ('.implode(', ', $qs).')', $vs);
 			} elseif (preg_match('/^(\-?[0-9\s\.]+|true|false)$/i', $value)) {
 				// value เป็น ตัวเลข จุดทศนิยม เครื่องหมาย - / , และ true, false
 				// เช่น ตัวเลข, จำนวนเงิน, boolean
-				$result = $key.$condition.(is_string($value) ? "'$value'" : $value);
+				$result = $key.$operator.(is_string($value) ? "'$value'" : $value);
 			} elseif (preg_match('/^[0-9\s\-:]+$/', $value)) {
 				// วันที่
-				$result = $key.$condition."'$value'";
+				$result = $key.$operator."'$value'";
 			} elseif (preg_match('/^\((.*)\)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $value, $match)) {
 				// value เป็น query string
-				$result = $key.$condition."($match[1]) AS `$match[3]`";
+				$result = $key.$operator."($match[1]) AS `$match[3]`";
 			} elseif (preg_match('/^([A-Z0-9]{1,2})\.([a-zA-Z0-9_]+)$/', $value, $match)) {
 				// U.id
-				$result = $key.$condition.$match[1].'.`'.$match[2].'`';
+				$result = $key.$operator.$match[1].'.`'.$match[2].'`';
 			} elseif (preg_match('/^([a-z0-9_]+)\.([a-z0-9_]+)$/i', $value, $match)) {
 				// value เป็น table.field
-				$result = $key.$condition.'`'.$match[1].'`.`'.$match[2].'`';
+				$result = $key.$operator.'`'.$match[1].'`.`'.$match[2].'`';
 			} else {
 				// value เป็น string
 				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));
-				$result = array($key.$condition.$q, array($q => $value));
+				$result = array($key.$operator.$q, array($q => $value));
 			}
 		} else {
 			$result = $params;
