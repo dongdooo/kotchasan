@@ -53,6 +53,9 @@ class Database
 			if (empty($param->settings->dbdriver)) {
 				$param->settings->dbdriver = 'mysql';
 			}
+			if (empty($param->settings->hostname)) {
+				$param->settings->hostname = '127.0.0.1';
+			}
 			// โหลด driver (base)
 			include ROOT_PATH.'core/database/driver.php';
 			// โหลด driver ตาม config ถ้าไม่พบ ใช้ PdoMysqlDriver

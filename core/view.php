@@ -100,6 +100,7 @@ class View extends KBase
 	 */
 	public function renderHTML()
 	{
+		// contents
 		$contents = $this->controller->contents;
 		// default for template
 		if (!empty($this->meta)) {
@@ -109,18 +110,18 @@ class View extends KBase
 		$contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Language::get(array(1=>"$1"))';
 		$contents['/{BREADCRUMB}/'] = empty($this->breadcrumb) ? '' : implode('', $this->breadcrumb);
 		$contents['/{BACKURL(\?([a-zA-Z0-9=&\-_@\.]+))?}/e'] = '\Url::back';
-		$contents['/{WEBTITLE}/'] = \Kotchasan::$config->web_title;
-		$contents['/{WEBDESCRIPTION}/'] = \Kotchasan::$config->web_description;
+		$contents['/{WEBTITLE}/'] = self::$cfg->web_title;
+		$contents['/{WEBDESCRIPTION}/'] = self::$cfg->web_description;
 		$contents['/{LANGUAGE}/'] = \Language::name();
 		$contents['/{WEBURL}/'] = WEB_URL;
-		$contents['/{SKIN}/'] = \Kotchasan::$template;
+		$contents['/{SKIN}/'] = \Template::$src;
 		$contents['/{ELAPSED}/'] = sprintf('%.3f', microtime(true) - BEGIN_TIME);
 		$contents['/{USAGE}/'] = memory_get_peak_usage() / 1024;
 		$contents['/{QURIES}/'] = Core\Database\Driver::$query_count;
 		$contents['/{VERSION}/'] = VERSION;
 		$contents['/^[\s\t]+/m'] = '';
 		// แทนที่ลงใน index.html
-		echo \String::pregReplace(array_keys($contents), array_values($contents), \Template::load('', '', 'index'));
+		echo \Text::pregReplace(array_keys($contents), array_values($contents), \Template::load('', '', 'index'));
 	}
 
 	/**

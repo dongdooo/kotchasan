@@ -42,13 +42,13 @@ class Email extends Model
 		} else {
 			$email = $email[0];
 			// ผู้ส่ง
-			$from = empty($email['from_email']) ? \Kotchasan::$config->noreply_email : $email['from_email'];
+			$from = empty($email['from_email']) ? self::$cfg->noreply_email : $email['from_email'];
 			// ข้อความในอีเมล์
 			$replace = array(
-				'/%WEBTITLE%/' => strip_tags(\Kotchasan::$config->web_title),
+				'/%WEBTITLE%/' => strip_tags(self::$cfg->web_title),
 				'/%WEBURL%/' => WEB_URL,
 				'/%ADMINEMAIL%/' => $from,
-				'/%TIME%/' => \Datetool::format(\Kotchasan::$mktime)
+				'/%TIME%/' => \Date::format()
 			);
 			$replace = \Arraytool::replace($replace, $datas);
 			\Arraytool::extract($replace, $keys, $values);
@@ -74,9 +74,9 @@ class Email extends Model
 	 */
 	public static function custom($mailto, $replyto, $subject, $msg)
 	{
-		$charset = empty(\Kotchasan::$config->email_charset) ? 'utf-8' : strtolower(\Kotchasan::$config->email_charset);
+		$charset = empty(self::$cfg->email_charset) ? 'utf-8' : strtolower(self::$cfg->email_charset);
 		if (empty($replyto)) {
-			$replyto = array(\Kotchasan::$config->noreply_email, strip_tags(\Kotchasan::$config->web_title));
+			$replyto = array(self::$cfg->noreply_email, strip_tags(self::$cfg->web_title));
 		} elseif (preg_match('/^(.*)<(.*?)>$/', $replyto, $match)) {
 			$replyto = array($match[1], (empty($match[2]) ? $match[1] : $match[2]));
 		} else {
@@ -88,7 +88,7 @@ class Email extends Model
 			$replyto[1] = iconv('utf-8', $charset, $replyto[1]);
 		}
 		$messages = array();
-		if (empty(\Kotchasan::$config->email_use_phpMailer)) {
+		if (empty(self::$cfg->email_use_phpMailer)) {
 			// ส่งอีเมล์ด้วยฟังก์ชั่นของ PHP
 			foreach (explode(',', $mailto) as $email) {
 				$headers = "MIME-Version: 1.0\r\n";
@@ -113,20 +113,20 @@ class Email extends Model
 			$mail->CharSet = $charset;
 			// use html
 			$mail->IsHTML();
-			$mail->SMTPAuth = empty(\Kotchasan::$config->email_SMTPAuth) ? false : true;
+			$mail->SMTPAuth = empty(self::$cfg->email_SMTPAuth) ? false : true;
 			if ($mail->SMTPAuth) {
-				$mail->Username = \Kotchasan::$config->email_Username;
-				$mail->Password = \Kotchasan::$config->email_Password;
-				$mail->SMTPSecure = \Kotchasan::$config->email_SMTPSecure;
+				$mail->Username = self::$cfg->email_Username;
+				$mail->Password = self::$cfg->email_Password;
+				$mail->SMTPSecure = self::$cfg->email_SMTPSecure;
 			}
-			if (!empty(\Kotchasan::$config->email_Host)) {
-				$mail->Host = \Kotchasan::$config->email_Host;
+			if (!empty(self::$cfg->email_Host)) {
+				$mail->Host = self::$cfg->email_Host;
 			}
-			if (!empty(\Kotchasan::$config->email_Port)) {
-				$mail->Port = \Kotchasan::$config->email_Port;
+			if (!empty(self::$cfg->email_Port)) {
+				$mail->Port = self::$cfg->email_Port;
 			}
 			$mail->AddReplyTo($replyto[0], $replyto[1]);
-			$mail->SetFrom(\Kotchasan::$config->noreply_email, strip_tags(\Kotchasan::$config->web_title));
+			$mail->SetFrom(self::$cfg->noreply_email, strip_tags(self::$cfg->web_title));
 			// subject
 			$mail->Subject = $subject;
 			// message

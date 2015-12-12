@@ -1,6 +1,6 @@
 <?php
 /**
- * @filesource core/datetool.php
+ * @filesource core/date.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -13,18 +13,54 @@
  *
  * @since 1.0
  */
-class Datetool
+class Date
 {
+
+	/**
+	 * อ่านวันที่
+	 *
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
+	 * @return int
+	 */
+	public static function day($mktime = 0)
+	{
+		return (int)date('j', empty($mktime) ? time() : $mktime);
+	}
+
+	/**
+	 * อ่านเดือน
+	 *
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นเดือนนี้
+	 * @return int
+	 */
+	public static function month($mktime = 0)
+	{
+		return (int)date('n', empty($mktime) ? time() : $mktime);
+	}
+
+	/**
+	 * อ่านปี คศ.
+	 *
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นปีนี้
+	 * @return int
+	 */
+	public static function year($mktime = 0)
+	{
+		return (int)date('Y', empty($mktime) ? time() : $mktime);
+	}
 
 	/**
 	 * ฟังก์ชั่น แปลงเวลา (mktime) เป็นวันที่ตามรูปแบบที่กำหนด สามารถคืนค่าวันเดือนปี พศ. ได้ ขึ้นกับไฟล์ภาษา
 	 *
-	 * @param int $mktime เวลาในรูป mktime
-	 * @param string $format (optional) รูปแบบของวันที่ที่ต้องการ (default DATE_FORMAT)
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
+	 * @param string $format รูปแบบของวันที่ที่ต้องการ (ถ้าไม่ระบุจะใช้รูปแบบที่มาจากระบบภาษา DATE_FORMAT)
 	 * @return string วันที่และเวลาตามรูปแบบที่กำหนดโดย $format
 	 */
-	public static function format($mktime, $format = '')
+	public static function format($mktime = 0, $format = '')
 	{
+		if (empty($mktime)) {
+			$mktime = time();
+		}
 		if (empty($format)) {
 			$format = \Language::get('DATE_FORMAT');
 		}
@@ -70,8 +106,8 @@ class Datetool
 	/**
 	 * ฟังก์ชั่น คำนวนความแตกต่างของวัน (อายุ)
 	 *
-	 * @param int $start_date วันที่เริ่มต้นหรือวันเกิด (mktime)
-	 * @param int $end_date วันที่สิ้นสุดหรือวันนี้ (mktime)
+	 * @param int $start_date วันที่เริ่มต้นหรือวันเกิด (Unix timestamp)
+	 * @param int $end_date วันที่สิ้นสุดหรือวันนี้ (Unix timestamp)
 	 * @return array คืนค่า ปี เดือน วัน [year, month, day] ที่แตกต่าง
 	 */
 	public static function compare($start_date, $end_date)
@@ -116,23 +152,23 @@ class Datetool
 	/**
 	 * แปลงวันที่ จาก mktime เป็น Y-m-d สามารถบันทึกลงฐานข้อมูลได้ทันที
 	 *
-	 * @param int $mktime วันที่ในรูป mktime
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
 	 * @return string คืนค่าวันที่รูป Y-m-d
 	 */
-	public static function mktimeToSqlDate($mktime)
+	public static function mktimeToSqlDate($mktime = 0)
 	{
-		return date('Y-m-d', $mktime);
+		return date('Y-m-d', empty($mktime) ? time() : $mktime);
 	}
 
 	/**
 	 * แปลงวันที่ จาก mktime เป็น Y-m-d H:i:s สามารถบันทึกลงฐานข้อมูลได้ทันที
 	 *
-	 * @param int $mktime วันที่ในรูป mktime
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
 	 * @return string คืนค่า วันที่และเวลาของ mysql เช่น Y-m-d H:i:s
 	 */
-	public static function mktimeToSqlDateTime($mktime)
+	public static function mktimeToSqlDateTime($mktime = 0)
 	{
-		return date('Y-m-d H:i:s', $mktime);
+		return date('Y-m-d H:i:s', empty($mktime) ? time() : $mktime);
 	}
 
 	/**

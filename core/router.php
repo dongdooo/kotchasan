@@ -20,41 +20,34 @@ class Router extends KBase
 	 *
 	 * @var array
 	 */
-	public $router_rules;
-
-	/**
-	 * class constructer
-	 */
-	public function __construct()
-	{
-		$this->router_rules = array(
-			// index/model/page/function
-			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
-			// index/model/page
-			'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'method', 'page'),
-			// module/action/cat/id
-			'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),
-			// module/action/cat
-			'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
-			// module/cat/id
-			'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
-			// module/cat
-			'/^([a-z]+)\/([0-9]+)$/' => array('module', 'cat'),
-			// module/document
-			'/^([a-z]+)\/(.*)?$/' => array('module', 'document'),
-			// module, module.php
-			'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
-			// document
-			'/^(.*)$/' => array('document')
-		);
-	}
+	private $rules = array(
+		// index/model/page/function
+		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
+		// index/model/page
+		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'method', 'page'),
+		// module/action/cat/id
+		'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),
+		// module/action/cat
+		'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
+		// module/cat/id
+		'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
+		// module/cat
+		'/^([a-z]+)\/([0-9]+)$/' => array('module', 'cat'),
+		// module/document
+		'/^([a-z]+)\/(.*)?$/' => array('module', 'document'),
+		// module, module.php
+		'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
+		// document
+		'/^(.*)$/' => array('document')
+	);
 
 	/**
 	 * inint Router
 	 *
+	 * @param string $controller (optional) Controller หลักหากไม่พบ Controller ที่มาจาก URL
 	 * @return \Router
 	 */
-	public function inint()
+	public function inint($controller = 'Index\Index\Controller')
 	{
 		// ตรวจสอบโมดูล
 		$request_uri = explode('?', rawurldecode($_SERVER['REQUEST_URI']));
@@ -64,18 +57,21 @@ class Router extends KBase
 			$controller = ucwords($modules['module']).'\\'.ucwords($modules['page']).'\\'.ucwords($modules['method']);
 			$function = empty($modules['function']) ? 'index' : $modules['function'];
 		} else {
-			// controller เริ่มต้น
-			$controller = \Kotchasan::$defaultController;
+			// ใช้ controller เริ่มต้น
 			$function = empty($modules['function']) ? 'index' : $modules['function'];
 		}
 		// ส่งค่าโมดูลที่เลือกไปยังตัวแปร $_GET
 		foreach ($modules as $key => $value) {
 			$_GET[$key] = $value;
 		}
-		// เรียก Controller
-		$obj = $this->createClass($controller);
-		if (method_exists($obj, $function)) {
-			$obj->$function();
+		if (method_exists($controller, $function)) {
+			// เรียก Controller
+			$obj = $this->createClass($controller);
+			if (method_exists($obj, $function)) {
+				$obj->$function();
+			}
+		} else {
+			throw new \Exception('Controller or method not found.');
 		}
 		return $this;
 	}
@@ -110,7 +106,7 @@ class Router extends KBase
 			$my_path = $match[1];
 		}
 		if (isset($my_path) && !preg_match('/^index\.php$/i', $my_path)) {
-			foreach ($this->router_rules AS $patt => $items) {
+			foreach ($this->rules AS $patt => $items) {
 				if (preg_match($patt, $my_path, $match)) {
 					foreach ($items AS $i => $key) {
 						if (isset($match[$i + 1])) {

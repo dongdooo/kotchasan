@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Language
+final class Language extends \KBase
 {
 	/**
 	 * ภาษาทั้งหมดที่ติดตั้ง
@@ -26,31 +26,31 @@ class Language
 	 *
 	 * @var string
 	 */
-	private $language_name;
+	private static $language_name;
 	/**
 	 * รายการภาษา
 	 *
 	 * @var array
 	 */
-	private $languages;
+	private static $languages = null;
 
 	/**
 	 * โหลดภาษา
 	 */
-	public function __construct()
+	private function __construct()
 	{
 		// โฟลเดอร์ ภาษา
-		$datas_folder = self::languageFolder();
+		$language_folder = self::languageFolder();
 		// ภาษาที่เลือก
 		$lang = \Input::get('GET,COOKIE', 'lang,my_lang');
 		// ตรวจสอบภาษา ใช้ภาษาแรกที่เจอ
-		foreach (array_merge((array)$lang, \Kotchasan::$config->languages) as $item) {
+		foreach (array_merge((array)$lang, self::$cfg->languages) as $item) {
 			if (!empty($item)) {
-				if (is_file($datas_folder.$item.'.php')) {
-					$language = include $datas_folder.$item.'.php';
+				if (is_file($language_folder.$item.'.php')) {
+					$language = include $language_folder.$item.'.php';
 					if (isset($language)) {
-						$this->languages = $language;
-						$this->language_name = $item;
+						self::$languages = (object)$language;
+						self::$language_name = $item;
 						// บันทึกภาษาที่กำลังใช้งานอยู่ลงใน cookie
 						setcookie('my_lang', $item, time() + 2592000, '/');
 						break;
@@ -58,10 +58,10 @@ class Language
 				}
 			}
 		}
-		if (empty($this->languages)) {
+		if (null === self::$languages) {
 			// default language
-			$this->language_name = 'th';
-			$this->languages = array(
+			self::$language_name = 'th';
+			self::$languages = (object)array(
 				'DATE_FORMAT' => 'd M Y เวลา H:i น.',
 				'DATE_LONG' => array(
 					0 => 'อาทิตย์',
@@ -112,7 +112,6 @@ class Language
 				)
 			);
 		}
-		\Kotchasan::$language = $this;
 	}
 
 	/**
@@ -133,9 +132,9 @@ class Language
 	public static function installedLanguage()
 	{
 		if (!isset(self::$installed_languages)) {
-			$datas_folder = self::languageFolder();
+			$language_folder = self::languageFolder();
 			$files = array();
-			\File::listFiles($datas_folder, $files);
+			\File::listFiles($language_folder, $files);
 			foreach ($files as $file) {
 				if (preg_match('/(.*\/([a-z]{2,2}))\.(php|js)/', $file, $match)) {
 					self::$installed_languages[$match[2]] = $match[2];
@@ -153,17 +152,17 @@ class Language
 	 */
 	public static function installed($type)
 	{
-		$datas_folder = self::languageFolder();
+		$language_folder = self::languageFolder();
 		$datas = array();
 		foreach (self::installedLanguage() as $lng) {
 			if ($type == 'php') {
-				if (is_file($datas_folder.$lng.'.php')) {
+				if (is_file($language_folder.$lng.'.php')) {
 					// php
-					$datas[$lng] = include($datas_folder.$lng.'.php');
+					$datas[$lng] = include($language_folder.$lng.'.php');
 				}
-			} elseif (is_file($datas_folder.$lng.'.js')) {
+			} elseif (is_file($language_folder.$lng.'.js')) {
 				// js
-				$list = file($datas_folder.$lng.'.js');
+				$list = file($language_folder.$lng.'.js');
 				foreach ($list as $item) {
 					if (preg_match('/var\s+(.*)\s+=\s+[\'"](.*)[\'"];/', $item, $values)) {
 						$datas[$lng][$values[1]] = $values[2];
@@ -192,9 +191,11 @@ class Language
 	}
 
 	/**
-	 * ตรวจสอบ key ซ้ำ
+	 * ตรวจสอบคีย์ของภาษาซ้ำ
 	 *
-	 * @param type $param
+	 * @param array $languages ข้อมูลภาษาที่ต้องการตรวจสอบ
+	 * @param string $key รายการที่ต้องการตรวจสอบ
+	 * @return int คืนค่าลำดับที่พบ (รายการแรกคือ 0), คืนค่า -1 ถ้าไม่พบ
 	 */
 	public static function keyExists($languages, $key)
 	{
@@ -224,7 +225,7 @@ class Language
 				}
 			}
 		}
-		$datas_folder = self::languageFolder();
+		$language_folder = self::languageFolder();
 		foreach ($datas as $lang => $items) {
 			$list = array();
 			foreach ($items as $key => $value) {
@@ -257,7 +258,7 @@ class Language
 					$list[] = '\''.$key.'\' => '.$value;
 				}
 			}
-			$f = @fopen($datas_folder.$lang.'.'.$type, 'wb');
+			$f = @fopen($language_folder.$lang.'.'.$type, 'wb');
 			if ($f !== false) {
 				if ($type == 'php') {
 					$content = "<"."?php\n/* language/$lang.php */\nreturn array(\n  ".implode(",\n  ", $list)."\n);";
@@ -267,7 +268,7 @@ class Language
 				fwrite($f, $content);
 				fclose($f);
 			} else {
-				return str_replace('%s', $lang.'.'.$type, \Language::get('Your file or folder %s is not writable, please CHMOD it to 775 or 777'));
+				return str_replace('%s', $lang.'.'.$type, \Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'));
 			}
 		}
 		return '';
@@ -280,10 +281,10 @@ class Language
 	 */
 	public static function name()
 	{
-		if (!isset(\Kotchasan::$language)) {
-			\Kotchasan::$language = new static;
+		if (null === self::$languages) {
+			new static;
 		}
-		return \Kotchasan::$language->language_name;
+		return self::$language_name;
 	}
 
 	/**
@@ -294,14 +295,14 @@ class Language
 	 */
 	public static function get($key)
 	{
-		if (!isset(\Kotchasan::$language)) {
-			\Kotchasan::$language = new static;
+		if (null === self::$languages) {
+			new static;
 		}
 		if (is_array($key)) {
 			// มาจากการ Parse Theme
 			$key = $key[1];
 		}
-		return isset(\Kotchasan::$language->languages[$key]) ? \Kotchasan::$language->languages[$key] : $key;
+		return isset(self::$languages->$key) ? self::$languages->$key : $key;
 	}
 
 	/**
@@ -312,9 +313,9 @@ class Language
 	 */
 	public static function find($key, $default = '')
 	{
-		if (!isset(\Kotchasan::$language)) {
-			\Kotchasan::$language = new static;
+		if (null === self::$languages) {
+			new static;
 		}
-		return isset(\Kotchasan::$language->languages[$key]) ? \Kotchasan::$language->languages[$key] : $default;
+		return isset(self::$languages->$key) ? self::$languages->$key : $default;
 	}
 }

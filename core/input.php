@@ -204,7 +204,7 @@ class Input
 		} else {
 			$text = $default;
 		}
-		return \String::htmlspecialchars(trim($text));
+		return \Text::htmlspecialchars(trim($text));
 	}
 
 	/**
@@ -226,7 +226,7 @@ class Input
 			return '';
 		}
 		$text = trim(preg_replace('/[_\(\)\-\+\r\n\s\"\'<>\.\/\\\?&\{\}]{1,}/isu', ' ', strip_tags($text)));
-		return \String::cut($text, $len);
+		return \Text::cut($text, $len);
 	}
 
 	/**
@@ -265,7 +265,7 @@ class Input
 			'/(&amp;|&quot;|&nbsp;|[_\(\)\-\+\r\n\s\"\'<>\.\/\\\?&\{\}]){1,}/isu' => ' '
 		);
 		$text = trim(preg_replace(array_keys($patt), array_values($patt), $text));
-		return \String::cut($text, $len);
+		return \Text::cut($text, $len);
 	}
 
 	/**
@@ -326,19 +326,19 @@ class Input
 	{
 		if ($key === 'text') {
 			// input text
-			return \String::htmlspecialchars(trim($value));
+			return \Text::htmlspecialchars(trim($value));
 		} elseif ($key === 'topic') {
 			// topic
-			return \String::topic($value);
+			return \Text::topic($value);
 		} elseif ($key === 'detail') {
 			// ckeditor
-			return \String::detail($value);
+			return \Text::detail($value);
 		} elseif ($key === 'textarea') {
 			// textarea
-			return \String::textarea($value);
+			return \Text::textarea($value);
 		} elseif ($key === 'url' || $key === 'email') {
 			// http://www.domain.tld และ email
-			return \String::htmlspecialchars(trim($value), false);
+			return \Text::htmlspecialchars(trim($value), false);
 		} elseif ($key === 'bool') {
 			// true หรือ false เท่านั้น
 			return empty($value) ? 0 : 1;

@@ -248,7 +248,7 @@ class Driver extends Query
 	{
 		if (!empty($this->settings->log)) {
 			$datas = array();
-			$datas[] = $type.' : <em>'.\String::replaceAll($sql, $values).'</em>';
+			$datas[] = $type.' : <em>'.\Text::replaceAll($sql, $values).'</em>';
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
 					$f = $item['function'];
@@ -259,7 +259,7 @@ class Driver extends Query
 				}
 			}
 			// ไฟล์ debug
-			$debug = ROOT_PATH.\Kotchasan::$data_folder.'debug.php';
+			$debug = ROOT_PATH.DATA_FOLDER.'debug.php';
 			// save
 			if (is_file($debug)) {
 				$f = fopen($debug, 'a');
@@ -267,7 +267,7 @@ class Driver extends Query
 				$f = fopen($debug, 'w');
 				fwrite($f, '<'.'?php exit() ?'.'>');
 			}
-			fwrite($f, "\n".\Kotchasan::$mktime.'|'.preg_replace('/[\s\n\t\r]+/', ' ', implode('', $datas)));
+			fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', implode('', $datas)));
 			fclose($f);
 		}
 	}

@@ -39,6 +39,23 @@ class Template
 	 * @var int
 	 */
 	private $num;
+	/**
+	 * ชื่อ template ที่กำลังใช้งานอยู่ รวมโฟลเดอร์ที่เก็บ template ด้วย
+	 * เช่น skin/default/
+	 *
+	 * @var string
+	 */
+	public static $src;
+
+	/**
+	 * เรียกใช้งาน template ในครั้งแรก
+	 *
+	 * @param string $skin
+	 */
+	public static function inint($skin)
+	{
+		self::$src = 'skin/'.($skin == '' ? '' : $skin.'/' );
+	}
 
 	/**
 	 * โหลด template
@@ -81,7 +98,7 @@ class Template
 			$this->items[] = "</div>\n<div class=row>";
 			$this->num = $this->cols;
 		}
-		$this->items[] = \String::pregReplace(array_keys($datas), array_values($datas), $this->skin);
+		$this->items[] = \Text::pregReplace(array_keys($datas), array_values($datas), $this->skin);
 		$this->num--;
 	}
 
@@ -108,13 +125,13 @@ class Template
 	 */
 	public static function load($owner, $module, $name)
 	{
-		$template = \Kotchasan::$template_root.\Kotchasan::$template;
-		if ($module != '' && is_file($template.$module.'/'.$name.'.html')) {
-			$result = file_get_contents($template.$module.'/'.$name.'.html');
-		} elseif ($owner != '' && is_file($template.$owner.'/'.$name.'.html')) {
-			$result = file_get_contents($template.$owner.'/'.$name.'.html');
-		} elseif (is_file($template.$name.'.html')) {
-			$result = file_get_contents($template.$name.'.html');
+		$src = TEMPLATE_ROOT.self::$src;
+		if ($module != '' && is_file($src.$module.'/'.$name.'.html')) {
+			$result = file_get_contents($src.$module.'/'.$name.'.html');
+		} elseif ($owner != '' && is_file($src.$owner.'/'.$name.'.html')) {
+			$result = file_get_contents($src.$owner.'/'.$name.'.html');
+		} elseif (is_file($src.$name.'.html')) {
+			$result = file_get_contents($src.$name.'.html');
 		} else {
 			$result = '';
 		}

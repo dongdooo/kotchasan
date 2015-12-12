@@ -14,6 +14,12 @@
  */
 class KBase
 {
+	/**
+	 * Config Class
+	 *
+	 * @var \Config
+	 */
+	static protected $cfg;
 
 	/**
 	 * ใช้สำหรับสร้าง Class
@@ -37,19 +43,6 @@ class KBase
 	{
 		if (isset($this->$key)) {
 			return $this->$key;
-		}
-	}
-
-	/**
-	 * ฟังก์ชั่นกำหนดค่าตัวแปรที่เป็น private หรือ protected
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function setAttributes($key, $value)
-	{
-		if (isset($this->$key)) {
-			return $this->$key = $value;
 		}
 	}
 }

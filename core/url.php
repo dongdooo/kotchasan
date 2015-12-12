@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Url extends KBase
+class Url
 {
 
 	/**
@@ -146,54 +146,5 @@ class Url extends KBase
 			$qs[$key] = is_int($key) ? $value : "$key=$value";
 		}
 		return sizeof($qs) > 0 ? '?'.implode('&amp;', $qs) : '';
-	}
-
-	/**
-	 * ฟังก์ชั่นสร้าง URL จากโมดูล
-	 *
-	 * @param string $module URL ชื่อโมดูล
-	 * @param string $document (option)
-	 * @param int $catid (option) id ของหมวดหมู่ (default 0)
-	 * @param int $id (option) id ของข้อมูล (default 0)
-	 * @param string $query (option) query string อื่นๆ (default ค่าว่าง)
-	 * @param boolean $encode (option) true=เข้ารหัสด้วย rawurlencode ด้วย (default true)
-	 * @assert ('home', 'ทดสอบ', 1, 1, 'action=login&amp;true') [==] "http://localhost/home/1/1/%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A.html?action=login&amp;true"
-	 * @assert ('home', 'ทดสอบ', 1, 1, 'action=login&amp;true', false) [==] "http://localhost/home/1/1/ทดสอบ.html?action=login&amp;true"
-	 * @assert ('home', 'ทดสอบ', 1, 1, 'action=login&amp;true') [==] "http://localhost/index.php?module=home-%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A&amp;cat=1&amp;id=1&amp;action=login&amp;true" [[Config::set('module_url', 0);]]
-	 * @assert ('home', 'ทดสอบ', 1, 1, 'action=login&amp;true', false) [==] "http://localhost/index.php?module=home-ทดสอบ&amp;cat=1&amp;id=1&amp;action=login&amp;true" [[Config::set('module_url', 0);]]
-	 * @return string URL ที่สร้าง
-	 */
-	public static function create($module, $document = '', $catid = 0, $id = 0, $query = '', $encode = true)
-	{
-		$patt = array();
-		$replace = array();
-		if (empty($document)) {
-			$patt[] = '/[\/-]{document}/';
-			$replace[] = '';
-		} else {
-			$patt[] = '/{document}/';
-			$replace[] = $encode ? rawurlencode($document) : $document;
-		}
-		$patt[] = '/{module}/';
-		$replace[] = $encode ? rawurlencode($module) : $module;
-		if (empty($catid)) {
-			$patt[] = '/((cat={catid}&amp;)|([\/-]{catid}))/';
-			$replace[] = '';
-		} else {
-			$patt[] = '/{catid}/';
-			$replace[] = (int)$catid;
-		}
-		if (empty($id)) {
-			$patt[] = '/(((&amp;|\?)id={id})|([\/-]{id}))/';
-			$replace[] = '';
-		} else {
-			$patt[] = '/{id}/';
-			$replace[] = (int)$id;
-		}
-		$link = preg_replace($patt, $replace, \Kotchasan::$urls[\Kotchasan::$config->module_url]);
-		if (!empty($query)) {
-			$link = preg_match('/[\?]/u', $link) ? $link.'&amp;'.$query : $link.'?'.$query;
-		}
-		return WEB_URL.$link;
 	}
 }

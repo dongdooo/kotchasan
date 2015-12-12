@@ -1,6 +1,6 @@
 <?php
 /**
- * @filesource core/string.php
+ * @filesource core/text.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class String
+class Text
 {
 
 	/**
@@ -97,7 +97,7 @@ class String
 	 */
 	public static function topic($topic)
 	{
-		return trim(preg_replace('/[\r\n\t\s]+/', ' ', \String::htmlspecialchars($topic)));
+		return trim(preg_replace('/[\r\n\t\s]+/', ' ', \Text::htmlspecialchars($topic)));
 	}
 
 	/**

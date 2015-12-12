@@ -26,25 +26,45 @@ if (!defined('APP_ROOT')) {
 /**
  * พาธของ Server ตั้งแต่ระดับราก เช่น D:/htdocs/gcms/
  */
-define('ROOT_PATH', str_replace('core/load.php', '', str_replace('\\', '/', __FILE__)));
+if (!defined('ROOT_PATH')) {
+	define('ROOT_PATH', str_replace('core/load.php', '', str_replace('\\', '/', __FILE__)));
+}
 /**
  *  http:// หรือ https://
  */
-define('URL_SCHEME', ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://'));
+if (!defined('URL_SCHEME')) {
+	define('URL_SCHEME', ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://'));
+}
 /**
  *  domain ของ Server เช่น http://domain.tld/
  */
-define('HOST_NAME', URL_SCHEME.(empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']).'/');
+if (!defined('HOST_NAME')) {
+	define('HOST_NAME', URL_SCHEME.(empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']).'/');
+}
 /**
  * URL ของเว็บไซต์รวม path เช่น http://domain.tld/folder
  */
-define('WEB_URL', HOST_NAME.str_replace(DOC_ROOT, '', APP_ROOT));
+if (!defined('WEB_URL')) {
+	define('WEB_URL', HOST_NAME.str_replace(DOC_ROOT, '', APP_ROOT));
+}
 /**
  * โฟลเดอร์ของเว็บ ตั้งแต่ DOCUMENT_ROOT
  * เช่น kotchasan/
  */
 if (!defined('BASE_PATH')) {
 	define('BASE_PATH', str_replace(DOC_ROOT, '', APP_ROOT));
+}
+/**
+ * โฟลเดอร์เก็บข้อมูล
+ */
+if (!defined('DATA_FOLDER')) {
+	define('DATA_FOLDER', 'datas/');
+}
+/**
+ * โฟลเดอร์เก็บ Template
+ */
+if (!defined('TEMPLATE_ROOT')) {
+	define('TEMPLATE_ROOT', APP_PATH);
 }
 
 /**
@@ -54,27 +74,25 @@ if (!defined('BASE_PATH')) {
  */
 function log_message($erargs, $errstr, $errfile, $errline)
 {
-	// ข้อความ error
-	$error_msg = '<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>';
-	// ไฟล์ debug
-	$debug = ROOT_PATH.\Kotchasan::$data_folder.'debug.php';
-	$exists = false;
-	if (file_exists($debug)) {
-		if (filesize($debug) > \Kotchasan::$log_file_size) {
-			rename($debug, $debug = ROOT_PATH.\Kotchasan::$data_folder.date('Ymd', \Kotchasan::$mktime).'.php');
+	if (defined('LOG') && LOG === true) {
+		if (\File::makeDirectory(ROOT_PATH.DATA_FOLDER.'logs/')) {
+			// ข้อความ error
+			$error_msg = '<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>';
+			// ไฟล์ debug
+			$debug = ROOT_PATH.DATA_FOLDER.'logs/'.date('Y-m-d').'.php';
+			// save
+			if (file_exists($debug)) {
+				$f = fopen($debug, 'a');
+			} else {
+				$f = fopen($debug, 'w');
+				fwrite($f, '<'.'?php exit() ?'.'>');
+			}
+			fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', $error_msg));
+			fclose($f);
 		} else {
-			$exists = true;
+			echo sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'logs/'.date('Y-m-d').'.php');
 		}
 	}
-	// save
-	if ($exists) {
-		$f = fopen($debug, 'a');
-	} else {
-		$f = fopen($debug, 'w');
-		fwrite($f, '<'.'?php exit() ?'.'>');
-	}
-	fwrite($f, "\n".\Kotchasan::$mktime.'|'.preg_replace('/[\s\n\t\r]+/', ' ', $error_msg));
-	fclose($f);
 }
 
 /**

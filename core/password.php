@@ -12,9 +12,27 @@
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
+ * 
+ * @setupParam '1234567890'
  */
 class Password
 {
+	/**
+	 * คีย์สำหรับการเข้ารหัส ถอดรหัส
+	 *
+	 * @var string
+	 */
+	private $password_key;
+
+	/**
+	 * class constructor
+	 *
+	 * @param string $key กำหนดคีย์สำหรับการเข้ารหัส ถอดรหัส
+	 */
+	public function __construct($key)
+	{
+		$this->password_key = $key;
+	}
 
 	/**
 	 * ฟังก์ชั่น เข้ารหัสข้อความ
@@ -22,9 +40,9 @@ class Password
 	 * @param string $string ข้อความที่ต้องการเข้ารหัส
 	 * @return string ข้อความที่เข้ารหัสแล้ว
 	 */
-	public static function encode($string)
+	public function encode($string)
 	{
-		$key = sha1((string)\Kotchasan::$config->password_key);
+		$key = sha1($this->password_key);
 		$str_len = strlen($string);
 		$key_len = strlen($key);
 		$j = 0;
@@ -42,14 +60,14 @@ class Password
 	/**
 	 * ฟังก์ชั่น ถอดรหัสข้อความ
 	 *
-	 * @param string $string ข้อความที่เข้ารหัสจาก gcms::encode()
-	 * @assert (\Password::encode("ทดสอบภาษาไทย")) [==] "ทดสอบภาษาไทย"
-	 * @assert (\Password::encode(1234)) [==] 1234
+	 * @param string $string ข้อความที่เข้ารหัสจาก encode()
+	 * @assert ($this->object->encode("ทดสอบภาษาไทย")) [==] "ทดสอบภาษาไทย"
+	 * @assert ($this->object->encode(1234)) [==] 1234
 	 * @return string ข้อความที่ถอดรหัสแล้ว
 	 */
-	public static function decode($string)
+	public function decode($string)
 	{
-		$key = sha1((string)\Kotchasan::$config->password_key);
+		$key = sha1($this->password_key);
 		$str_len = strlen($string);
 		$key_len = strlen($key);
 		$j = 0;

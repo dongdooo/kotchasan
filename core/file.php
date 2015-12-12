@@ -22,7 +22,6 @@ class File
 	 * @param string $dir ไดเร็คทอรี่ มี / ปิดท้ายด้วย
 	 * @param string $result
 	 * @param array $filter (option) ไฟล์ฟิลเตอร์ ตัวพิมพ์เล็ก เช่น array('jpg','gif') แอเรย์ว่างหมายถึงทุกนามสกุล
-	 * @assert (param1, param2) == expectedResult
 	 */
 	public static function listFiles($dir, &$result, $filter = array())
 	{

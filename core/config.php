@@ -13,8 +13,12 @@
  *
  * @since 1.0
  */
-class Config
+final class Config
 {
+	/**
+	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
+	 */
+	private static $instance = null;
 	/**
 	 * ตั้งค่าเขตเวลาของ Server ให้ตรงกันกับเวลาท้องถิ่น เช่น Asia/Bankok
 	 *
@@ -178,11 +182,13 @@ class Config
 	public $password_key;
 
 	/**
-	 * โหลดไฟล์ในครั้งแรก
+	 * inint class
+	 *
+	 * @return \Config
 	 */
-	public function __construct($file = '')
+	private function __construct()
 	{
-		$this->timezone = date_default_timezone_get();
+		$this->timezone = @date_default_timezone_get();
 		$this->languages = array('th');
 		$this->skin = 'default';
 		$this->login_fields = array('email', 'phone1');
@@ -221,6 +227,19 @@ class Config
 	}
 
 	/**
+	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
+	 *
+	 * @return \static
+	 */
+	public static function &create()
+	{
+		if (null === self::$instance) {
+			self::$instance = new static();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * อ่านค่าตัวแปร และ แปลงผลลัพท์ตามชนิดของตัวแปรตามที่กำหนดโดย $default เช่น
 	 * $default = 0 หรือ เลขจำนวนเต็ม ผลลัพท์จะถูกแปลงเป็น int
 	 * $default = 0.0 หรือตัวเลขมีจุดทศนิยม จำนวนเงิน ผลลัพท์จะถูกแปลงเป็น double
@@ -230,10 +249,10 @@ class Config
 	 * @param mixed $default (option) ค่าเริ่มต้นหากไม่พบตัวแปร
 	 * @return mixed ค่าตัวแปร $key ถ้าไม่พบคืนค่า $default
 	 */
-	public static function get($key, $default = '')
+	public function get($key, $default = '')
 	{
-		if (isset(\Kotchasan::$config->$key)) {
-			$result = \Kotchasan::$config->$key;
+		if (isset($this->{$key})) {
+			$result = $this->{$key};
 			if (is_float($default)) {
 				// จำนวนเงิน เช่น 0.0
 				$result = (double)$result;
@@ -251,27 +270,16 @@ class Config
 	}
 
 	/**
-	 * กำหนดค่าตัวแปร $config
+	 * โหลดไฟล์ config
 	 *
-	 * @param string $key
-	 * @param mixed $value
+	 * @param string $file ไฟล์ config (fullpath)
+	 * @return Object
 	 */
-	public static function set($key, $value)
-	{
-		\Kotchasan::$config->$key = $value;
-	}
-
-	/**
-	 * โหลด config ของโปรเจ็ค ใหม่
-	 * APP_ROOT.settings/config.php
-	 *
-	 * @return \Config
-	 */
-	public static function load()
+	public static function load($file)
 	{
 		$config = array();
-		if (is_file(APP_ROOT.'settings/config.php')) {
-			$config = include (APP_ROOT.'settings/config.php');
+		if (is_file($file)) {
+			$config = include ($file);
 		}
 		return (object)$config;
 	}
@@ -280,9 +288,10 @@ class Config
 	 * บันทึกไฟล์ config ของโปรเจ็ค
 	 *
 	 * @param array $config
+	 * @param string $file ไฟล์ config (fullpath)
 	 * @return boolean คืนค่า true ถ้าสำเร็จ
 	 */
-	public static function save($config)
+	public static function save($config, $file)
 	{
 		$list = array();
 		foreach ($config as $key => $value) {
@@ -309,9 +318,9 @@ class Config
 				$list[] = '\''.$key.'\' => '.$value;
 			}
 		}
-		$f = @fopen(APP_ROOT.'settings/config.php', 'wb');
+		$f = @fopen($file, 'wb');
 		if ($f !== false) {
-			fwrite($f, "<"."?php\n/* settings/config.php */\nreturn array(\n  ".implode(",\n  ", $list)."\n);");
+			fwrite($f, "<"."?php\n/* config.php */\nreturn array(\n  ".implode(",\n  ", $list)."\n);");
 			fclose($f);
 			return true;
 		} else {

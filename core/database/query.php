@@ -15,7 +15,7 @@ namespace Core\Database;
  *
  * @since 1.0
  */
-class Query
+class Query extends \KBase
 {
 	/**
 	 * database connection

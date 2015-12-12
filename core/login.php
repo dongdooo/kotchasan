@@ -77,13 +77,14 @@ class Login extends \Model
 			} else {
 				$login_remember = 0;
 			}
+			$pw = new Password(Config::create()->get('password_key'));
 			foreach (array('login_email', 'login_password') as $name) {
 				$key = str_replace('login_', '', $name);
 				if (!isset($save[$key])) {
 					foreach (array($_SESSION, $_COOKIE) as $var) {
 						if (isset($var[$name])) {
 							if ($var == $_COOKIE) {
-								$$name = Password::decode($var[$name]);
+								$$name = $pw->decode($var[$name]);
 							} else {
 								$$name = trim($var[$name]);
 							}
@@ -120,9 +121,11 @@ class Login extends \Model
 					$_SESSION['login']['password'] = $login_password;
 					// save login cookie
 					$time = time() + 2592000;
+					// password
+					$pw = new Password(self::$cfg->password_key);
 					if ($login_remember == 1) {
-						setcookie('login_email', Password::encode($login_result->email), $time, '/');
-						setcookie('login_password', Password::encode($login_password), $time, '/');
+						setcookie('login_email', $pw->encode($login_result->email), $time, '/');
+						setcookie('login_password', $pw->encode($login_password), $time, '/');
 						setcookie('login_remember', $login_remember, $time, '/');
 					}
 					setcookie('login_id', $login_result->id, $time, '/');
@@ -142,7 +145,7 @@ class Login extends \Model
 	{
 		// current session
 		$session_id = session_id();
-		if (!empty(\Kotchasan::$config->demo_mode) && $user == 'demo' && $password == 'demo') {
+		if (!empty(self::$cfg->demo_mode) && $user == 'demo' && $password == 'demo') {
 			// login เป็น demo
 			$login_result = array(
 				'id' => 0,
@@ -163,7 +166,7 @@ class Login extends \Model
 			$login_result = false;
 			$qs = array();
 			$where = array();
-			foreach (\Kotchasan::$config->login_fields AS $field) {
+			foreach (self::$cfg->login_fields as $field) {
 				$qs[] = "`$field`=:$field";
 				$where[":$field"] = $user;
 			}
@@ -186,12 +189,12 @@ class Login extends \Model
 			} else {
 				// ตรวจสอบการ login มากกว่า 1 ip
 				$ip = Input::ip();
-				if (\Kotchasan::$config->member_only_ip && !empty($ip)) {
+				if (self::$cfg->member_only_ip && !empty($ip)) {
 					$sql = "SELECT * FROM `".$this->tableWithPrefix('useronline')."`";
 					$sql .= " WHERE `member_id`='$login_result[id]' AND `ip`!='$ip' AND `ip`!=''";
 					$sql .= " ORDER BY `time` DESC LIMIT 1";
 					$online = $this->db->customQuery($sql);
-					if (sizeof($online) == 1 && \Kotchasan::$mktime - $online[0]['time'] < \Kotchasan::$settings->count_gap) {
+					if (sizeof($online) == 1 && time() - $online[0]['time'] < \Kotchasan::$settings->count_gap) {
 						// login ต่าง ip กัน
 						return 'Members of this system already';
 					}
@@ -204,7 +207,7 @@ class Login extends \Model
 				}
 				// บันทึกลง db
 				if ($userupdate) {
-					$this->db->update($this->tableWithPrefix('user'), $login_result['id'], array('session_id' => $session_id, 'visited' => $login_result['visited'], 'lastvisited' => \Kotchasan::$mktime, 'ip' => $ip));
+					$this->db->update($this->tableWithPrefix('user'), $login_result['id'], array('session_id' => $session_id, 'visited' => $login_result['visited'], 'lastvisited' => time(), 'ip' => $ip));
 				}
 				return (object)$login_result;
 			}
@@ -231,7 +234,7 @@ class Login extends \Model
 		} else {
 			$user = $user[0];
 			// สุ่มรหัสผ่านใหม่
-			$password = \String::rndname(6);
+			$password = \Text::rndname(6);
 			// ส่งเมล์แจ้งสมาชิก
 			$replace = array();
 			$replace['/%PASSWORD%/'] = $password;

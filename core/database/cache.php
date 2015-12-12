@@ -15,7 +15,7 @@ namespace Core\Database;
  *
  * @since 1.0
  */
-class Cache
+class Cache extends \KBase
 {
 	/**
 	 * ไดเร็คทอรี่แคช
@@ -59,10 +59,10 @@ class Cache
 	public function __construct()
 	{
 		//  folder cache
-		$dir = ROOT_PATH.\Kotchasan::$data_folder.'cache/';
+		$dir = ROOT_PATH.DATA_FOLDER.'cache/';
 		if (\File::makeDirectory($dir)) {
 			$this->cache_dir = $dir;
-			$this->cache_expire = \Config::get('cache_expire', 5);
+			$this->cache_expire = self::$cfg->get('cache_expire', 5);
 			// clear old cache every day
 			$d = is_file($dir.'index.php') ? file_get_contents($dir.'index.php') : 0;
 			if ($d != date('d')) {
@@ -90,7 +90,7 @@ class Cache
 	public function get($sql, $values)
 	{
 		if ($this->cache_dir && !empty($this->cache_expire) && !empty($this->action)) {
-			$this->file = $this->cache_dir.md5(\String::replaceAll($sql, $values)).'.php';
+			$this->file = $this->cache_dir.md5(\Text::replaceAll($sql, $values)).'.php';
 			if (file_exists($this->file) && time() - filemtime($this->file) < $this->cache_expire) {
 				$this->used_cache = true;
 				return unserialize(preg_replace('/^<\?php\sexit\?>(.*)$/isu', '\\1', file_get_contents($this->file)));

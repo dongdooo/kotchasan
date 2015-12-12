@@ -40,9 +40,9 @@ $config['Enabled'] = \Login::isAdmin() || (\Login::isMember() && isset($_SESSION
 // false ใช้ชื่อไฟล์เป็นเวลา (mktime)
 $config['UploadOrginalFilename'] = false;
 // โฟลเดอร์ ที่เก็บไฟล์
-$config['UserFilesPath'] = Kotchasan::$data_folder;
+$config['UserFilesPath'] = DATA_FOLDER;
 // path ที่เก็บไฟล์ตั้งแต่ root ของ Server
-$config['UserFilesAbsolutePath'] = ROOT_PATH.Kotchasan::$data_folder;
+$config['UserFilesAbsolutePath'] = ROOT_PATH.DATA_FOLDER;
 // Due to security issues with Apache modules, it is recommended to leave the
 // following setting enabled.
 $config['ForceSingleExtension'] = true;
