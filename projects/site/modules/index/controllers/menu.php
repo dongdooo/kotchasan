@@ -28,6 +28,6 @@ class Controller extends \Controller
 	public function render($module)
 	{
 		// สร้างเมนู
-		return $this->createClass('Index\Menu\View')->render($module);
+		return $this->createView('Index\Menu\View')->render($module);
 	}
 }

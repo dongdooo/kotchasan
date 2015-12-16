@@ -72,11 +72,13 @@ class Cache extends \KBase
 					fwrite($f, date('d'));
 					fclose($f);
 				} else {
-					log_message('Warning', str_replace('%s', 'cache/index.php', \Kotchasan::trans('%s file cannot be written')), __FILE__, __LINE__);
+					$message = sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'cache/index.php');
+					log_message('Warning', $message, __FILE__, __LINE__);
 				}
 			}
 		} else {
-			log_message('Warning', str_replace('%s', $datas_folder.'cache/', \Kotchasan::trans('The directory %s cannot be written')), __FILE__, __LINE__);
+			$message = sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'cache/');
+			log_message('Warning', $message, __FILE__, __LINE__);
 		}
 	}
 

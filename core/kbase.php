@@ -22,24 +22,12 @@ class KBase
 	static protected $cfg;
 
 	/**
-	 * ใช้สำหรับสร้าง Class
-	 *
-	 * @param string $className ชื่อ class (carmelCase)
-	 * @param mixed $param (option)
-	 * @return stdClass
-	 */
-	public function createClass($className, $param = null)
-	{
-		return new $className($this, $param);
-	}
-
-	/**
 	 * ฟังก์ชั่นอ่านค่าตัวแปรที่เป็น private หรือ protected
 	 *
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function getAttribute($key)
+	protected function getAttribute($key)
 	{
 		if (isset($this->$key)) {
 			return $this->$key;

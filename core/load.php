@@ -12,6 +12,12 @@ if (!defined('BEGIN_TIME')) {
 	define('BEGIN_TIME', microtime(true));
 }
 /**
+ * Framework Version
+ *
+ * @var string
+ */
+define('VERSION', '0.6.0');
+/**
  *  document root (Server)
  */
 if (!defined('DOC_ROOT')) {
@@ -68,9 +74,23 @@ if (!defined('TEMPLATE_ROOT')) {
 }
 
 /**
- * จัดการข้อความผิดพลาด.
+ * ฟังก์ชั่นใช้สำหรับสร้างคลาส
  *
- * @param string $message ข้อความผิดพลาด
+ * @param string $className ชื่อคลาส
+ * @return \className
+ */
+function & createClass($className)
+{
+	return new $className();
+}
+
+/**
+ * บันทึก log
+ *
+ * @param string $erargs
+ * @param string $errstr
+ * @param string $errfile
+ * @param int $errline
  */
 function log_message($erargs, $errstr, $errfile, $errline)
 {
@@ -103,7 +123,6 @@ function log_message($erargs, $errstr, $errfile, $errline)
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- *
  * @return boolean
  */
 function _error_handler($errno, $errstr, $errfile, $errline)
@@ -142,7 +161,14 @@ function _error_handler($errno, $errstr, $errfile, $errline)
 function _exception_handler($e)
 {
 	$tract = $e->getTrace();
-	$tract = next($tract);
+	if (empty($tract)) {
+		$tract = array(
+			'file' => $e->getFile(),
+			'line' => $e->getLine()
+		);
+	} else {
+		$tract = next($tract);
+	}
 	log_message('Exception', $e->getMessage(), $tract['file'], $tract['line']);
 }
 set_error_handler('_error_handler');

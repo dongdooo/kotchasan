@@ -20,6 +20,6 @@ class Controller extends \Controller
 
 	public function index()
 	{
-		$this->createClass('Index\Index\View')->render();
+		$this->createView('Index\Index\View')->render();
 	}
 }

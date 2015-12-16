@@ -42,10 +42,12 @@ class View extends KBase
 
 	/**
 	 * Class constructor
+	 *
+	 * @param \Controller $controller
 	 */
-	public function __construct($controller)
+	public function __construct($controller = null)
 	{
-		$this->controller = $controller;
+		$this->controller = $controller == null ? new Object : $controller;
 		$this->breadcrumb_template = \Template::load('', '', 'breadcrumb');
 		$this->meta = array();
 		$this->breadcrumb = array();
@@ -106,7 +108,9 @@ class View extends KBase
 		if (!empty($this->meta)) {
 			$contents['/(<head.*)(<\/head>)/isu'] = '$1'.implode("\n", $this->meta)."\n".'$2';
 		}
-		$contents['/{WIDGET_([A-Z]+)(([\s_])(.*))?}/e'] = '\Kotchasan::getWidgets(array(1=>"$1",3=>"$3",4=>"$4"))';
+		if (method_exists('Gcms', 'getWidgets')) {
+			$contents['/{WIDGET_([A-Z]+)(([\s_])(.*))?}/e'] = '\Gcms::getWidgets(array(1=>"$1",3=>"$3",4=>"$4"))';
+		}
 		$contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Language::get(array(1=>"$1"))';
 		$contents['/{BREADCRUMB}/'] = empty($this->breadcrumb) ? '' : implode('', $this->breadcrumb);
 		$contents['/{BACKURL(\?([a-zA-Z0-9=&\-_@\.]+))?}/e'] = '\Url::back';

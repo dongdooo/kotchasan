@@ -26,17 +26,17 @@ class Controller extends \Controller
 		// ถ้าไม่มีโมดูลเลือกหน้า home
 		$module = empty($_GET['module']) ? 'home' : $_GET['module'];
 		// สร้าง View
-		$view = $this->createClass('Index\Index\View');
+		$view = $this->createView('Index\Index\View');
 		// template default
 		$view->add(array(
 			// menu
-			'MENU' => $this->createClass('Index\Menu\Controller')->render($module),
+			'MENU' => createClass('Index\Menu\Controller')->render($module),
 			// web title
 			'TITLE' => 'Welcome to GCMS++',
 			// โหลดหน้าที่เลือก (html)
 			'CONTENT' => \Template::load('', '', $module),
 			// แสดงเวลาปัจจุบัน
-			'TIME' => \Datetool::format(\Kotchasan::$mktime)
+			'TIME' => \Date::format()
 		));
 		// output เป็น HTML
 		$view->renderHTML();

@@ -188,7 +188,7 @@ final class Config
 	 */
 	private function __construct()
 	{
-		$this->timezone = @date_default_timezone_get();
+		$this->timezone = 'UTC';
 		$this->languages = array('th');
 		$this->skin = 'default';
 		$this->login_fields = array('email', 'phone1');
@@ -198,7 +198,7 @@ final class Config
 		$this->demo_mode = false;
 		$this->web_title = 'Kotchasan PHP Framework';
 		$this->web_description = 'PHP Framework พัฒนาโดยคนไทย';
-		$this->cache_expire = 0;
+		$this->cache_expire = 5;
 		$this->user_icon_h = 50;
 		$this->user_icon_w = 50;
 		$this->user_icon_typies = array('jpg', 'gif', 'png');
@@ -231,7 +231,7 @@ final class Config
 	 *
 	 * @return \static
 	 */
-	public static function &create()
+	public static function & create()
 	{
 		if (null === self::$instance) {
 			self::$instance = new static();

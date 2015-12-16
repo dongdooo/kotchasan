@@ -5,20 +5,6 @@
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
-/**
- * Framework Version
- *
- * @var string
- */
-define('VERSION', '0.6.0');
-/**
- * FORMAT_PCRE set แบบ PCRE
- */
-define('FORMAT_PCRE', 0);
-/**
- * FORMAT_TEXT set แบบ text
- */
-define('FORMAT_TEXT', 1);
 
 /**
  * Kotchasan PHP Framework
@@ -38,19 +24,19 @@ final class Kotchasan extends KBase
 	 *
 	 * @var string
 	 */
-	public static $char_set = 'utf-8';
+	private static $char_set = 'utf-8';
 	/**
 	 * Controller หลัก
 	 *
 	 * @var string
 	 */
-	public static $defaultController = 'Index\Index\Controller';
+	private static $defaultController = 'Index\Index\Controller';
 	/**
 	 * Router หลัก
 	 *
 	 * @var string
 	 */
-	public static $defaultRouter = 'Router';
+	private static $defaultRouter = 'Router';
 
 	/**
 	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
@@ -103,7 +89,7 @@ final class Kotchasan extends KBase
 	 */
 	public function run()
 	{
-		return $this->createClass(self::$defaultRouter)->inint(self::$defaultController);
+		return createClass(self::$defaultRouter)->inint(self::$defaultController);
 	}
 
 	/**
@@ -124,16 +110,5 @@ final class Kotchasan extends KBase
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * แสดงผล Widget
-	 *
-	 * @param array $matches
-	 */
-	public static function getWidgets($matches)
-	{
-		unset($matches[0]);
-		return implode(' ', $matches);
 	}
 }

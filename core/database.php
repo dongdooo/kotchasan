@@ -34,27 +34,33 @@ class Database
 		if (isset(self::$instances[$name])) {
 			$conn = self::$instances[$name];
 		} else {
+			$param = (object)array(
+				'settings' => (object)array(
+					'char_set' => 'utf8',
+					'dbdriver' => 'mysql',
+					'hostname' => '127.0.0.1'
+				),
+				'tables' => (object)array(
+					
+				)
+			);
 			if (is_file(APP_PATH.'settings/database.php')) {
 				$config = include APP_PATH.'settings/database.php';
 			} elseif (is_file(APP_ROOT.'settings/database.php')) {
 				$config = include APP_ROOT.'settings/database.php';
 			}
-			$param = new \stdClass();
-			foreach ($config as $key => $val) {
-				if ($key == $name) {
-					$param->settings = (object)$val;
-				} elseif ($key == 'tables') {
-					$param->tables = (object)$val;
+			if (isset($config)) {
+				foreach ($config as $key => $values) {
+					if ($key == $name) {
+						foreach ($values as $k => $v) {
+							$param->settings->$k = $v;
+						}
+					} elseif ($key == 'tables') {
+						foreach ($values as $k => $v) {
+							$param->tables->$k = $v;
+						}
+					}
 				}
-			}
-			if (empty($param->settings->char_set)) {
-				$param->settings->char_set = 'utf8';
-			}
-			if (empty($param->settings->dbdriver)) {
-				$param->settings->dbdriver = 'mysql';
-			}
-			if (empty($param->settings->hostname)) {
-				$param->settings->hostname = '127.0.0.1';
 			}
 			// โหลด driver (base)
 			include ROOT_PATH.'core/database/driver.php';

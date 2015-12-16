@@ -5,6 +5,14 @@
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+/**
+ * FORMAT_PCRE set แบบ PCRE
+ */
+define('FORMAT_PCRE', 0);
+/**
+ * FORMAT_TEXT set แบบ text
+ */
+define('FORMAT_TEXT', 1);
 
 /**
  * Template engine

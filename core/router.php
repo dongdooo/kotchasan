@@ -66,7 +66,7 @@ class Router extends KBase
 		}
 		if (method_exists($controller, $function)) {
 			// เรียก Controller
-			$obj = $this->createClass($controller);
+			$obj = new $controller;
 			if (method_exists($obj, $function)) {
 				$obj->$function();
 			}
