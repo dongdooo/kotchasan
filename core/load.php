@@ -79,7 +79,7 @@ if (!defined('TEMPLATE_ROOT')) {
  * @param string $className ชื่อคลาส
  * @return \className
  */
-function & createClass($className)
+function createClass($className)
 {
 	return new $className();
 }
@@ -171,8 +171,8 @@ function _exception_handler($e)
 	}
 	log_message('Exception', $e->getMessage(), $tract['file'], $tract['line']);
 }
-set_error_handler('_error_handler');
-set_exception_handler('_exception_handler');
+//set_error_handler('_error_handler');
+//set_exception_handler('_exception_handler');
 
 /**
  * โหลดคลาสหลักเตรียมไว้

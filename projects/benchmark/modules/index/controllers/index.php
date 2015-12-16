@@ -28,7 +28,7 @@ class Controller extends \Controller
 	 * Loading Performance
 	 * ทดสอบการโหลดเว็บไซต์แบบน้อยที่สุด
 	 */
-	private function hello()
+	public function hello()
 	{
 		echo 'Hello World!';
 	}
@@ -37,7 +37,7 @@ class Controller extends \Controller
 	 * ORM Performance (select only)
 	 * ทดสอบการเรียกข้อมูลด้วย ORM
 	 */
-	private function select()
+	public function select()
 	{
 		$rs = \Core\Orm\Recordset::create('Index\World\Model');
 		$rs->updateAll(array('name' => 'Hello World!'));
@@ -53,7 +53,7 @@ class Controller extends \Controller
 	 * ORM Performance (select and update)
 	 * ทดสอบการเรียกข้อมูลและอัปเดทข้อมูลด้วย ORM
 	 */
-	private function orm()
+	public function orm()
 	{
 		$rs = \Core\Orm\Recordset::create('Index\World\Model');
 		$rs->updateAll(array('name' => ''));
@@ -71,7 +71,7 @@ class Controller extends \Controller
 	 * Query Builder Performance
 	 * ทดสอบการเรียกข้อมูลและอัปเดทข้อมูลด้วย Query Builder
 	 */
-	private function querybuilder()
+	public function querybuilder()
 	{
 		$db = \Database::create();
 		$db->createQuery()->update('world')->set(array('name' => ''))->execute();
@@ -89,7 +89,7 @@ class Controller extends \Controller
 	 * SQL Command Performance
 	 * ทดสอบการเรียกข้อมูลและอัปเดทข้อมูลโดยใช้คำสั่ง SQL Command
 	 */
-	private function sql()
+	public function sql()
 	{
 		$db = \Database::create();
 		$db->query("UPDATE `world` SET `name`=''");

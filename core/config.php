@@ -231,7 +231,7 @@ final class Config
 	 *
 	 * @return \static
 	 */
-	public static function & create()
+	public static function create()
 	{
 		if (null === self::$instance) {
 			self::$instance = new static();
