@@ -19,20 +19,21 @@ class Controller extends \Controller
 {
 
 	/**
-	 * inint index
+	 * แสดงผล
 	 */
 	public function index()
 	{
+		\Template::inint(self::$cfg->skin);
 		// ถ้าไม่มีโมดูลเลือกหน้า home
-		$module = empty($_GET['module']) ? 'home' : $_GET['module'];
+		$module = \Input::get('module', 'home');
 		// สร้าง View
 		$view = $this->createView('Index\Index\View');
 		// template default
-		$view->add(array(
+		$view->setContents(array(
 			// menu
-			'MENU' => createClass('Index\Menu\Controller')->render($module),
+			'MENU' => \createClass('Index\Menu\Controller')->render($module),
 			// web title
-			'TITLE' => 'Welcome to GCMS++',
+			'TITLE' => self::$cfg->web_title,
 			// โหลดหน้าที่เลือก (html)
 			'CONTENT' => \Template::load('', '', $module),
 			// แสดงเวลาปัจจุบัน

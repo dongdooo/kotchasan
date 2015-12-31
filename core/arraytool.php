@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/arraytool.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -21,7 +21,7 @@ class Arraytool
 	 *
 	 * @param pointer $array แอเรย์ที่ต้องการเรียงลำดับ
 	 * @param string $sort_key (optional) คืย์ของ $array ที่ต้องการในการเรียง (default id)
-	 * @param boolean $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
+	 * @param bool $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
 	 */
 	public static function sort(&$array, $sort_key = 'id', $sort_desc = false)
 	{

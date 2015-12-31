@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/password.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -12,7 +12,7 @@
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
- * 
+ *
  * @setupParam '1234567890'
  */
 class Password
@@ -22,7 +22,7 @@ class Password
 	 *
 	 * @var string
 	 */
-	private $password_key;
+	protected $password_key;
 
 	/**
 	 * class constructor

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/file.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -15,6 +15,18 @@
  */
 class File
 {
+
+	/**
+	 * อ่านนามสกุลของไฟล์เช่น config.php คืนค่า php
+	 *
+	 * @param string $path ไฟล์
+	 * @return string คืนค่า ext ของไฟล์ ตัวอักษรตัวพิมพ์เล็ก
+	 */
+	public static function ext($path)
+	{
+		$exts = explode('.', strtolower($path));
+		return end($exts);
+	}
 
 	/**
 	 * อ่านรายชื่อไฟล์ภายใต้ไดเร็คทอรี่รวมไดเร็คทอรี่ย่อย
@@ -59,17 +71,6 @@ class File
 		closedir($f);
 	}
 
-	/**
-	 * อ่านนามสกุลของไฟล์เช่น config.php คืนค่า php
-	 *
-	 * @param string $path ไฟล์
-	 * @return string คืนค่า ext ของไฟล์ ตัวอักษรตัวพิมพ์เล็ก
-	 */
-	public static function ext($path)
-	{
-		$exts = explode('.', strtolower($path));
-		return end($exts);
-	}
 
 	/**
 	 * สร้างและตรวจสอบไดเร็คทอรี่ ให้เขียนได้

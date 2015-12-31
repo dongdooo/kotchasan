@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/database/query.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -8,44 +8,40 @@
 
 namespace Core\Database;
 
+use Core\Database\Driver;
+
 /**
- * Database Query base class
+ * Database Query (base class)
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
  */
-class Query extends \KBase
+abstract class Query extends \KBase
 {
 	/**
 	 * database connection
 	 *
-	 * @var \Core\Database\Driver
+	 * @var Driver
 	 */
-	public $db;
-	/**
-	 * cache class
-	 *
-	 * @var \Core\Database\Cache
-	 */
-	public $cache;
-	/**
-	 * ถ้ามีข้อมูลในตัวแปรนี้ จะใช้การ prepare แทน exexute
-	 *
-	 * @var array
-	 */
-	protected $values;
+	private $db;
 
 	/**
-	 * เปิดการใช้งานแคช
-	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
-	 *
-	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * Class constructor
 	 */
-	private function cacheOn($auto_save = true)
+	public function __construct($conn)
 	{
-		$this->cache->cacheOn($auto_save);
-		return $this;
+		$this->db = \Database::create($conn);
+	}
+
+	/**
+	 * อ่าน database connection
+	 *
+	 * @return Driver
+	 */
+	public function db()
+	{
+		return $this->db;
 	}
 
 	/**
@@ -97,55 +93,6 @@ class Query extends \KBase
 			$sqls[] = $this->buildValue($item);
 		}
 		return '('.implode(' OR ', $sqls).')';
-	}
-
-	/**
-	 * ฟังก์ชั่นสร้างคำสั่ง sql query
-	 *
-	 * @param array $sqls คำสั่ง sql จาก query builder
-	 * @assert (array('update' => '`user`', 'where' => '`id` = 1', 'set' => array('`id` = 1', "`email` = 'admin@localhost'"))) [==] "UPDATE `user` SET `id` = 1, `email` = 'admin@localhost' WHERE `id` = 1"
-	 * @assert (array('insert' => 'user', 'values' => array('id' => 1, 'email' => 'admin@localhost'))) [==] "INSERT INTO `user` (`id`, `email`) VALUES (:id, :email)"
-	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'join' => array(" INNER JOIN ..."))) [==] "SELECT * FROM `user` INNER JOIN ... WHERE `id` = 1 ORDER BY `id` LIMIT 1,10"
-	 * @return string sql command
-	 */
-	protected function makeQuery($sqls)
-	{
-		$sql = '';
-		if (isset($sqls['insert'])) {
-			$keys = array_keys($sqls['values']);
-			$sql = 'INSERT INTO `'.$sqls['insert'].'` (`'.implode('`, `', $keys);
-			$sql .= "`) VALUES (:".implode(", :", $keys).")";
-		} else {
-			if (isset($sqls['select'])) {
-				$sql = 'SELECT '.$sqls['select'];
-				if (isset($sqls['from'])) {
-					$sql.=' FROM '.$sqls['from'];
-				}
-			}
-			if (isset($sqls['update'])) {
-				$sql = 'UPDATE '.$sqls['update'];
-			} elseif (isset($sqls['delete'])) {
-				$sql = 'DELETE FROM '.$sqls['delete'];
-			}
-			if (isset($sqls['set'])) {
-				$sql .= ' SET '.implode(', ', $sqls['set']);
-			}
-			if (isset($sqls['join'])) {
-				foreach ($sqls['join'] AS $join) {
-					$sql .= $join;
-				}
-			}
-			if (isset($sqls['where'])) {
-				$sql .= ' WHERE '.$sqls['where'];
-			}
-			if (isset($sqls['order'])) {
-				$sql .= ' ORDER BY '.$sqls['order'];
-			}
-			if (isset($sqls['limit'])) {
-				$sql .= ' LIMIT '.(empty($sqls['start']) ? '' : $sqls['start'].',').$sqls['limit'];
-			}
-		}
-		return $sql;
 	}
 
 	/**

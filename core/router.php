@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/router.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Router extends KBase
+class Router
 {
 	/**
 	 * กฏของ Router สำหรับการแยกหน้าเว็บไซต์
@@ -21,6 +21,8 @@ class Router extends KBase
 	 * @var array
 	 */
 	private $rules = array(
+		// index.php/module/method/page/function
+		'/^index\.php\/([a-z]+)\/(model|controller|view)(\/([a-z0-9_]+))?(\/([a-z0-9_]+))?/i' => array('module', 'method', '', 'page', '', 'function'),
 		// index/model/page/function
 		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
 		// index/model/page
@@ -71,7 +73,7 @@ class Router extends KBase
 				$obj->$function();
 			}
 		} else {
-			throw new \Exception('Controller or method not found.');
+			throw new \InvalidArgumentException('Controller or method not found.');
 		}
 		return $this;
 	}
@@ -80,6 +82,9 @@ class Router extends KBase
 	 * แปลง path เป็น query string ตามที่กำหนดโดย $url_rules
 	 *
 	 * @param string path เช่น /a/b/c.html
+	 * @assert ('/index.php/css/view', array()) [==] array( 'method' => 'view', 'module' => 'css')
+	 * @assert ('/index.php/css/view/index', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css')
+	 * @assert ('/index.php/css/view/index/inint', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css', 'function' => 'inint')
 	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'method' => 'model', 'page' => 'updateprofile', 'module' => 'index')
 	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'method' => 'view', 'page' => 'index')
 	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
@@ -93,8 +98,7 @@ class Router extends KBase
 	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
 	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
 	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
-	 *
-	 * @param pointer $modules คืนค่า query string ที่ตัวแปรนี้
+	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
 	 */
 	public function parseRoutes($path, $modules)
 	{
@@ -109,7 +113,7 @@ class Router extends KBase
 			foreach ($this->rules AS $patt => $items) {
 				if (preg_match($patt, $my_path, $match)) {
 					foreach ($items AS $i => $key) {
-						if (isset($match[$i + 1])) {
+						if (!empty($key) && isset($match[$i + 1])) {
 							$value = $match[$i + 1];
 							if (!empty($value)) {
 								$modules[$key] = $value;

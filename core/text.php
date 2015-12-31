@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/text.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -97,7 +97,7 @@ class Text
 	 */
 	public static function topic($topic)
 	{
-		return trim(preg_replace('/[\r\n\t\s]+/', ' ', \Text::htmlspecialchars($topic)));
+		return trim(preg_replace('/[\r\n\t\s]+/', ' ', self::htmlspecialchars($topic)));
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Text
 	 * @assert ('&"'."'<>{}&amp;&#38;") [==] "&amp;&quot;&#039;&lt;&gt;&#x007B;&#x007D;&amp;&#38;"
 	 * @return string
 	 */
-	public static function detail_to_text($detail)
+	public static function toEditor($detail)
 	{
 		return preg_replace(array('/&/', '/"/', "/'/", '/</', '/>/', '/{/', '/}/', '/&(amp;([\#a-z0-9]+));/'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;', '&#x007B;', '&#x007D;', '&\\2;'), $detail);
 	}

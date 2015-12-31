@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/date.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -61,13 +61,17 @@ class Date
 		if (empty($mktime)) {
 			$mktime = time();
 		}
+		$lang = \Language::getItems(array(
+			'DATE_FORMAT',
+			'DATE_SHORT',
+			'DATE_LONG',
+			'MONTH_SHORT',
+			'MONTH_LONG',
+			'YEAR_OFFSET'
+		));
 		if (empty($format)) {
-			$format = \Language::get('DATE_FORMAT');
+			$format = $lang['DATE_FORMAT'];
 		}
-		$date_short = \Language::get('DATE_SHORT');
-		$date_long = \Language::get('DATE_LONG');
-		$month_short = \Language::get('MONTH_SHORT');
-		$month_long = \Language::get('MONTH_LONG');
 		if (preg_match_all('/(.)/u', $format, $match)) {
 			$ret = '';
 			foreach ($match[0] AS $item) {
@@ -79,19 +83,19 @@ class Date
 						$ret .= $item;
 						break;
 					case 'D':
-						$ret .= $date_short[date('w', $mktime)];
+						$ret .= $lang['DATE_SHORT'][date('w', $mktime)];
 						break;
 					case 'l':
-						$ret .= $date_long[date('w', $mktime)];
+						$ret .= $lang['DATE_LONG'][date('w', $mktime)];
 						break;
 					case 'M':
-						$ret .= $month_short[date('n', $mktime)];
+						$ret .= $lang['MONTH_SHORT'][date('n', $mktime)];
 						break;
 					case 'F':
-						$ret .= $month_long[date('n', $mktime)];
+						$ret .= $lang['MONTH_LONG'][date('n', $mktime)];
 						break;
 					case 'Y':
-						$ret .= (int)date('Y', $mktime) + \Language::get('YEAR_OFFSET');
+						$ret .= (int)date('Y', $mktime) + $lang['YEAR_OFFSET'];
 						break;
 					default:
 						$ret .= date($item, $mktime);
@@ -187,8 +191,13 @@ class Date
 			if ($match[1] == 0 || $match[2] == 0) {
 				return '';
 			} else {
-				$month = $short ? \Language::get('month_short') : \Language::get('month_long');
-				return $match[3].' '.$month[$match[2]].' '.((int)$match[1] + (int)\Language::get('year_offset') ).($time && isset($match[4]) ? $match[4] : '');
+				$lang = \Language::getItems(array(
+					'MONTH_SHORT',
+					'MONTH_LONG',
+					'YEAR_OFFSET'
+				));
+				$month = $short ? $lang['MONTH_SHORT'] : $lang['MONTH_LONG'];
+				return $match[3].' '.$month[$match[2]].' '.((int)$match[1] + (int)$lang['YEAR_OFFSET'] ).($time && isset($match[4]) ? $match[4] : '');
 			}
 		} else {
 			return '';

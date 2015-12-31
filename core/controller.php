@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/controller.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -15,18 +15,6 @@
  */
 class Controller extends KBase
 {
-	/**
-	 * รายการ header
-	 *
-	 * @var array
-	 */
-	public $headers = array();
-	/**
-	 * ตัวแปรเก็บเนื่อหาของเว็บไซต์
-	 *
-	 * @var array
-	 */
-	public $contents = array();
 
 	/**
 	 * สร้าง View สำหรับ Controller นี้

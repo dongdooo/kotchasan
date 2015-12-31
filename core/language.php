@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/language.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -148,6 +148,7 @@ final class Language extends \KBase
 	 * โหลดไฟล์ภาษาทั้งหมดที่ติดตั้ง
 	 * คืนค่าข้อมูลภาษาทั้งหมด
 	 *
+	 * @param string $type
 	 * @return array
 	 */
 	public static function installed($type)
@@ -303,6 +304,24 @@ final class Language extends \KBase
 			$key = $key[1];
 		}
 		return isset(self::$languages->$key) ? self::$languages->$key : $key;
+	}
+
+	/**
+	 * อ่านภาษาหลายรายการ ตามที่กำหนดโดย $keys
+	 *
+	 * @param array $keys
+	 * @return array
+	 */
+	public static function getItems(array $keys = array())
+	{
+		if (null === self::$languages) {
+			new static;
+		}
+		$result = array();
+		foreach ($keys as $key) {
+			$result[$key] = isset(self::$languages->$key) ? self::$languages->$key : $key;
+		}
+		return $result;
 	}
 
 	/**

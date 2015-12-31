@@ -47,7 +47,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = \Text::detail_to_text($value);
+				$innerHTML = \Text::toEditor($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}
@@ -56,7 +56,7 @@ class CKEditor extends Html
 			$content['label'] = '<label'.$for.'>'.$this->attributes['label'].'</label>';
 		}
 		$content['tag'] = '<div><'.$this->tag.implode('', $prop).'>'.$innerHTML.'</'.$this->tag.'></div>';
-		$_SESSION['CKEDITOR'] = $_SESSION['login']['id'];
+		$_SESSION['CKEDITOR'] = $_SESSION['login']->id;
 		if (isset($this->attributes['id'])) {
 			$script = array();
 			foreach ($attributes as $key => $value) {

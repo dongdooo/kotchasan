@@ -7,8 +7,7 @@ return array(
 		'username' => 'plus',
 		'password' => '1234',
 		'dbname' => 'gcms_plus',
-		'prefix' => '',
-		'log' => 0
+		'prefix' => ''
 	),
 	'tables' => array(
 	)

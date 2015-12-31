@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/orm/field.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -8,7 +8,7 @@
 
 namespace Core\Orm;
 
-use \Core\Orm\Recordset as Recordset;
+use Core\Orm\Recordset;
 
 /**
  * ORM Field base class
@@ -28,11 +28,11 @@ class Field extends \KBase
 	/**
 	 * true ถ้ามาจากการ query, false ถ้าเป็นรายการใหม่
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $exists;
 	/**
-	 * ชื่อฟิลด์ที่จะใช้เป็น Primary Key INT(11)
+	 * ชื่อฟิลด์ที่จะใช้เป็น Primary Key INT(11) AUTO_INCREMENT
 	 *
 	 * @var string
 	 */
@@ -45,12 +45,11 @@ class Field extends \KBase
 	protected $table;
 
 	/**
-	 * create new Model
+	 * Create new Model
 	 *
-	 * @param array $param
-	 * @param \Core\Database\Cache $cache  database cache class default null
+	 * @param array|object $param ข้อมูลเริ่มต้น
 	 */
-	public function __construct($param = null, $cache = null)
+	public function __construct($param = null)
 	{
 		if (!empty($param)) {
 			foreach ($param as $key => $value) {
@@ -63,9 +62,9 @@ class Field extends \KBase
 	}
 
 	/**
-	 * create new model
+	 * สร้าง record
 	 *
-	 * @return \Core\Orm\Field
+	 * @return \static
 	 */
 	public static function create()
 	{
@@ -78,9 +77,8 @@ class Field extends \KBase
 	 */
 	public function delete()
 	{
-		$class = get_called_class();
-		$recordset = Recordset::create($class);
-		return $recordset->delete(array($this->primaryKey, $this->getAttribute($this->primaryKey)), 1);
+		$rs = Recordset::create(get_called_class());
+		return $rs->delete(array($this->primaryKey, (int)$this->{$this->primaryKey}), 1);
 	}
 
 	/**
@@ -88,12 +86,41 @@ class Field extends \KBase
 	 */
 	public function save()
 	{
-		$class = get_called_class();
-		$recordset = Recordset::create($class);
+		$rs = Recordset::create(get_called_class());
 		if ($this->exists) {
-			$recordset->update(array($this->primaryKey, (int)$this->getAttribute($this->primaryKey)), $this);
+			$rs->update(array($this->primaryKey, (int)$this->{$this->primaryKey}), $this);
 		} else {
-			$recordset->insert($this);
+			$rs->insert($this);
 		}
+	}
+
+	/**
+	 * อ่านค่าตัวแปร conn (ชื่อของการเชื่อมต่อ)
+	 *
+	 * @return string
+	 */
+	public function getConn()
+	{
+		return $this->conn;
+	}
+
+	/**
+	 * อ่านชื่อตาราง
+	 *
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
+
+	/**
+	 * vjkoชื่อฟิลด์ที่เป็น Primary Key
+	 *
+	 * @return string
+	 */
+	public function getPrimarykey()
+	{
+		return $this->primaryKey;
 	}
 }

@@ -1,15 +1,13 @@
 <?php
-/**
+/*
  * @filesource core/model.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-/**
- * database query base class
- */
-use Core\Database\Query as Query;
+use Core\Database\Query;
+use Core\Database\DbCache as Cache;
 
 /**
  * Model base class
@@ -34,14 +32,14 @@ class Model extends Query
 	{
 		if (!isset($this->db)) {
 			$this->db = Database::create($this->conn);
-			$this->cache = new \Core\Database\Cache();
+			$this->cache = new Cache();
 		}
 	}
 
 	/**
 	 * create Model
 	 *
-	 * @return \Model
+	 * @return \static
 	 */
 	public static function create()
 	{

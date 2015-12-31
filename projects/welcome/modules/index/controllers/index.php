@@ -18,6 +18,9 @@ namespace Index\Index;
 class Controller extends \Controller
 {
 
+	/**
+	 * แสดงผล
+	 */
 	public function index()
 	{
 		$this->createView('Index\Index\View')->render();

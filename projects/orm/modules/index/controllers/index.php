@@ -32,13 +32,14 @@ class Controller extends \Controller
 		// insert new record
 		for ($i = 0; $i < 10000; $i++) {
 			$query = World::create();
-			$query->updated_at = \Datetool::mktimeToSqlDateTime(\Kotchasan::$mktime);
+			$query->updated_at = \Date::mktimeToSqlDateTime();
 			$query->save();
 		}
 		// อัปเดททุก record
-		$model->updateAll(array('created_at' => \Datetool::mktimeToSqlDateTime(\Kotchasan::$mktime)));
+		$model->updateAll(array('created_at' => \Date::mktimeToSqlDateTime()));
 		// อ่านจำนวนข้อมูลทั้งหมดในตาราง
 		echo 'All '.$model->count().' records.<br>';
+
 		// สุ่ม record มาแก้ไข
 		for ($i = 0; $i < 5; $i++) {
 			$rnd = rand(1, 10000);

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/database/schema.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -7,6 +7,9 @@
  */
 
 namespace Core\Database;
+
+use Core\Database\Driver;
+use Core\Database\Exception;
 
 /**
  * Database schema
@@ -22,66 +25,62 @@ class Schema
 	 *
 	 * @var array
 	 */
-	protected static $tables = array();
+	private $tables;
 	/**
 	 * Database object
 	 *
-	 * @var	object
+	 * @var	 Driver
 	 */
 	private $db;
-	/**
-	 * ชื่อตาราง
-	 *
-	 * @var	string
-	 */
-	private $table;
 
 	/**
-	 * Class constructor
+	 * Create Schema Class
 	 *
-	 * @param object $db
-	 * @return void
+	 * @param Driver $db
+
+	 * @return \static
 	 */
-	public function __construct($db, $table)
+	public static function create(Driver $db)
 	{
-		$this->db = $db;
-		$this->table = $table;
+		$obj = new static;
+		$obj->db = $db;
+		return $obj;
 	}
 
 	/**
 	 * อ่านข้อมูล Schema จากตาราง
 	 *
-	 * @param \Core\Database\Cache $cache
+	 * @param string $table
 	 */
-	public function inint($cache = null)
+	private function inint($table)
 	{
-		$table = $this->table;
-		if (isset(self::$tables[$table])) {
-			$columns = self::$tables[$table];
-		} else {
-			if ($cache instanceof \Core\Database\Cache && $cache->action > 0) {
-				$cache = new \Core\Database\Cache();
-				$cache->action = 1;
-			}
+		if (empty($this->tables[$table])) {
 			$sql = "SHOW FULL COLUMNS FROM `$table`";
-			$columns = $this->db->customQuery($sql, true, array(), $cache);
-			$datas = array();
-			foreach ($columns as $column) {
-				$datas[$column['Field']] = $column;
+			$columns = $this->db->cacheOn()->customQuery($sql, true);
+			if (empty($columns)) {
+				throw new Exception($this->db->getError());
+			} else {
+				$datas = array();
+				foreach ($columns as $column) {
+					$datas[$column['Field']] = $column;
+				}
+				$this->tables[$table] = $datas;
 			}
-			self::$tables[$table] = $datas;
 		}
 	}
 
 	/**
 	 * อ่านรายชื่อฟิลด์ของตาราง
 	 *
-	 * @param \Core\Database\Cache $cache
 	 * @return array รายชื่อฟิลด์ทั้งหมดในตาราง
 	 */
-	public function fields($cache = null)
+	public function fields($table)
 	{
-		$columns = $this->inint($cache);
-		return array_keys(self::$tables[$this->table]);
+		if (empty($table)) {
+			throw new \InvalidArgumentException('table name empty in '.__METHOD__);
+		} else {
+			$this->inint($table);
+			return array_keys($this->tables[$table]);
+		}
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/singleton.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -22,7 +22,6 @@ abstract class Singleton
 
 	final private function __construct()
 	{
-		echo __CLASS__;
 		// inintial class
 		static::inint();
 	}

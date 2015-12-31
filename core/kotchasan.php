@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/kotchasan.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-final class Kotchasan extends KBase
+class Kotchasan extends KBase
 {
 	/**
 	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
@@ -24,51 +24,36 @@ final class Kotchasan extends KBase
 	 *
 	 * @var string
 	 */
-	private static $char_set = 'utf-8';
+	protected static $char_set = 'utf-8';
 	/**
 	 * Controller หลัก
 	 *
 	 * @var string
 	 */
-	private static $defaultController = 'Index\Index\Controller';
+	protected static $defaultController = 'Index\Index\Controller';
 	/**
 	 * Router หลัก
 	 *
 	 * @var string
 	 */
-	private static $defaultRouter = 'Router';
+	protected static $defaultRouter = 'Router';
 
 	/**
-	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
-	 *
-	 * @param array $config ค่ากำหนดของ แอพพลิเคชั่น
-	 * @return Singleton
+	 * Singleton
 	 */
-	public function __construct()
+	private function __construct()
 	{
-		/* display error */
-		if (defined('DEBUG') && DEBUG === true) {
-			/* ขณะออกแบบ แสดง error และ warning ของ PHP */
-			ini_set('display_errors', 1);
-			ini_set('display_startup_errors', 1);
-			error_reporting(-1);
-		} else {
-			/* ขณะใช้งานจริง */
-			error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-		}
 		/* config */
-		self::$cfg = \Config::create();
+		self::$cfg = Config::create();
 		/* charset default UTF-8 */
 		ini_set('default_charset', self::$char_set);
 		if (extension_loaded('mbstring')) {
 			mb_internal_encoding(self::$char_set);
 		}
-		/* inint Input */
-		Input::normalizeRequest();
-		// template ที่กำลังใช้งานอยู่
-		Template::inint(Input::get($_GET, 'skin', self::$cfg->skin));
 		/* time zone default Thailand */
 		@date_default_timezone_set(self::$cfg->timezone);
+		/* remove slashes (/) ตัวแปร GLOBAL  */
+		self::normalizeRequest();
 	}
 
 	/**
@@ -85,11 +70,51 @@ final class Kotchasan extends KBase
 	}
 
 	/**
-	 * โหลด GCMS เพื่อแสดงผลหน้าเว็บไซต์
+	 * แสดงผลหน้าเว็บไซต์
 	 */
 	public function run()
 	{
-		return createClass(self::$defaultRouter)->inint(self::$defaultController);
+		return \createClass(self::$defaultRouter)->inint(self::$defaultController);
+
+	}
+
+	/**
+	 * remove slashes (/) ตัวแปร GLOBAL
+	 */
+	public static function normalizeRequest()
+	{
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
+			if (!empty($_GET)) {
+				$_GET = self::stripSlashes($_GET);
+			}
+			if (!empty($_POST)) {
+				$_POST = self::stripSlashes($_POST);
+			}
+			if (!empty($_REQUEST)) {
+				$_REQUEST = self::stripSlashes($_REQUEST);
+			}
+		}
+	}
+
+	/**
+	 * remove slashes (/)
+	 *
+	 * @param array|string $data
+	 * @return array|string
+	 */
+	public static function stripSlashes(&$data)
+	{
+		if (is_array($data)) {
+			if (sizeof($data) == 0) {
+				return $data;
+			} else {
+				$keys = array_map('stripslashes', array_keys($data));
+				$data = array_combine($keys, array_values($data));
+				return array_map(array(__CLASS__, 'stripSlashes'), $data);
+			}
+		} else {
+			return stripslashes($data);
+		}
 	}
 
 	/**

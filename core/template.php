@@ -1,18 +1,10 @@
 <?php
-/**
+/*
  * @filesource core/template.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
-/**
- * FORMAT_PCRE set แบบ PCRE
- */
-define('FORMAT_PCRE', 0);
-/**
- * FORMAT_TEXT set แบบ text
- */
-define('FORMAT_TEXT', 1);
 
 /**
  * Template engine
@@ -90,17 +82,12 @@ class Template
 	 * ฟังก์ชั่นนี้จะแทนที่ตัวแปรที่ส่งทั้งหมดลงใน template ทันที
 	 *
 	 * @param array $array ชื่อที่ปรากฏใน template รูปแบบ array(key1=>val1,key2=>val2)
-	 * @param int $option FORMAT_TEXT = คีย์แบบข้อความ, FORMAT_PCRE = คีย์แบบ PCRE
 	 */
-	public function add($array, $option = FORMAT_TEXT)
+	public function add($array)
 	{
 		$datas = array();
 		foreach ($array as $key => $value) {
-			if ($option === FORMAT_TEXT) {
-				$datas['/{'.$key.'}/'] = $value;
-			} else {
-				$datas[$key] = $value;
-			}
+			$datas[$key] = $value;
 		}
 		if (!empty($this->cols) && $this->num == 0) {
 			$this->items[] = "</div>\n<div class=row>";

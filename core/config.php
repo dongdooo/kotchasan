@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/config.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-final class Config
+class Config
 {
 	/**
 	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
@@ -51,6 +51,20 @@ final class Config
 	 */
 	public $member_only_ip;
 	/**
+	 * สถานะสมาชิก
+	 * 0 สมาชิกทั่วไป
+	 * 1 ผู้ดูแลระบบ
+	 *
+	 * @var array
+	 */
+	public $member_status;
+	/**
+	 * สีของสมาชิกตามสถานะ
+	 *
+	 * @var array
+	 */
+	public $color_status;
+	/**
 	 * ถ้ากำหนดเป็น true บัญชี demo จะสามารถเข้าระบบแอดมินได้
 	 *
 	 * @var boolean default false
@@ -68,27 +82,6 @@ final class Config
 	 * @var string
 	 */
 	public $web_description;
-	/**
-	 * กำหนดรูปแบบของ URL ที่สร้างจากระบบ
-	 * ตามที่กำหนดโดย \Settings->urls
-	 *
-	 * @var int
-	 */
-	public $module_url;
-	/**
-	 * สถานะสมาชิก
-	 * 0 สมาชิกทั่วไป
-	 * 1 ผู้ดูแลระบบ
-	 *
-	 * @var array
-	 */
-	public $member_status;
-	/**
-	 * สีของสมาชิกตามสถานะ
-	 *
-	 * @var array
-	 */
-	public $color_status;
 	/**
 	 * กำหนดอายุของแคช
 	 *
@@ -138,7 +131,7 @@ final class Config
 	 */
 	public $email_use_phpMailer;
 	/**
-	 * ชื่อของเมล์เซิร์ฟเวอร์ เช่น localhost หรือ smtp.gmail.com (ต้องการเปลี่ยนค่ากำหนดของอีเมล์ทั้งหมดเป็นค่าเริ่มต้น ให้ลบข้อความในช่องนี้ออกทั้งหมด)
+	 * ชื่อของเมล์เซิร์ฟเวอร์ เช่น localhost หรือ smtp.gmail.com
 	 *
 	 * @var string
 	 */
@@ -180,15 +173,22 @@ final class Config
 	 * @var string
 	 */
 	public $password_key;
+	/**
+	 * กำหนดรูปแบบของ URL ที่สร้างจากระบบ
+	 * ตามที่กำหนดโดย \Settings->urls
+	 *
+	 * @var int
+	 */
+	public $module_url;
 
 	/**
-	 * inint class
+	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
 	 *
-	 * @return \Config
+	 * @return \static
 	 */
 	private function __construct()
 	{
-		$this->timezone = 'UTC';
+		$this->timezone = 'Asia/Bangkok';
 		$this->languages = array('th');
 		$this->skin = 'default';
 		$this->login_fields = array('email', 'phone1');
@@ -234,7 +234,7 @@ final class Config
 	public static function create()
 	{
 		if (null === self::$instance) {
-			self::$instance = new static();
+			self::$instance = new static;
 		}
 		return self::$instance;
 	}

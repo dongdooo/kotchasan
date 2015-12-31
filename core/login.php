@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/login.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -47,171 +47,107 @@ class Login extends \Model
 	 * มาจากการ submit ตรวจสอบการ login
 	 * ถ้าไม่มีทั้งสองส่วนด้านบน จะตรวจสอบการ login จาก session และ cookie ตามลำดับ
 	 *
-	 * @return \Login
+	 * @return \static
 	 */
 	public static function create()
 	{
-		$obj = new static;
+		// create Model
+		$model = new static;
+		// การเข้ารหัส
+		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
-		$save = Input::filter($_POST);
+		self::$text_email = $model->get('text_email', $pw);
+		self::$text_password = $model->get('text_password', $pw);
+		$login_remember = $model->get('bool_remember', $pw) == 1 ? 1 : 0;
+		$action = Input::request('action');
 		// ตรวจสอบการ login
-		if (Input::get($_GET, 'error') === 'EMAIL_EXISIS') {
-			// facebook login error มี email อยู่แล้ว
+		if ($action === 'EMAIL_EXISIS') {
+			// error มี email อยู่แล้ว (facebook login)
 			self::$login_message = Language::get('This email is already registered');
-		} elseif (empty($save) && Input::get($_GET, 'action') === 'logout') {
+		} elseif ($action === 'logout') {
 			// logout ลบ session และ cookie
 			unset($_SESSION['login']);
 			$time = time();
 			setCookie('login_email', '', $time, '/');
 			setCookie('login_password', '', $time, '/');
 			self::$login_message = Language::get('Logout successful');
-		} elseif (isset($save['action']) && $save['action'] === 'forgot') {
+		} elseif ($action === 'forgot') {
 			// ลืมรหัสผ่าน
-			return $obj->forgot();
+			return $model->forgot();
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
-			if (isset($save['remember'])) {
-				$login_remember = $save['remember'];
-			} elseif (isset($_COOKIE['login_remember'])) {
-				$login_remember = $_COOKIE['login_remember'] == 1 ? 1 : 0;
-			} else {
-				$login_remember = 0;
-			}
-			$pw = new Password(Config::create()->get('password_key'));
-			foreach (array('login_email', 'login_password') as $name) {
-				$key = str_replace('login_', '', $name);
-				if (!isset($save[$key])) {
-					foreach (array($_SESSION, $_COOKIE) as $var) {
-						if (isset($var[$name])) {
-							if ($var == $_COOKIE) {
-								$$name = $pw->decode($var[$name]);
-							} else {
-								$$name = trim($var[$name]);
-							}
-							break;
+			if (self::$text_email != '' && self::$text_password != '') {
+				// ตรวจสอบการกรอก
+				if (self::$text_email == '') {
+					self::$login_message = Language::get('Please fill out').' '.Language::get('Email');
+					self::$login_input = 'text_email';
+				} elseif (self::$text_password == '') {
+					self::$login_message = Language::get('Please fill out').' '.Language::get('Password');
+					self::$login_input = 'text_password';
+				} else {
+					// ตรวจสอบการ login กับฐานข้อมูล
+					$login_result = $model->checkLogin(self::$text_email, self::$text_password);
+					if (is_string($login_result)) {
+						// ข้อความผิดพลาด
+						self::$login_input = $login_result == 'Incorrect password' ? 'text_password' : 'text_email';
+						self::$login_message = Language::get($login_result);
+					} else {
+						// save login session
+						$_SESSION['login'] = $login_result;
+						$_SESSION['login']->password = self::$text_password;
+						// save login cookie
+						$time = time() + 2592000;
+						if ($login_remember == 1) {
+							setcookie('login_email', $pw->encode($login_result->email), $time, '/');
+							setcookie('login_password', $pw->encode(self::$text_password), $time, '/');
+							setcookie('login_remember', $login_remember, $time, '/');
 						}
+						setcookie('login_id', $login_result->id, $time, '/');
 					}
-				} else {
-					$$name = $save[$key];
 				}
 			}
+			return $model;
 		}
-		if (isset($login_email) && isset($login_password)) {
-			self::$text_email = $login_email;
-			self::$text_password = $login_password;
-			// ตรวจสอบการกรอก
-			if (empty($login_email)) {
-				self::$login_message = Language::get('Please fill out').' '.Language::get('Email');
-				self::$login_input = 'text_email';
-			} elseif (empty($login_password)) {
-				self::$login_message = Language::get('Please fill out').' '.Language::get('Password');
-				self::$login_input = 'text_password';
-			} else {
-				// ตรวจสอบการ login กับฐานข้อมูล
-				$login_result = $obj->checkLogin($login_email, $login_password);
-				if (is_string($login_result)) {
-					// ข้อความผิดพลาด
-					self::$login_input = $login_result == 'Incorrect password' ? 'text_password' : 'text_email';
-					self::$login_message = Language::get($login_result);
-				} else {
-					// save login session
-					foreach ($login_result as $key => $value) {
-						$_SESSION['login'] [$key] = $value;
-					}
-					$_SESSION['login']['password'] = $login_password;
-					// save login cookie
-					$time = time() + 2592000;
-					// password
-					$pw = new Password(self::$cfg->password_key);
-					if ($login_remember == 1) {
-						setcookie('login_email', $pw->encode($login_result->email), $time, '/');
-						setcookie('login_password', $pw->encode($login_password), $time, '/');
-						setcookie('login_remember', $login_remember, $time, '/');
-					}
-					setcookie('login_id', $login_result->id, $time, '/');
-				}
+	}
+
+	/**
+	 * อ่านข้อมูลจาก $_POST, $_SESSION, $_COOKIE ตามลำดับ
+	 * เจออันไหนก่อนใช้อันนั้น
+	 *
+	 * @param string $name
+	 * @param \Password $pwd
+	 * @return string|null คืนค่าข้อความ ไม่พบคืนค่า null
+	 */
+	protected function get($name, \Password $pwd)
+	{
+		foreach (array($_POST, $_SESSION, $_COOKIE) as $var) {
+			if (isset($var[$name])) {
+				return $var == $_COOKIE ? $pwd->decode($var[$name]) : $var[$name];
+				break;
 			}
 		}
-		// คืนค่า \Login
-		return $obj;
+		return null;
 	}
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบการ login
 	 *
-	 * @return array
+	 * @param string $username
+	 * @param string $password
+	 * @return string|Object เข้าระบบสำเร็จคืนค่า Object ข้อมูลสมาชิก, ไม่สำเร็จ คืนค่าข้อความผิดพลาด
 	 */
-	private function checkLogin($user, $password)
+	protected function checkLogin($username, $password)
 	{
-		// current session
-		$session_id = session_id();
-		if (!empty(self::$cfg->demo_mode) && $user == 'demo' && $password == 'demo') {
-			// login เป็น demo
-			$login_result = array(
-				'id' => 0,
-				'email' => 'demo',
-				'password' => 'demo',
-				'displayname' => 'demo',
-				'status' => 0,
-				'admin_access' => 1,
-				'activatecode' => '',
-				'ban_date' => 0,
-				'session_id' => $session_id,
-				'visited' => 0,
-				'fb' => 0
+		if ($username == self::$cfg->get('username') && $password == self::$cfg->get('password')) {
+			return (object)array(
+				'id' => 1,
+				'email' => $username,
+				'password' => $password,
+				'displayname' => $username,
+				'status' => 1
 			);
-			return (object)$login_result;
-		} else {
-			// ตรวจสอบการ login กับฐานข้อมูล
-			$login_result = false;
-			$qs = array();
-			$where = array();
-			foreach (self::$cfg->login_fields as $field) {
-				$qs[] = "`$field`=:$field";
-				$where[":$field"] = $user;
-			}
-			$sql = "SELECT * FROM `".$this->tableWithPrefix('user')."` WHERE ".implode(' OR ', $qs)." ORDER BY `status` DESC";
-			foreach ($this->db->customQuery($sql, true, $where) AS $item) {
-				if ($item['password'] == md5($password.$item['email'])) {
-					$login_result = $item;
-					break;
-				}
-			}
-			if (!$login_result) {
-				// user หรือ password ไม่ถูกต้อง
-				return isset($item) ? 'Incorrect password' : 'not a registered user';
-			} elseif (!empty($login_result['activatecode'])) {
-				// ยังไม่ได้ activate
-				return 'No confirmation email, please check your e-mail';
-			} elseif (!empty($login_result['ban'])) {
-				// ติดแบน
-				return 'Members were suspended';
-			} else {
-				// ตรวจสอบการ login มากกว่า 1 ip
-				$ip = Input::ip();
-				if (self::$cfg->member_only_ip && !empty($ip)) {
-					$sql = "SELECT * FROM `".$this->tableWithPrefix('useronline')."`";
-					$sql .= " WHERE `member_id`='$login_result[id]' AND `ip`!='$ip' AND `ip`!=''";
-					$sql .= " ORDER BY `time` DESC LIMIT 1";
-					$online = $this->db->customQuery($sql);
-					if (sizeof($online) == 1 && time() - $online[0]['time'] < \Kotchasan::$settings->count_gap) {
-						// login ต่าง ip กัน
-						return 'Members of this system already';
-					}
-				}
-				$userupdate = false;
-				// อัปเดทการเยี่ยมชม
-				if ($session_id != $login_result['session_id']) {
-					$login_result['visited'] ++;
-					$userupdate = true;
-				}
-				// บันทึกลง db
-				if ($userupdate) {
-					$this->db->update($this->tableWithPrefix('user'), $login_result['id'], array('session_id' => $session_id, 'visited' => $login_result['visited'], 'lastvisited' => time(), 'ip' => $ip));
-				}
-				return (object)$login_result;
-			}
 		}
+		return 'not a registered user';
 	}
 
 	/**
@@ -219,79 +155,26 @@ class Login extends \Model
 	 */
 	public function forgot()
 	{
-		// ค่าที่ส่งมา
-		$save = \Input::filter($_POST);
-		// query user
-		$sql = "SELECT `id`,`email`,`activatecode` FROM `".$this->tableWithPrefix('user')."` WHERE (`email`=:email OR `phone1`=:email) AND `fb`='0' LIMIT 1";
-		$where = array(
-			':email' => $save['email']
-		);
-		$user = $this->db->customQuery($sql, true, $where);
-		if (empty($user)) {
-			self::$login_message = Language::get('not a registered user');
-			self::$login_input = 'email_email';
-			self::$text_email = $save['email'];
-		} else {
-			$user = $user[0];
-			// สุ่มรหัสผ่านใหม่
-			$password = \Text::rndname(6);
-			// ส่งเมล์แจ้งสมาชิก
-			$replace = array();
-			$replace['/%PASSWORD%/'] = $password;
-			$replace['/%EMAIL%/'] = $user['email'];
-			if (empty($user['activatecode'])) {
-				// send mail
-				$err = \Email::send(3, 'member', $replace, $user['email']);
-			} else {
-				$replace['/%ID%/'] = $user['activatecode'];
-				// send mail
-				$err = \Email::send(1, 'member', $replace, $user['email']);
-			}
-			if (empty($err)) {
-				// อัปเดทรหัสผ่านใหม่
-				$save_password = md5($password.$user['email']);
-				$this->db->update($this->tableWithPrefix('user'), $user['id'], array('password' => $save_password));
-				// สำเร็จ
-				self::$login_message = Language::get('Your message was sent successfully');
-				// ไปหน้า login
-				$_REQUEST['action'] = 'login';
-			} else {
-				// ไม่สามารถส่งอีเมล์ได้
-				self::$login_message = $err;
-				self::$login_input = 'email_email';
-			}
-			self::$text_email = $user['email'];
-		}
 		return $this;
 	}
 
 	/**
-	 * ฟังก์ชั่นตรวจสอบการ Login
+	 * ฟังก์ชั่นตรวจสอบการเข้าระบบ
 	 *
-	 * @return array|boolean คืนค่า ข้อมูลสมาชิกที่ login (array) หรือ คืนค่า false ถ้ายังไม่ได้เข้าระบบ
+	 * @return bool คืนค่า true ถ้าเป็นสมาชิกและเข้าระบบแล้ว ไม่ใช่คืนค่า false
 	 */
 	public static function isMember()
 	{
-		return isset($_SESSION['login']) ? $_SESSION['login'] : false;
+		return isset($_SESSION['login']) ? true : false;
 	}
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบสถานะแอดมิน
 	 *
-	 * @return array|boolean คืนค่า ข้อมูลแอดมิน (array) หรือ คืนค่า false ถ้ายังไม่ใช่แอดมิน
+	 * @return bool คืนค่า true ถ้าเป็นผู้ดูแลสูงสุด ไม่ใช่คืนค่า false
 	 */
 	public static function isAdmin()
 	{
-		return isset($_SESSION['login']) && $_SESSION['login']['id'] > 0 && $_SESSION['login']['status'] == 1 ? $_SESSION['login'] : false;
-	}
-
-	/**
-	 * ตรวจสอบความสามารถในการเข้าระบบแอดมิน
-	 *
-	 * @return boolean true สามารถเข้าแอดมินได้, false ไม่สามารถเข้าหน้าแอดมินได้
-	 */
-	public static function adminAccess()
-	{
-		return isset($_SESSION['login']['admin_access']) && $_SESSION['login']['admin_access'] == 1;
+		return isset($_SESSION['login']) && !empty($_SESSION['login']->id) && $_SESSION['login']->status == 1 ? true : false;
 	}
 }

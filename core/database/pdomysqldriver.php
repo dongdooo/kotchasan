@@ -1,15 +1,13 @@
 <?php
-/**
+/*
  * @filesource core/database/pdomysqldriver.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-/**
- * Database driver class
- */
-use Core\Database\Driver as Driver;
+use Core\Database\Driver;
+use Core\Database\DbCache as Cache;
 
 /**
  * PDO MySQL Database Adapter Class
@@ -22,18 +20,10 @@ class PdoMysqlDriver extends Driver
 {
 
 	/**
-	 * close database.
-	 */
-	protected function _close()
-	{
-
-	}
-
-	/**
 	 * เชื่อมต่อ database
 	 *
 	 * @param array $param
-	 * @return \PdoMysqlDriver
+	 * @return \static
 	 */
 	public function connect($param)
 	{
@@ -53,7 +43,7 @@ class PdoMysqlDriver extends Driver
 			$this->connection = new PDO($sql, $this->settings->username, $this->settings->password, $options);
 			return $this;
 		} catch (PDOException $e) {
-			$this->sendError(__FUNCTION__, $e->getMessage());
+			$this->logError(__FUNCTION__, $e->getMessage());
 		}
 	}
 
@@ -62,13 +52,13 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @param string $sql query string
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @param \Core\Database\Cache $cache  database cache class default null
-	 * @return array|boolean คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข หรือคืนค่า false หามีข้อผิดพลาด
+	 * @return array|bool คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข หรือคืนค่า false หามีข้อผิดพลาด
 	 */
-	protected function doCustomQuery($sql, $values = array(), $cache = null)
+	protected function doCustomQuery($sql, $values = array())
 	{
-		if ($cache && $cache->action > 0) {
-			$result = $cache->get($sql, $values);
+		$action = $this->cache->getAction();
+		if ($action) {
+			$result = $this->cache->get($sql, $values);
 		} else {
 			$result = false;
 		}
@@ -82,18 +72,18 @@ class PdoMysqlDriver extends Driver
 				}
 				self::$query_count++;
 				$result = $this->result_id->fetchAll(PDO::FETCH_ASSOC);
-				if ($cache && $cache->action == 1) {
-					$cache->save($result);
+				if ($action == 1) {
+					$this->cache->save($result);
 				}
 			} catch (PDOException $e) {
 				$this->error_message = $e->getMessage();
 				$result = false;
 			}
-			$this->used_cache = false;
+			$this->log('Database', $sql, $values);
 		} else {
-			$this->used_cache = true;
+			$this->cache->setAction(0);
+			$this->log('Cached', $sql, $values);
 		}
-		$this->log($this->used_cache ? 'Cached' : 'Database', $sql, $values);
 		return $result;
 	}
 
@@ -102,7 +92,7 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @param string $sql
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 */
 	protected function doQuery($sql, $values = array())
 	{
@@ -114,10 +104,10 @@ class PdoMysqlDriver extends Driver
 				$query->execute($values);
 			}
 			self::$query_count++;
-			$this->log('Query', $sql, $values);
+			$this->log(__FUNCTION__, $sql, $values);
 			return true;
 		} catch (PDOException $e) {
-			$this->sendError($sql, $e->getMessage());
+			$this->logError($sql, $e->getMessage());
 			return false;
 		}
 	}
@@ -150,7 +140,7 @@ class PdoMysqlDriver extends Driver
 				$filed_list[$result['name']] = $result;
 			}
 		}
-		$this->log('getFileds', var_export($this->result_id, true));
+		$this->log(__FUNCTION__, var_export($this->result_id, true));
 		return $filed_list;
 	}
 
@@ -158,14 +148,14 @@ class PdoMysqlDriver extends Driver
 	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก
-	 * @return int|boolean สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
+	 * @param array $save ข้อมูลที่ต้องการบันทึก
+	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
-	public function insert($table, $recArr)
+	public function insert($table, $save)
 	{
 		$keys = array();
 		$values = array();
-		foreach ($recArr AS $key => $value) {
+		foreach ($save AS $key => $value) {
 			$keys[] = $key;
 			$values[':'.$key] = $value;
 		}
@@ -177,9 +167,58 @@ class PdoMysqlDriver extends Driver
 			self::$query_count++;
 			return (int)$this->connection->lastInsertId();
 		} catch (PDOException $e) {
-			$this->sendError($sql, $e->getMessage());
+			$this->logError($sql, $e->getMessage());
 			return false;
 		}
+	}
+
+	/**
+	 * ฟังก์ชั่นสร้างคำสั่ง sql query
+	 *
+	 * @param array $sqls คำสั่ง sql จาก query builder
+	 * @assert (array('update' => '`user`', 'where' => '`id` = 1', 'set' => array('`id` = 1', "`email` = 'admin@localhost'"))) [==] "UPDATE `user` SET `id` = 1, `email` = 'admin@localhost' WHERE `id` = 1"
+	 * @assert (array('insert' => 'user', 'values' => array('id' => 1, 'email' => 'admin@localhost'))) [==] "INSERT INTO `user` (`id`, `email`) VALUES (:id, :email)"
+	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'join' => array(" INNER JOIN ..."))) [==] "SELECT * FROM `user` INNER JOIN ... WHERE `id` = 1 ORDER BY `id` LIMIT 1,10"
+	 * @return string sql command
+	 */
+	public function makeQuery($sqls)
+	{
+		$sql = '';
+		if (isset($sqls['insert'])) {
+			$keys = array_keys($sqls['values']);
+			$sql = 'INSERT INTO `'.$sqls['insert'].'` (`'.implode('`, `', $keys);
+			$sql .= "`) VALUES (:".implode(", :", $keys).")";
+		} else {
+			if (isset($sqls['select'])) {
+				$sql = 'SELECT '.$sqls['select'];
+				if (isset($sqls['from'])) {
+					$sql.=' FROM '.$sqls['from'];
+				}
+			}
+			if (isset($sqls['update'])) {
+				$sql = 'UPDATE '.$sqls['update'];
+			} elseif (isset($sqls['delete'])) {
+				$sql = 'DELETE FROM '.$sqls['delete'];
+			}
+			if (isset($sqls['set'])) {
+				$sql .= ' SET '.implode(', ', $sqls['set']);
+			}
+			if (isset($sqls['join'])) {
+				foreach ($sqls['join'] AS $join) {
+					$sql .= $join;
+				}
+			}
+			if (isset($sqls['where'])) {
+				$sql .= ' WHERE '.$sqls['where'];
+			}
+			if (isset($sqls['order'])) {
+				$sql .= ' ORDER BY '.$sqls['order'];
+			}
+			if (isset($sqls['limit'])) {
+				$sql .= ' LIMIT '.(empty($sqls['start']) ? '' : $sqls['start'].',').$sqls['limit'];
+			}
+		}
+		return $sql;
 	}
 
 	/**
@@ -189,10 +228,9 @@ class PdoMysqlDriver extends Driver
 	 * @param mixed $condition query WHERE
 	 * @param array $sort เรียงลำดับ
 	 * @param int $limit จำนวนข้อมูลที่ต้องการ
-	 * @param \Core\Database\Cache $cache  database cache class default null
 	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
 	 */
-	public function select($table, $condition, $sort = array(), $limit = 0, $cache = null)
+	public function select($table, $condition, $sort = array(), $limit = 0)
 	{
 		$values = array();
 		$condition = $this->buildWhere($condition);
@@ -215,9 +253,9 @@ class PdoMysqlDriver extends Driver
 		if (is_int($limit) && $limit > 0) {
 			$sql .= ' LIMIT '.$limit;
 		}
-		$result = $this->doCustomQuery($sql, $values, $cache);
+		$result = $this->doCustomQuery($sql, $values);
 		if ($result === false) {
-			$this->sendError($sql, $this->error_message);
+			$this->logError($sql, $this->error_message);
 			return array();
 		} else {
 			return $result;
@@ -242,14 +280,14 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @param array $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
+	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function update($table, $condition, $recArr)
+	public function update($table, $condition, $save)
 	{
 		$sets = array();
 		$values = array();
-		foreach ($recArr AS $key => $value) {
+		foreach ($save AS $key => $value) {
 			$sets[] = '`'.$key.'` = :'.$key;
 			$values[':'.$key] = $value;
 		}
@@ -265,7 +303,7 @@ class PdoMysqlDriver extends Driver
 			self::$query_count++;
 			return true;
 		} catch (PDOException $e) {
-			$this->sendError($sql, $e->getMessage());
+			$this->logError($sql, $e->getMessage());
 			return false;
 		}
 	}

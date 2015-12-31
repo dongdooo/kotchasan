@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/load.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -11,12 +11,43 @@
 if (!defined('BEGIN_TIME')) {
 	define('BEGIN_TIME', microtime(true));
 }
+
+/**
+ * การแสดงข้อผิดพลาด
+ * 0 บันทึกข้อผิดพลาดร้ายแรงลง error_log .php (ขณะใช้งานจริง)
+ * 1 บันทึกข้อผิดพลาดและคำเตือนลง error_log .php
+ * 2 แสดงผลข้อผิดพลาดและคำเตือนออกทางหน้าจอ (เฉพาะตอนออกแบบเท่านั้น)
+ *
+ * $var integer
+ */
+if (!defined('DEBUG')) {
+	define('DEBUG', 0);
+}
+/* display error */
+if (DEBUG > 0) {
+	/* ขณะออกแบบ แสดง error และ warning ของ PHP */
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(-1);
+} else {
+	/* ขณะใช้งานจริง */
+	error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+}
 /**
  * Framework Version
  *
  * @var string
  */
 define('VERSION', '0.6.0');
+/**
+ * กำหนดการบันทึกการ query ฐานข้อมูล
+ * ควรกำหนดเป็น false ขณะใช้งานจริง
+ *
+ * $var boolean
+ */
+if (!defined('DB_LOG')) {
+	define('DB_LOG', false);
+}
 /**
  *  document root (Server)
  */
@@ -77,7 +108,7 @@ if (!defined('TEMPLATE_ROOT')) {
  * ฟังก์ชั่นใช้สำหรับสร้างคลาส
  *
  * @param string $className ชื่อคลาส
- * @return \className
+ * @return \static
  */
 function createClass($className)
 {
@@ -94,24 +125,31 @@ function createClass($className)
  */
 function log_message($erargs, $errstr, $errfile, $errline)
 {
-	if (defined('LOG') && LOG === true) {
-		if (\File::makeDirectory(ROOT_PATH.DATA_FOLDER.'logs/')) {
-			// ข้อความ error
-			$error_msg = '<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>';
-			// ไฟล์ debug
-			$debug = ROOT_PATH.DATA_FOLDER.'logs/'.date('Y-m-d').'.php';
-			// save
-			if (file_exists($debug)) {
-				$f = fopen($debug, 'a');
-			} else {
-				$f = fopen($debug, 'w');
-				fwrite($f, '<'.'?php exit() ?'.'>');
-			}
-			fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', $error_msg));
-			fclose($f);
+	// บันทึกข้อความ error ลง log file
+	save_log('<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
+}
+
+/**
+ * บันทึก log file รายวัน
+ *
+ * @param string $message
+ */
+function save_log($message)
+{
+	if (\File::makeDirectory(ROOT_PATH.DATA_FOLDER.'logs/')) {
+		// ไฟล์ debug
+		$debug = ROOT_PATH.DATA_FOLDER.'logs/'.date('Y-m-d').'.php';
+		// save
+		if (file_exists($debug)) {
+			$f = fopen($debug, 'a');
 		} else {
-			echo sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'logs/'.date('Y-m-d').'.php');
+			$f = fopen($debug, 'w');
+			fwrite($f, '<'.'?php exit() ?'.'>');
 		}
+		fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', $message));
+		fclose($f);
+	} else {
+		echo sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'logs/'.date('Y-m-d').'.php');
 	}
 }
 
@@ -123,7 +161,6 @@ function log_message($erargs, $errstr, $errfile, $errline)
  * @param string $errstr
  * @param string $errfile
  * @param int $errline
- * @return boolean
  */
 function _error_handler($errno, $errstr, $errfile, $errline)
 {
@@ -156,7 +193,7 @@ function _error_handler($errno, $errstr, $errfile, $errline)
  * custom exception handler
  * ถ้าอยู่ใน mode debug จะแสดง error ถ้าไม่จะเขียนลง log อย่างเดียว
  *
- * @param resource $e
+ * @param Exception $e
  */
 function _exception_handler($e)
 {
@@ -171,17 +208,16 @@ function _exception_handler($e)
 	}
 	log_message('Exception', $e->getMessage(), $tract['file'], $tract['line']);
 }
-//set_error_handler('_error_handler');
-//set_exception_handler('_exception_handler');
+if (DEBUG != 2) {
+	set_error_handler('_error_handler');
+	set_exception_handler('_exception_handler');
+}
 
 /**
- * โหลดคลาสหลักเตรียมไว้
+ * base class
  */
 include ROOT_PATH.'core/kbase.php';
 include ROOT_PATH.'core/kotchasan.php';
-include ROOT_PATH.'core/router.php';
-include ROOT_PATH.'core/input.php';
-include ROOT_PATH.'core/controller.php';
 include ROOT_PATH.'core/config.php';
 
 /**
@@ -205,7 +241,7 @@ function autoload($className)
 	if (isset($className)) {
 		if (preg_match('/[a-z]+/i', $className) && is_file(ROOT_PATH.'core/'.$className.'.php')) {
 			include ROOT_PATH.'core/'.$className.'.php';
-		} elseif (preg_match('/[\a-z0-9]+/i', $className) && is_file(ROOT_PATH.$className.'.php')) {
+		} elseif (preg_match('/[\/a-z0-9]+/i', $className) && is_file(ROOT_PATH.$className.'.php')) {
 			include ROOT_PATH.$className.'.php';
 		}
 	}

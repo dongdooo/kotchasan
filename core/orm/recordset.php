@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/orm/recordset.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -8,9 +8,11 @@
 
 namespace Core\Orm;
 
-use \Core\Database\Query as Query;
-use \Core\Database\Schema as Schema;
-use \Core\Database\Cache as Cache;
+use Core\Database\Query;
+use Core\Database\Schema;
+use Core\Database\DbCache as Cache;
+use Core\Cache\CacheItem;
+use Core\Orm\Field;
 
 /**
  * ORM model base class
@@ -36,7 +38,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * คลาส Model
 	 *
-	 * @var Core\Orm\Field
+	 * @var Field
 	 */
 	private $model;
 	/**
@@ -45,12 +47,6 @@ class Recordset extends Query implements \Iterator
 	 * @var int
 	 */
 	private $perPage;
-	/**
-	 * คลาส Schema
-	 *
-	 * @var Core\Database\Schema
-	 */
-	private $schema;
 	/**
 	 * ตัวแปรเก็บคำสั่ง SQL
 	 *
@@ -74,9 +70,15 @@ class Recordset extends Query implements \Iterator
 	 * true ผลลัพท์เป็น Array
 	 * false ผลลัพท์เป็น Model
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $toArray = false;
+	/**
+	 * ถ้ามีข้อมูลในตัวแปรนี้ จะใช้การ prepare แทน exexute
+	 *
+	 * @var array
+	 */
+	private $values;
 
 	/**
 	 * create new Recordset
@@ -85,15 +87,11 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function __construct($model)
 	{
-		$this->cache = new Cache();
-		$this->model = new $model(null, $this->cache);
+		$this->model = new $model();
+		parent::__construct($this->model->getConn());
 		$this->sqls = array();
 		$this->values = array();
-		if (!isset($this->db)) {
-			$this->db = \Database::create($this->model->getAttribute('conn'));
-			$this->inintTableName($this->model->getAttribute('table'));
-			$this->schema = new Schema($this->db, $this->table_name);
-		}
+		$this->inintTableName($this->model->getTable());
 		if (method_exists($this->model, 'getConfig')) {
 			$result = $this->model->getConfig();
 			foreach ($result as $key => $value) {
@@ -107,7 +105,7 @@ class Recordset extends Query implements \Iterator
 	 * SELECT ....
 	 *
 	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
-	 * @return array|\Core\Orm\Recordset
+	 * @return array|Recordset
 	 */
 	public function all($fields = null)
 	{
@@ -129,7 +127,7 @@ class Recordset extends Query implements \Iterator
 	 * create new Recordset
 	 *
 	 * @param string $model ชื่อ Model
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public static function create($model)
 	{
@@ -142,14 +140,14 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @return string
 	 */
-	private function createQuery($start, $count)
+	public function createQuery($start, $count)
 	{
 		$this->sqls['from'] = $this->tableWithAlias();
 		if (!empty($start) || !empty($count)) {
 			$this->sqls['limit'] = $count;
 			$this->sqls['start'] = $start;
 		}
-		return $this->db->makeQuery($this->sqls);
+		return $this->db()->makeQuery($this->sqls);
 	}
 
 	/**
@@ -162,17 +160,17 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function customQuery($sql, $toArray = true, $values = array())
 	{
-		return $this->db->customQuery($sql, $toArray, $values, $this->cache);
+		return $this->db()->customQuery($sql, $toArray, $values);
 	}
 
 	/**
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
 	 *
-	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
-	 * @return array|\Core\Orm\Recordset
+	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @return \static
 	 */
-	private function cacheOn($auto_save = true)
+	public function cacheOn($auto_save = true)
 	{
 		$this->cache->cacheOn($auto_save);
 		return $this;
@@ -195,7 +193,7 @@ class Recordset extends Query implements \Iterator
 			}
 		}
 		$sql = $this->createQuery(0, 0);
-		$result = $this->db->customQuery($sql, true, $this->values, $this->cache);
+		$result = $this->db()->customQuery($sql, true, $this->values);
 		$count = empty($result) ? 0 : (int)$result[0]['count'];
 		$this->sqls = $old_sqls;
 		$this->values = $old_values;
@@ -206,13 +204,13 @@ class Recordset extends Query implements \Iterator
 	 * ลบ record กำหนดโดย $condition
 	 *
 	 * @param mixed $condition int (primaryKey), string (SQL QUERY), array
-	 * @param boolean $all false (default) ลบรายการเดียว, true ลบทุกรายการที่ตรงตามเงื่อนไข
+	 * @param bool $all false (default) ลบรายการเดียว, true ลบทุกรายการที่ตรงตามเงื่อนไข
 	 * @param string $oprator สำหรับเชื่อมแต่ละ $condition เข้าด้วยกัน AND (default), OR
-	 * @return boolean true ถ้าสำเร็จ
+	 * @return bool true ถ้าสำเร็จ
 	 */
 	public function delete($condition = array(), $all = false, $oprator = 'AND')
 	{
-		$ret = $this->buildWhereValues($condition, $oprator, $this->model->getAttribute('primaryKey'));
+		$ret = $this->buildWhereValues($condition, $oprator, $this->model->getPrimarykey());
 		$sqls = array(
 			'delete' => '`'.$this->table_name.'`',
 			'where' => $ret[0]
@@ -220,8 +218,8 @@ class Recordset extends Query implements \Iterator
 		if (!$all) {
 			$sqls['limit'] = 1;
 		}
-		$sql = $this->makeQuery($sqls);
-		return $this->db->query($sql, $ret[1]);
+		$sql = $this->db()->makeQuery($sqls);
+		return $this->db()->query($sql, $ret[1]);
 	}
 
 	/**
@@ -235,14 +233,14 @@ class Recordset extends Query implements \Iterator
 	private function doExecute($start, $end)
 	{
 		$sql = $this->createQuery($start, $end);
-		$result = $this->db->customQuery($sql, true, $this->values, $this->cache);
+		$result = $this->db()->customQuery($sql, true, $this->values);
 		if ($this->toArray) {
 			return $result;
 		} else {
 			$class = get_class($this->model);
 			$this->datas = array();
 			foreach ($result as $item) {
-				$this->datas[] = new $class($item, $this->cache);
+				$this->datas[] = new $class($item);
 			}
 			return $this;
 		}
@@ -254,7 +252,7 @@ class Recordset extends Query implements \Iterator
 	 * @param string $model model class ของตารางที่ join
 	 * @param string $type เช่น LEFT, RIGHT, INNER...
 	 * @param mixed $on where condition สำหรับการ join
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	private function doJoin($model, $type, $on)
 	{
@@ -300,7 +298,7 @@ class Recordset extends Query implements \Iterator
 	 * เรียกข้อมูลที่ $primaryKey
 	 *
 	 * @param int $id
-	 * @return Core\Orm\Field
+	 * @return Field
 	 */
 	public function find($id)
 	{
@@ -312,7 +310,7 @@ class Recordset extends Query implements \Iterator
 	 * SELECT .... LIMIT 1
 	 *
 	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
-	 * @return boolean|array|Core\Orm\Field ไม่พบคืนค่า false พบคืนค่า record ของข้อมูลรายการเดียว
+	 * @return bool|array|Field ไม่พบคืนค่า false พบคืนค่า record ของข้อมูลรายการเดียว
 	 */
 	public function first($fields = null)
 	{
@@ -332,15 +330,15 @@ class Recordset extends Query implements \Iterator
 			$sqls['select'] = '*';
 		}
 		$sqls = \Arraytool::replace($this->sqls, $sqls);
-		$sql = $this->db->makeQuery($sqls);
-		$this->datas = $this->db->customQuery($sql, true, $this->values, $this->cache);
+		$sql = $this->db()->makeQuery($sqls);
+		$this->datas = $this->db()->customQuery($sql, true, $this->values);
 		if (empty($this->datas)) {
 			return false;
 		} elseif ($this->toArray) {
 			return $this->datas[0];
 		} else {
 			$class = get_class($this->model);
-			return new $class($this->datas[0], $this->cache);
+			return new $class($this->datas[0]);
 		}
 	}
 
@@ -354,7 +352,7 @@ class Recordset extends Query implements \Iterator
 		if (empty($this->datas)) {
 			$this->first();
 		}
-		return $this->db->getFileds();
+		return $this->db()->getFileds();
 	}
 
 	/**
@@ -408,13 +406,13 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * insert ข้อมูล
 	 *
-	 * @param Core\Orm\Field $model
-	 * @return int|boolean สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
+	 * @param Field $model
+	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
-	public function insert($model)
+	public function insert(Field $model)
 	{
 		$save = array();
-		foreach ($this->schema->fields($this->cache) as $field) {
+		foreach (Schema::create($this->db())->fields($this->table_name) as $field) {
 			if (isset($model->$field)) {
 				$save[$field] = $model->$field;
 			}
@@ -422,10 +420,7 @@ class Recordset extends Query implements \Iterator
 		if (empty($save)) {
 			$result = false;
 		} else {
-			$result = $this->db->insert($this->table_name, $save);
-			if (isset($this->cache)) {
-				$this->cache->save(array($save));
-			}
+			$result = $this->db()->insert($this->table_name, $save);
 		}
 		return $result;
 	}
@@ -468,7 +463,7 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function query($sql, $values = array())
 	{
-		$this->db->query($sql, $values);
+		$this->db()->query($sql, $values);
 	}
 
 	/**
@@ -525,13 +520,13 @@ class Recordset extends Query implements \Iterator
 	 * @param int $count จำนวนผลลัพธ์ที่ต้องการ
 	 * @return \Core\Orm\Recordset
 	 */
-	public function take($count)
+	public function take()
 	{
 		$count = func_num_args();
 		if ($count == 1) {
 			$this->perPage = (int)func_get_arg(0);
 			$this->firstRecord = 0;
-		} else {
+		} elseif ($count == 2) {
 			$this->perPage = (int)func_get_arg(1);
 			$this->firstRecord = (int)func_get_arg(0);
 		}
@@ -557,38 +552,36 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function truncate()
 	{
-		return $this->db->truncate($this->table_name);
+		return $this->db()->truncate($this->table_name);
 	}
 
 	/**
+	 * อัปเดทข้อมูล
 	 *
 	 * @param array $condition
-	 * @param array|Core\Orm\Field $save
-	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @param array|Field $save
+	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function update($condition, $save)
 	{
+		$db = $this->db();
+		$schema = Schema::create($db);
 		$datas = array();
-		$fields = $this->schema->fields($this->cache);
-		if (is_array($save)) {
-			foreach ($fields as $field) {
-				if (isset($save[$field])) {
-					$datas[$field] = $save[$field];
-				}
+		if ($save instanceof Field) {
+			foreach ($schema->fields($this->table_name) as $field) {
+				$datas[$field] = $save->$field;
 			}
 		} else {
-			foreach ($fields as $field) {
-				if (isset($save->$field)) {
-					$datas[$field] = $save->$field;
-				}
+			foreach ($schema->fields($this->table_name) as $field) {
+				$datas[$field] = $save[$field];
 			}
 		}
 		if (empty($datas)) {
 			$result = false;
 		} else {
-			$result = $this->db->update($this->table_name, $condition, $datas);
-			if (isset($this->cache)) {
-				$this->cache->save(array($datas));
+			$result = $db->update($this->table_name, $condition, $datas);
+			if ($db->cache()->getAction() == 1) {
+				$db->cache()->save($datas);
 			}
 		}
 		return $result;
@@ -597,13 +590,13 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * อัปเดทข้อมูลทุก record
 	 *
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก
+	 * @param array $save ข้อมูลที่ต้องการบันทึก
 	 * array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function updateAll($array)
+	public function updateAll($save)
 	{
-		return $this->db->updateAll($this->table_name, $array);
+		return $this->db()->updateAll($this->table_name, $save);
 	}
 
 	/**
@@ -616,12 +609,12 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @param mixed $where
 	 * @param string $oprator (options) AND (default), OR
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public function where($where = array(), $oprator = 'AND')
 	{
 		if ((is_string($where) && $where != '') || !empty($where)) {
-			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->model->getAttribute('primaryKey'));
+			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->model->getPrimarykey());
 			if (is_array($where)) {
 				$this->values = \Arraytool::replace($this->values, $where[1]);
 				$where = $where[0];
@@ -635,7 +628,7 @@ class Recordset extends Query implements \Iterator
 	 * Magic method สำหรับการอ่านรายการ Model
 	 *
 	 * @param (int) $id
-	 * @return array|Core\Orm\Field
+	 * @return mixed
 	 */
 	public function __get($id)
 	{
@@ -646,7 +639,7 @@ class Recordset extends Query implements \Iterator
 	 * อ่านข้อมูลที่ $id
 	 *
 	 * @param (int) $id
-	 * @return array|Core\Orm\Field
+	 * @return mixed
 	 */
 	public function get($id)
 	{
@@ -659,7 +652,7 @@ class Recordset extends Query implements \Iterator
 	 * Magic method สำหรับการกำหนดค่า Model ลงใน recordset
 	 *
 	 * @param (int) $id
-	 * @param array|Core\Orm\Field $value
+	 * @param mixed $value
 	 */
 	public function __set($id, $value)
 	{

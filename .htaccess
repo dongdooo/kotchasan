@@ -1,10 +1,14 @@
+Options -Indexes
+
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 
-	#RewriteCond %{HTTP_HOST} ^siamlearning\.org
-	#RewriteRule ^(.*)$ http://www.siamlearning.org/$1 [L,R=301]
+	#RewriteCond %{HTTP_HOST} ^kotchasan\.com$
+	#RewriteRule ^(.*)$ http://www.kotchasan.com/$1 [L,R=301]
 
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule . index.php [L,QSA]
 </IfModule>
+
+#AddHandler application/x-httpd-php7 .php

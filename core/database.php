@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/database.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -13,21 +13,20 @@
  *
  * @since 1.0
  */
-class Database
+final class Database
 {
 	/**
 	 * database connection instances
 	 *
 	 * @var array
 	 */
-	protected static $instances = array();
+	private static $instances = array();
 
 	/**
 	 * Create Database Connection
 	 *
-	 * @param string $name (option)
-	 * @param boolead $cache (option)
-	 * @return \Core\Database\Driver
+	 * @param string $name ชื่อของการเชื่อมต่อกำหนดค่าใน config
+	 * @return Core\Database\Driver
 	 */
 	public static function create($name = 'mysql')
 	{
@@ -41,7 +40,6 @@ class Database
 					'hostname' => '127.0.0.1'
 				),
 				'tables' => (object)array(
-					
 				)
 			);
 			if (is_file(APP_PATH.'settings/database.php')) {

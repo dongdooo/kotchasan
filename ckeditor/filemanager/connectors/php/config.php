@@ -34,7 +34,7 @@ include APP_PATH.'core/load.php';
 // inint Kotchasan Framework
 Kotchasan::createWebApplication();
 // ตรวจสอบการ login สำหรับสมาชิกเท่านั้น
-$config['Enabled'] = \Login::isAdmin() || (\Login::isMember() && isset($_SESSION['CKEDITOR']) && $_SESSION['CKEDITOR'] == $_SESSION['login']['id']);
+$config['Enabled'] = \Login::isAdmin() || (\Login::isMember() && isset($_SESSION['CKEDITOR']) && $_SESSION['CKEDITOR'] == $_SESSION['login']->id);
 // กำหนดการอัปโหลดไฟล์โดยใช้ชื่อเดิม หรือเป็นตัวเลข (เวลา)
 // true ใช้ชื่อเดิมของไฟล์ (rename ชื่อซ้ำ)
 // false ใช้ชื่อไฟล์เป็นเวลา (mktime)

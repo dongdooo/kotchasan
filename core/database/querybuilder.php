@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/database/querybuilder.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -8,7 +8,8 @@
 
 namespace Core\Database;
 
-use Core\Database\Query as DbQuery;
+use Core\Database\Query;
+use Core\Database\Driver;
 
 /**
  * SQL Query builder
@@ -19,12 +20,12 @@ use Core\Database\Query as DbQuery;
  *
  * @setupParam new Query
  */
-class QueryBuilder extends DbQuery
+class QueryBuilder extends Query
 {
 	/**
 	 * ส่งออกผลลัพท์เป็น Array
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $toArray = false;
 
@@ -32,19 +33,18 @@ class QueryBuilder extends DbQuery
 	 * Class constructor
 	 *
 	 * @param object $db database driver
-	 * @param \Core\Database\Cache $cache  database cache class default null
 	 */
-	public function __construct(&$db, &$cache = null)
+	public function __construct(Driver $db)
 	{
-		$this->db = & $db;
+		$this->db = $db;
 		$this->values = array();
-		$this->cache = isset($cache) ? $cache : new \Core\Database\Cache();
 	}
 
 	/**
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
-	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @return \static
 	 */
 	public function cacheOn($auto_save = true)
 	{
@@ -82,7 +82,7 @@ class QueryBuilder extends DbQuery
 	 */
 	public function execute()
 	{
-		$result = $this->db->execQuery($this->sqls, $this->values, $this->cache);
+		$result = $this->db->execQuery($this->sqls, $this->values);
 		if ($this->toArray) {
 			$this->toArray = false;
 		} elseif (is_array($result)) {
@@ -97,7 +97,7 @@ class QueryBuilder extends DbQuery
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL ข้อมูลต้องการผลลัพท์เพียงรานการเดียว
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
-	 * @return Object|boolean คืนค่า Object ของผลลัพท์ที่พบเพียงรายการเดียว ไม่พบข้อมูลคืนค่า false
+	 * @return object|bool คืนค่าผลลัพท์ที่พบเพียงรายการเดียว ไม่พบข้อมูลคืนค่า false
 	 */
 	public function first($fields = '*')
 	{
@@ -124,7 +124,7 @@ class QueryBuilder extends DbQuery
 	 * @param string $tables ชื่อตาราง table1, table2, table3, ....
 	 * @assert select()->from('user')->text() [==] "SELECT * FROM `user`"
 	 * @assert select()->from('user a', 'user b')->text() [==] "SELECT * FROM `user` AS `a`, `user` AS `b`"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function from($tables)
 	{
@@ -141,7 +141,7 @@ class QueryBuilder extends DbQuery
 	/**
 	 *
 	 * @param array $fields
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function groupBy($fields)
 	{
@@ -169,7 +169,7 @@ class QueryBuilder extends DbQuery
 	 * @param string $table ชื่อตาราง
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
 	 * @assert insert('user', array('id' => 1, 'name' => 'test'))->text() [==] "INSERT INTO `user` (`id`, `name`) VALUES (:id, :name)"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function insert($table, $datas)
 	{
@@ -193,7 +193,7 @@ class QueryBuilder extends DbQuery
 	 * @assert join('user U', 'INNER', array('U.id', '=', 'A.id'))->text() [==] " INNER JOIN `user` AS U ON U.`id`=A.`id`"
 	 * @assert join('user U', 'INNER', array('id', '=', 1))->text() [==] " INNER JOIN `user` AS U ON `id`=1"
 	 * @assert join('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id')))->text() [==] " INNER JOIN `user` AS U ON U.`id`=A.`id` AND U.`id`=A.`id`"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function join($table, $type, $on)
 	{
@@ -214,7 +214,7 @@ class QueryBuilder extends DbQuery
 	 * @param int $start รายการเริ่มต้น
 	 * @assert limit(10)->text() [==] " LIMIT 10"
 	 * @assert limit(10, 1)->text() [==] " LIMIT 1,10"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function limit($count, $start = 0)
 	{
@@ -233,7 +233,7 @@ class QueryBuilder extends DbQuery
 	 * @assert order('id ASC')->text() [==] " ORDER BY `id` ASC"
 	 * @assert order('user.id DESC')->text() [==] " ORDER BY `user`.`id` DESC"
 	 * @assert order('id ASCD')->text() [==] ""
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function order($sorts)
 	{
@@ -251,7 +251,7 @@ class QueryBuilder extends DbQuery
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
 	 * @assert select('id', 'email name')->from('user')->where('`id`=1')->text() [==] "SELECT `id`,`email` AS `name` FROM `user` WHERE `id`=1"
 	 * @assert select()->text()  [==] "SELECT *"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function select($fields = '*')
 	{
@@ -277,7 +277,7 @@ class QueryBuilder extends DbQuery
 	 * @assert selectCount()->from('user')->text() [==] "SELECT COUNT(*) AS `count` FROM `user`"
 	 * @assert selectCount('id ids')->from('user')->text() [==] "SELECT COUNT(`id`) AS `ids` FROM `user`"
 	 * @assert selectCount('id ids', 'field alias')->from('user')->text() [==] "SELECT COUNT(`id`) AS `ids`, COUNT(`field`) AS `alias` FROM `user`"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function selectCount($fileds = '* count')
 	{
@@ -300,7 +300,7 @@ class QueryBuilder extends DbQuery
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
 	 * @assert selectDistinct('id')->from('user')->text() [==] "SELECT DISTINCT `id` FROM `user`"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function selectDistinct($fields = '*')
 	{
@@ -314,7 +314,7 @@ class QueryBuilder extends DbQuery
 	 *
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
 	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id`=1"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function set($datas)
 	{
@@ -330,7 +330,7 @@ class QueryBuilder extends DbQuery
 	 * คืนค่าข้อมูลเป็น Array
 	 * ฟังก์ชั่นนี้ใช้เรียกก่อนการสอบถามข้อมูล
 	 *
-	 * @return \Core\Orm\Model
+	 * @return \static
 	 */
 	public function toArray()
 	{
@@ -348,7 +348,7 @@ class QueryBuilder extends DbQuery
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id`=1 AND `id`=1"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function update($table)
 	{
@@ -369,7 +369,7 @@ class QueryBuilder extends DbQuery
 	 * @assert where('`id`=1 OR (SELECT ....)')->text() [==] " WHERE `id`=1 OR (SELECT ....)"
 	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id`=1"
 	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (:id0, :id1, :id2)"
-	 * @return \Core\Database\QueryBuilder
+	 * @return \static
 	 */
 	public function where($condition, $oprator = 'AND', $id = 'id')
 	{

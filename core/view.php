@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/view.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -16,84 +16,73 @@
 class View extends KBase
 {
 	/**
-	 * meta tag
-	 *
-	 * @var array
-	 */
-	private $meta;
-	/**
 	 * Controller ที่เรียก View นี้
 	 *
 	 * @var \Controller
 	 */
-	public $controller;
+	protected $controller;
 	/**
-	 * ลิสต์รายการ breadcrumb
+	 * ตัวแปรเก็บเนื่อหาของเว็บไซต์
 	 *
 	 * @var array
 	 */
-	private $breadcrumb;
+	protected $contents = array();
 	/**
-	 * template ของ breadcrumb
+	 * meta tag
 	 *
-	 * @var type
+	 * @var array
 	 */
-	private $breadcrumb_template;
+	protected $metas = array();
+	/**
+	 * รายการ header
+	 *
+	 * @var array
+	 */
+	protected $headers = array();
 
 	/**
 	 * Class constructor
 	 *
 	 * @param \Controller $controller
 	 */
-	public function __construct($controller = null)
+	public function __construct(\Controller $controller)
 	{
-		$this->controller = $controller == null ? new Object : $controller;
-		$this->breadcrumb_template = \Template::load('', '', 'breadcrumb');
-		$this->meta = array();
-		$this->breadcrumb = array();
+		$this->controller = $controller;
 	}
 
 	/**
-	 * เพิ่ม breadcrumb
-	 *
-	 * @param string $url ลิงค์
-	 * @param string $tooltip ทูลทิป
-	 * @param string $menu ข้อความแสดงใน breadcrumb
-	 * @param string $class (option) คลาสสำหรับลิงค์นี้
-	 */
-	public function addBreadcrumb($url, $menu, $tooltip, $class = '')
-	{
-		$patt = array('/{CLASS}/', '/{URL}/', '/{TOOLTIP}/', '/{MENU}/');
-		$this->breadcrumb[] = preg_replace($patt, array($class, $url, $tooltip, htmlspecialchars_decode($menu)), $this->breadcrumb_template);
-	}
-
-	/**
-	 * ฟังก์ชั่นกำหนดค่าตัวแปรของ template
+	 * ใส่เนื้อหาลงใน $contens
 	 *
 	 * @param array $array ชื่อที่ปรากฏใน template รูปแบบ array(key1=>val1,key2=>val2)
-	 * @param int $option FORMAT_TEXT = คีย์แบบข้อความ, FORMAT_PCRE = คีย์แบบ PCRE
 	 */
-	public function add($array, $option = FORMAT_TEXT)
+	public function setContents($array)
 	{
-		$contents = &$this->controller->contents;
 		foreach ($array as $key => $value) {
-			if ($option === FORMAT_TEXT) {
-				$contents['/{'.$key.'}/'] = $value;
-			} else {
-				$contents[$key] = $value;
-			}
+			$this->contents[$key] = $value;
 		}
 	}
 
 	/**
-	 * ฟังก์ชั่นใส่ Tag ลงใน Head ของ HTML
+	 * ใส่ Tag ลงใน Head ของ HTML
 	 *
 	 * @param array $array
 	 */
-	public function addHead($array)
+	public function setMetas($array)
 	{
-		foreach ($array as $value) {
-			$this->meta[] = $value;
+		foreach ($array as $key => $value) {
+			$this->metas[$key] = $value;
+		}
+	}
+
+	/**
+	 * กำหนด header ให้กับเอกสาร
+	 *
+	 * @param array $array
+	 */
+	public function setHeaders($array)
+	{
+		foreach ($array as $key => $value) {
+			$this->headers[$key] = $value;
 		}
 	}
 
@@ -102,30 +91,23 @@ class View extends KBase
 	 */
 	public function renderHTML()
 	{
-		// contents
-		$contents = $this->controller->contents;
 		// default for template
-		if (!empty($this->meta)) {
-			$contents['/(<head.*)(<\/head>)/isu'] = '$1'.implode("\n", $this->meta)."\n".'$2';
+		if (!empty($this->metas)) {
+			$this->contents['/(<head.*)(<\/head>)/isu'] = '$1'.implode("\n", $this->metas)."\n".'$2';
 		}
-		if (method_exists('Gcms', 'getWidgets')) {
-			$contents['/{WIDGET_([A-Z]+)(([\s_])(.*))?}/e'] = '\Gcms::getWidgets(array(1=>"$1",3=>"$3",4=>"$4"))';
-		}
-		$contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Language::get(array(1=>"$1"))';
-		$contents['/{BREADCRUMB}/'] = empty($this->breadcrumb) ? '' : implode('', $this->breadcrumb);
-		$contents['/{BACKURL(\?([a-zA-Z0-9=&\-_@\.]+))?}/e'] = '\Url::back';
-		$contents['/{WEBTITLE}/'] = self::$cfg->web_title;
-		$contents['/{WEBDESCRIPTION}/'] = self::$cfg->web_description;
-		$contents['/{LANGUAGE}/'] = \Language::name();
-		$contents['/{WEBURL}/'] = WEB_URL;
-		$contents['/{SKIN}/'] = \Template::$src;
-		$contents['/{ELAPSED}/'] = sprintf('%.3f', microtime(true) - BEGIN_TIME);
-		$contents['/{USAGE}/'] = memory_get_peak_usage() / 1024;
-		$contents['/{QURIES}/'] = Core\Database\Driver::$query_count;
-		$contents['/{VERSION}/'] = VERSION;
-		$contents['/^[\s\t]+/m'] = '';
+		$this->contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Language::get(array(1=>"$1"))';
+		$this->contents['/{WEBTITLE}/'] = self::$cfg->web_title;
+		$this->contents['/{WEBDESCRIPTION}/'] = self::$cfg->web_description;
+		$this->contents['/{WEBURL}/'] = WEB_URL;
+		$this->contents['/{SKIN}/'] = \Template::$src;
+		$this->contents['/{ELAPSED}/'] = sprintf('%.3f', microtime(true) - BEGIN_TIME);
+		$this->contents['/{USAGE}/'] = memory_get_peak_usage() / 1024;
+		$this->contents['/{QURIES}/'] = Core\Database\Driver::$query_count;
+		$this->contents['/{VERSION}/'] = VERSION;
+		$this->contents['/{LANGUAGE}/'] = \Language::name();
+		$this->contents['/^[\s\t]+/m'] = '';
 		// แทนที่ลงใน index.html
-		echo \Text::pregReplace(array_keys($contents), array_values($contents), \Template::load('', '', 'index'));
+		echo \Text::pregReplace(array_keys($this->contents), array_values($this->contents), \Template::load('', '', 'index'));
 	}
 
 	/**
@@ -136,20 +118,10 @@ class View extends KBase
 	public function output($content)
 	{
 		// send header
-		foreach ($this->controller->headers as $key => $value) {
+		foreach ($this->headers as $key => $value) {
 			header("$key: $value");
 		}
 		// output content
 		echo $content;
-	}
-
-	/**
-	 * กำหนด header ให้กับเอกสาร
-	 *
-	 * @param array $headers
-	 */
-	public function setHeaders($headers)
-	{
-		$this->controller->headers = $headers;
 	}
 }

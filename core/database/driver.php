@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/database/driver.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -8,21 +8,19 @@
 
 namespace Core\Database;
 
+use Core\Database\QueryBuilder;
+use Core\Database\Schema;
+use \Core\Database\DbCache as Cache;
+
 /**
- * Database Driver Class
+ * Kotchasan Database driver Class (base class)
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
  */
-class Driver extends Query
+abstract class Driver extends Query
 {
-	/**
-	 * นับจำนวนการ query
-	 *
-	 * @var int
-	 */
-	public static $query_count = 0;
 	/**
 	 * database connection
 	 *
@@ -30,30 +28,72 @@ class Driver extends Query
 	 */
 	protected $connection = null;
 	/**
-	 * เก็บ Object ที่เป็นผลลัพท์จากการ query
-	 *
-	 * @var resource|object
-	 */
-	protected $result_id;
-	/**
 	 * database error message
 	 *
 	 * @var string
 	 */
 	protected $error_message = '';
 	/**
+	 * นับจำนวนการ query
+	 *
+	 * @var int
+	 */
+	protected static $query_count = 0;
+	/**
+	 * เก็บ Object ที่เป็นผลลัพท์จากการ query
+	 *
+	 * @var resource|object
+	 */
+	protected $result_id;
+	/**
 	 * ตัวแปรเก็บ query สำหรับการ execute
 	 *
 	 * @var array
 	 */
 	protected $sqls;
+	/**
+	 * cache class
+	 *
+	 * @var Cache
+	 */
+	protected $cache;
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct()
+	{
+		$this->cache = Cache::create();
+	}
+
+	/**
+	 * เปิดการใช้งานแคช
+	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
+	 *
+	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @return \static
+	 */
+	public function cacheOn($auto_save = true)
+	{
+		$this->cache->cacheOn($auto_save);
+		return $this;
+	}
+
+	/**
+	 * ฟังก์ชั่นคืนค่า Database Cache
+	 *
+	 * @param Cache
+	 */
+	public function cache()
+	{
+		return $this->cache;
+	}
 
 	/**
 	 * close database.
 	 */
 	public function close()
 	{
-		$this->_close();
 		$this->connection = null;
 	}
 
@@ -70,27 +110,26 @@ class Driver extends Query
 	/**
 	 * ฟังก์ชั่นสร้าง query builder
 	 *
-	 * @return \Core\Database\QueryBuilder
+	 * @return QueryBuilder
 	 */
 	public function createQuery()
 	{
-		return new \Core\Database\QueryBuilder($this);
+		return new QueryBuilder($this);
 	}
 
 	/**
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL สำหรับสอบถามข้อมูล คืนค่าผลลัพท์เป็นแอเรย์ของข้อมูลที่ตรงตามเงื่อนไข.
 	 *
 	 * @param string $sql query string
-	 * @param boolean $toArray (option) default true คืนค่าเป็น Array, false คืนค่าผลลัทเป็น Object
+	 * @param bool $toArray (option) default  false คืนค่าผลลัทเป็น Object, true คืนค่าเป็น Array
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @param \Core\Database\Cache $cache  database cache class default null
-	 * @return array|object คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข
+	 * @return array คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข ไม่พบคืนค่าแอเรย์ว่าง
 	 */
-	public function customQuery($sql, $toArray = true, $values = array(), $cache = null)
+	public function customQuery($sql, $toArray = false, $values = array())
 	{
-		$result = $this->doCustomQuery($sql, $values, $cache);
+		$result = $this->doCustomQuery($sql, $values);
 		if ($result === false) {
-			$this->sendError($sql, $this->error_message);
+			$this->logError($sql, $this->error_message);
 			$result = array();
 		} elseif (!$toArray) {
 			foreach ($result as $i => $item) {
@@ -138,30 +177,22 @@ class Driver extends Query
 	/**
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL จาก query builder
 	 *
-	 * @return boolean|array
+	 * @param array $sqls
+	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
+	 * @return bool|array
 	 */
-	public function execQuery($sqls, $values = array(), $cache = null)
+	public function execQuery($sqls, $values = array())
 	{
 		$sql = $this->makeQuery($sqls);
 		if (isset($sqls['values'])) {
 			$values = \Arraytool::replace($sqls['values'], $values);
 		}
 		if ($sqls['function'] == 'customQuery') {
-			$result = $this->customQuery($sql, true, $values, $cache);
+			$result = $this->customQuery($sql, true, $values);
 		} else {
 			$result = $this->query($sql, $values);
 		}
 		return $result;
-	}
-
-	/**
-	 * จำนวนฟิลด์ทั้งหมดในผลลัพท์จากการ query
-	 *
-	 * @return int
-	 */
-	public function fieldCount()
-	{
-		return 0;
 	}
 
 	/**
@@ -175,15 +206,9 @@ class Driver extends Query
 	{
 		if (!empty($table) && !empty($field)) {
 			$field = strtolower($field);
-			// query table fields
-			$result = $this->doCustomQuery("SHOW COLUMNS FROM `$table`");
-			if ($result === false) {
-				$this->sendError(__FUNCTION__, $this->error_message);
-			} else {
-				foreach ($result as $item) {
-					if (strtolower($item['Field']) == $field) {
-						return true;
-					}
+			foreach (Schema::create($this->db)->fields($table) as $key => $values) {
+				if (strtolower($key) == $field) {
+					return true;
 				}
 			}
 		}
@@ -204,25 +229,13 @@ class Driver extends Query
 	}
 
 	/**
-	 * รายชื่อฟิลด์ทั้งหมดจากผลัพท์จองการ query
+	 * คืนค่าข้อความผิดพลาดของฐานข้อมูล
 	 *
-	 * @return array
+	 * @return string
 	 */
-	public function getFileds()
+	public function getError()
 	{
-		return array();
-	}
-
-	/**
-	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
-	 *
-	 * @param string $table ชื่อตาราง
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก
-	 * @return int|boolean สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
-	 */
-	public function insert($table, $recArr)
-	{
-
+		return $this->error_message;
 	}
 
 	/**
@@ -246,7 +259,7 @@ class Driver extends Query
 	 */
 	protected function log($type, $sql, $values = array())
 	{
-		if (!empty($this->settings->log)) {
+		if (DB_LOG == true) {
 			$datas = array();
 			$datas[] = $type.' : <em>'.\Text::replaceAll($sql, $values).'</em>';
 			foreach (debug_backtrace() as $a => $item) {
@@ -258,18 +271,24 @@ class Driver extends Query
 					}
 				}
 			}
-			// ไฟล์ debug
-			$debug = ROOT_PATH.DATA_FOLDER.'debug.php';
-			// save
-			if (is_file($debug)) {
-				$f = fopen($debug, 'a');
-			} else {
-				$f = fopen($debug, 'w');
-				fwrite($f, '<'.'?php exit() ?'.'>');
+			if (!empty($datas)) {
+				// บันทึก log
+				save_log(implode('', $datas));
 			}
-			fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', implode('', $datas)));
-			fclose($f);
 		}
+	}
+
+	/**
+	 * ฟังก์ชั่นจัดการ error ของ database
+	 *
+	 * @param string $sql
+	 * @param string $message
+	 */
+	protected function logError($sql, $message)
+	{
+		$trace = debug_backtrace();
+		$trace = next($trace);
+		log_message($sql, $message, $trace['file'], $trace['line']);
 	}
 
 	/**
@@ -277,13 +296,13 @@ class Driver extends Query
 	 *
 	 * @param string $sql
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 */
 	public function query($sql, $values = array())
 	{
 		$result = $this->doQuery($sql, $values);
 		if (!$result) {
-			$this->sendError($sql, $this->error_message);
+			$this->logError($sql, $this->error_message);
 		}
 		return $result;
 	}
@@ -293,37 +312,9 @@ class Driver extends Query
 	 *
 	 * @return int
 	 */
-	public function queryCount()
+	public static function queryCount()
 	{
-		return $this->time;
-	}
-
-	/**
-	 * เรียกดูข้อมูล
-	 *
-	 * @param string $table ชื่อตาราง
-	 * @param mixed $condition query WHERE
-	 * @param array $sort เรียงลำดับ
-	 * @param int $limit จำนวนข้อมูลที่ต้องการ
-	 * @param \Core\Database\Cache $cache  database cache class default null
-	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
-	 */
-	public function select($table, $condition, $sort = array(), $limit = 0, $cache = null)
-	{
-
-	}
-
-	/**
-	 * ฟังก์ชั่นจัดการ error ของ database
-	 *
-	 * @param string $sql
-	 * @param string $message
-	 */
-	protected function sendError($sql, $message)
-	{
-		$trace = debug_backtrace();
-		$trace = next($trace);
-		log_message($sql, $message, $trace['file'], $trace['line']);
+		return self::$query_count;
 	}
 
 	/**
@@ -345,31 +336,70 @@ class Driver extends Query
 	 */
 	public function truncate($table)
 	{
-		return $this->query("TRUNCATE TABLE $table") === false ? false : true;
+		return $this->query("TRUNCATE TABLE `$table`") === false ? false : true;
 	}
+
+	/**
+	 * อัปเดทข้อมูลทุก record
+	 *
+	 * @param array $save ข้อมูลที่ต้องการบันทึก
+	 * array('key1'=>'value1', 'key2'=>'value2', ...)
+	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 */
+	public function updateAll($table, $save)
+	{
+		return $this->update($table, array(1, 1), $save);
+	}
+
+	/**
+	 * จำนวนฟิลด์ทั้งหมดในผลลัพท์จากการ query
+	 *
+	 * @return int
+	 */
+	abstract public function fieldCount();
+
+	/**
+	 * รายชื่อฟิลด์ทั้งหมดจากผลัพท์จองการ query
+	 *
+	 * @return array
+	 */
+	abstract public function getFileds();
+
+	/**
+	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
+	 *
+	 * @param string $table ชื่อตาราง
+	 * @param array $save ข้อมูลที่ต้องการบันทึก
+	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
+	 */
+	abstract public function insert($table, $save);
+
+	/**
+	 * ฟังก์ชั่นสร้างคำสั่ง sql query
+	 *
+	 * @param array $sqls คำสั่ง sql จาก query builder
+	 * @return string sql command
+	 */
+	abstract public function makeQuery($sqls);
+
+	/**
+	 * เรียกดูข้อมูล
+	 *
+	 * @param string $table ชื่อตาราง
+	 * @param mixed $condition query WHERE
+	 * @param array $sort เรียงลำดับ
+	 * @param int $limit จำนวนข้อมูลที่ต้องการ
+	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
+	 */
+	abstract public function select($table, $condition, $sort = array(), $limit = 0);
 
 	/**
 	 * ฟังก์ชั่นแก้ไขข้อมูล
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @param array $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
+	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function update($table, $condition, $recArr)
-	{
-
-	}
-
-	/**
-	 * อัปเดทข้อมูลทุก record
-	 *
-	 * @param array $recArr ข้อมูลที่ต้องการบันทึก
-	 * array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
-	 */
-	public function updateAll($table, $recArr)
-	{
-		return $this->update($table, array(1, 1), $recArr);
-	}
+	abstract public function update($table, $condition, $save);
 }

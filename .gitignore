@@ -1,3 +1,4 @@
-!.gitignore
-!/datas/*
-!/settings/*
+datas/*
+settings/*
+benchmark/
+docs/
