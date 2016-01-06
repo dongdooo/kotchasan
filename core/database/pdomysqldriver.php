@@ -293,7 +293,7 @@ class PdoMysqlDriver extends Driver
 		}
 		$condition = $this->buildWhere($condition);
 		if (is_array($condition)) {
-			$values = \Arraytool::replace($values, $condition[1]);
+			$values = \ArrayTool::replace($values, $condition[1]);
 			$condition = $condition[0];
 		}
 		$sql = 'UPDATE `'.$table.'` SET '.implode(', ', $sets).' WHERE '.$condition;

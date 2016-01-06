@@ -47,7 +47,7 @@ class Router
 	 * inint Router
 	 *
 	 * @param string $controller (optional) Controller หลักหากไม่พบ Controller ที่มาจาก URL
-	 * @return \Router
+	 * @return \static
 	 */
 	public function inint($controller = 'Index\Index\Controller')
 	{

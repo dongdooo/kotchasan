@@ -8,7 +8,7 @@
 
 /**
  * คลาสสำหรับจัดการตัวแปรต่างๆของ Server
- * เช่น $_GET $_POST $_SESSION $_COOKIE $_SERVER $_REQUEST
+ * เช่น $_GET $_POST $_SESSION $_COOKIE $_REQUEST
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *
@@ -18,11 +18,11 @@ class Input
 {
 
 	/**
-	 * อ่านค่าจากตัวแปรของ Server $_GET
+	 * อ่านค่าจากตัวแปร $_GET
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem|InputItems
 	 */
 	public static function get($name, $default = '')
 	{
@@ -30,11 +30,11 @@ class Input
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปรของ Server $_POST
+	 * อ่านค่าจากตัวแปร $_POST
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem|InputItems
 	 */
 	public static function post($name, $default = '')
 	{
@@ -42,11 +42,11 @@ class Input
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปรของ Server $_POST และ $_GET ตามลำดับ
+	 * อ่านค่าจากตัวแปร $_REQUEST
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem|InputItems
 	 */
 	public static function request($name, $default = '')
 	{
@@ -54,11 +54,11 @@ class Input
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปรของ $_SESSION
+	 * อ่านค่าจากตัวแปร $_SESSION
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem
 	 */
 	public static function session($name, $default = '')
 	{
@@ -70,7 +70,7 @@ class Input
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem
 	 */
 	public static function cookie($name, $default = '')
 	{
@@ -78,16 +78,23 @@ class Input
 	}
 
 	/**
+	 * อ่านค่าจากไฟล์อัปโหลด
+	 *
+	 * @return InputItem|InputItems
+	 */
+	public static function files()
+	{
+		print_r($_FILES);
+	}
+
+	/**
 	 * อ่านค่าจากตัวแปรของ Server เช่น $_GET $_POST  $_REQUEST
-	 * แปลงผลลัพท์ตามชนิดของตัวแปรตามที่กำหนดโดย $default เช่น
-	 * $default = 0 หรือ เลขจำนวนเต็ม ผลลัพท์จะถูกแปลงเป็น int
-	 * $default = 0.0 หรือตัวเลขมีจุดทศนิยม จำนวนเงิน ผลลัพท์จะถูกแปลงเป็น double
-	 * $default = true หรือ false ผลลัพท์จะถูกแปลงเป็น true หรือ false เท่านั้น
+	 * ถ้าไม่พบจะใช้ค่า $default
 	 *
 	 * @param string $var ชื่อตัวแปรของ Server เช่น GET POST REQUEST
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return mixed
+	 * @return InputItem|InputItems
 	 */
 	private static function getFromGlobal($var, $name, $default)
 	{
@@ -105,27 +112,30 @@ class Input
 				$result = isset($_SESSION[$name]) ? $_SESSION[$name] : null;
 				break;
 			case 'REQUEST':
-				$result = isset($_REQUEST[$name]) ? $_REQUEST[$name] : null;
+				if (isset($_POST[$name])) {
+					$result = $_POST[$name];
+				} elseif (isset($_GET[$name])) {
+					$result = $_GET[$name];
+				} elseif (isset($_COOKIE[$name])) {
+					$result = $_COOKIE[$name];
+				} else {
+					$result = null;
+				}
 				break;
 			default:
 				$result = null;
 		}
 		if ($result === null) {
-			return $default;
+			return new InputItem($default);
 		} else {
-			if ($default != '') {
-				if (is_float($default)) {
-					// จำนวนเงิน เช่น 0.0
-					$result = (double)$result;
-				} elseif (is_int($default)) {
-					// เลขจำนวนเต็ม เช่น 0
-					$result = (int)$result;
-				} elseif (is_bool($default)) {
-					// true, false
-					$result = $result == 1 ? true : false;
-				}
+			switch ($var) {
+				case 'GET':
+				case 'POST':
+					return is_array($result) ? new InputItems($result) : new InputItem($result);
+					break;
+				default:
+					return new InputItem($result);
 			}
-			return $result;
 		}
 	}
 
@@ -140,7 +150,7 @@ class Input
 	{
 		$result = array();
 		foreach ($array as $key => $value) {
-			if (preg_match('/^(text|topic|detail|textarea|email|url|bool|number|int|float|double|date)_([a-zA-Z0-9_]+)/', $key, $match)) {
+			if (preg_match('/^(text|topic|detail|textarea|email|url|bool|boolean|number|int|float|double|date)_([a-zA-Z0-9_]+)/', $key, $match)) {
 				if (is_array($value)) {
 					foreach ($value as $k => $v) {
 						$result[$match[2]][$k] = self::filterByType($match[1], $v);
@@ -167,22 +177,22 @@ class Input
 	{
 		if ($key === 'text') {
 			// input text
-			return self::text($value);
+			return InputItem::create($value)->text();
 		} elseif ($key === 'topic') {
 			// topic
-			return self::topic($value);
+			return InputItem::create($value)->topic();
 		} elseif ($key === 'detail') {
 			// ckeditor
-			return self::detail($value);
+			return InputItem::create($value)->detail();
 		} elseif ($key === 'textarea') {
 			// textarea
-			return self::textarea($value);
+			return InputItem::create($value)->textarea();
 		} elseif ($key === 'url' || $key === 'email') {
 			// http://www.domain.tld และ email
-			return self::htmlspecialchars(trim($value), false);
-		} elseif ($key === 'bool') {
+			return InputItem::create($value)->url();
+		} elseif ($key === 'bool' || $key === 'boolean') {
 			// true หรือ false เท่านั้น
-			return empty($value) ? 0 : 1;
+			return InputItem::create($value)->toBoolean();
 		} elseif ($key === 'number') {
 			// ตัวเลขเท่านั้น
 			return preg_replace('/[^\d]/', '', $value);
@@ -235,7 +245,7 @@ class Input
 	/**
 	 * ฟังก์ชั่น ตรวจสอบ referer
 	 *
-	 * @return boolean คืนค่า true ถ้า referer มาจากเว็บไซต์นี้
+	 * @return bool คืนค่า true ถ้า referer มาจากเว็บไซต์นี้
 	 */
 	public static function isReferer()
 	{
@@ -251,99 +261,41 @@ class Input
 	}
 
 	/**
-	 * ฟังก์ชั่น ตัดข้อความที่ไม่พึงประสงค์ก่อนบันทึกลง db ที่มาจาก textarea
-	 *
-	 * @param string $detail ข้อความ
-	 * @return string คืนค่าข้อความ
+	 * remove slashes (/) ตัวแปร GLOBAL
 	 */
-	public static function textarea($detail)
+	public static function normalizeRequest()
 	{
-		return trim(preg_replace(array('/</u', '/>/u', '/\\\/u'), array('&lt;', '&gt;', '&#92;'), nl2br($detail)));
-	}
-
-	/**
-	 * ฟังก์ชั่นตรวจสอบข้อความใช้เป็น topic
-	 * แปลง tag และ ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
-	 *
-	 * @param string $topic
-	 * @assert (' "ข่าวด่วน" ') [==] "&quot;ข่าวด่วน&quot;"
-	 * @return string
-	 */
-	public static function topic($topic)
-	{
-		return trim(preg_replace('/[\r\n\t\s]+/', ' ', self::htmlspecialchars($topic)));
-	}
-
-	/**
-	 * ฟังก์ชั่นรับค่าจาก CKEditor ตัด PHP ออก
-	 *
-	 * @param string $detail
-	 * @assert ("ทด\สอบ/การแทรก&nbsp;&nbsp;<?php echo '555'?>") [==] "ทด\สอบ/การแทรก&nbsp;&nbsp;<?php echo '555'?>"
-	 * @return string
-	 */
-	public static function detail($detail)
-	{
-		$patt = array(
-			'/^(&nbsp;|\s){0,}<br[\s\/]+?>(&nbsp;|\s){0,}$/iu' => '',
-			'/<\?(.*?)\?>/su' => '',
-			'/\\\/' => '&#92;'
-		);
-		return preg_replace(array_keys($patt), array_values($patt), $detail);
-	}
-
-	/**
-	 * ฟังก์ชั่น เข้ารหัส อักขระพิเศษ และ {} ก่อนจะส่งให้กับ textarea หรือ editor ตอนแก้ไข
-	 * & " ' < > { } ไม่แปลง รหัส HTML เช่น &amp; &#38;
-	 *
-	 * @param string $detail
-	 * @assert ('&"'."'<>{}&amp;&#38;") [==] "&amp;&quot;&#039;&lt;&gt;&#x007B;&#x007D;&amp;&#38;"
-	 * @return string
-	 */
-	public static function toEditor($detail)
-	{
-		return preg_replace(array('/&/', '/"/', "/'/", '/</', '/>/', '/{/', '/}/', '/&(amp;([\#a-z0-9]+));/'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;', '&#x007B;', '&#x007D;', '&\\2;'), $detail);
-	}
-
-	/**
-	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities ใช้แทน htmlspecialchars() ของ PHP
-	 *
-	 * @param string $string
-	 * @param boolean $double_encode (option) default true แปลง รหัส HTML เช่น &amp; เป็น &amp;amp;, false ไม่แปลง
-	 * @assert ('&"'."'<>\/&amp;&#38;", true) [==] "&amp;&quot;&#039;&lt;&gt;&#92;/&amp;amp;&amp;#38;"
-	 * @assert ('&"'."'<>\/&amp;&#38;", false) [==] "&amp;&quot;&#039;&lt;&gt;&#92;/&amp;&#38;"
-	 * @return string
-	 */
-	public static function htmlspecialchars($string, $double_encode = true)
-	{
-		$string = preg_replace(array('/&/', '/"/', "/'/", '/</', '/>/', '/\\\/'), array('&amp;', '&quot;', '&#039;', '&lt;', '&gt;', '&#92;'), $string);
-		if (!$double_encode) {
-			$string = preg_replace('/&(amp;([#a-z0-9]+));/', '&\\2;', $string);
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
+			if (!empty($_GET)) {
+				$_GET = self::stripSlashes($_GET);
+			}
+			if (!empty($_POST)) {
+				$_POST = self::stripSlashes($_POST);
+			}
+			if (!empty($_REQUEST)) {
+				$_REQUEST = self::stripSlashes($_REQUEST);
+			}
 		}
-		return $string;
 	}
 
 	/**
-	 * ฟังก์ชั่นแปลง ' เป็น &#39;
+	 * remove slashes (/)
 	 *
-	 * @param string $text
-	 * @assert ("What's your name") [==] "What&#39;s your name"
-	 * @return string
+	 * @param array|string $data
+	 * @return array|string
 	 */
-	public static function quote($text)
+	private static function stripSlashes(&$data)
 	{
-		return str_replace("'", '&#39;', $text);
-	}
-
-	/**
-	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities และลบช่องว่างหัวท้าย
-	 * ใช้แปลงค่าที่รับจาก input ที่ไม่ยอมรับ tag
-	 *
-	 * @param string $text
-	 * @assert (' &"'."'<>\/&amp;&#38; ") [==] "&amp;&quot;&#039;&lt;&gt;&#92;/&amp;amp;&amp;#38;"
-	 * @return string
-	 */
-	public static function text($text)
-	{
-		return self::htmlspecialchars(trim($text));
+		if (is_array($data)) {
+			if (sizeof($data) == 0) {
+				return $data;
+			} else {
+				$keys = array_map('stripslashes', array_keys($data));
+				$data = array_combine($keys, array_values($data));
+				return array_map(array(__CLASS__, 'stripSlashes'), $data);
+			}
+		} else {
+			return stripslashes($data);
+		}
 	}
 }

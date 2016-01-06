@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/lisitem.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com

@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Arraytool
+class ArrayTool
 {
 
 	/**

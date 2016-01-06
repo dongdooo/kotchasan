@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * index.php.
  *
  * @author Goragod Wiriya <admin@goragod.com>
@@ -19,7 +19,7 @@ define('DEBUG', 2);
  * false (default)
  * true บันทึกการ query ฐานข้อมูลลง log (ใช้เฉพาะตอนออกแบบเท่านั้น)
  */
-//define('DB_LOG', false);
+define('DB_LOG', false);
 // load Kotchasan
 include APP_PATH.'core/load.php';
 // inint Kotchasan Framework

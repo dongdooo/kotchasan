@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Login extends \Model
+class Login extends \Model implements Core\LoginInterface
 {
 	/**
 	 * ข้อความจาก Login Class
@@ -59,7 +59,7 @@ class Login extends \Model
 		self::$text_email = $model->get('text_email', $pw);
 		self::$text_password = $model->get('text_password', $pw);
 		$login_remember = $model->get('bool_remember', $pw) == 1 ? 1 : 0;
-		$action = Input::request('action');
+		$action = Input::request('action')->toString();
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
 			// error มี email อยู่แล้ว (facebook login)
@@ -134,9 +134,9 @@ class Login extends \Model
 	 *
 	 * @param string $username
 	 * @param string $password
-	 * @return string|Object เข้าระบบสำเร็จคืนค่า Object ข้อมูลสมาชิก, ไม่สำเร็จ คืนค่าข้อความผิดพลาด
+	 * @return string|object เข้าระบบสำเร็จคืนค่า Object ข้อมูลสมาชิก, ไม่สำเร็จ คืนค่าข้อความผิดพลาด
 	 */
-	protected function checkLogin($username, $password)
+	public function checkLogin($username, $password)
 	{
 		if ($username == self::$cfg->get('username') && $password == self::$cfg->get('password')) {
 			return (object)array(
@@ -161,20 +161,20 @@ class Login extends \Model
 	/**
 	 * ฟังก์ชั่นตรวจสอบการเข้าระบบ
 	 *
-	 * @return bool คืนค่า true ถ้าเป็นสมาชิกและเข้าระบบแล้ว ไม่ใช่คืนค่า false
+	 * @return object|bool คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นสมาชิกและเข้าระบบแล้ว ไม่ใช่คืนค่า false
 	 */
 	public static function isMember()
 	{
-		return isset($_SESSION['login']) ? true : false;
+		return isset($_SESSION['login']) ? $_SESSION['login'] : false;
 	}
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบสถานะแอดมิน
 	 *
-	 * @return bool คืนค่า true ถ้าเป็นผู้ดูแลสูงสุด ไม่ใช่คืนค่า false
+	 * @return object|bool คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นผู้ดูแลระบบและเข้าระบบแล้ว ไม่ใช่คืนค่า false
 	 */
 	public static function isAdmin()
 	{
-		return isset($_SESSION['login']) && !empty($_SESSION['login']->id) && $_SESSION['login']->status == 1 ? true : false;
+		return isset($_SESSION['login']) && !empty($_SESSION['login']->id) && $_SESSION['login']->status == 1 ? $_SESSION['login'] : false;
 	}
 }

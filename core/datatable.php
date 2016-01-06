@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/datatable.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -43,7 +43,7 @@ class Datatable
 	/**
 	 * database cache
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $cache = false;
 	/**
@@ -62,25 +62,25 @@ class Datatable
 	/**
 	 * แสดงตารางกว้าง 100%
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $fullWidth = true;
 	/**
 	 * แสดงเส้นกรอบ
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $border = false;
 	/**
 	 * แสดงปุ่ม สำหรับเพิ่มและลบแถว
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $pmButton = false;
 	/**
 	 * แสดงตารางแบบ responsive
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	private $responsive = false;
 	/**
@@ -222,7 +222,7 @@ class Datatable
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = \Input::request('count', 30);
+			$this->perPage = \Input::request('count', 30)->toInt();
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
@@ -317,7 +317,7 @@ class Datatable
 			$form[] = '</fieldset>';
 		}
 		// search
-		$search = \Input::text($_REQUEST, 'search');
+		$search = \Input::request('search')->text();
 		if (!empty($this->searchColumns)) {
 			if (!empty($search)) {
 				if (isset($this->model)) {
@@ -328,7 +328,7 @@ class Datatable
 					$qs[] = $this->rs->group($sh, 'OR');
 				} elseif (isset($this->datas)) {
 					// filter ข้อมูลจาก array
-					$this->datas = \Arraytool::filter($this->datas, $search);
+					$this->datas = \ArrayTool::filter($this->datas, $search);
 				}
 			}
 			$form[] = '&nbsp;<fieldset class=search>';
@@ -363,7 +363,7 @@ class Datatable
 			$this->perPage = 0;
 		} else {
 			// หน้าที่เลือก
-			$page = max(1, \Input::request('page', 1));
+			$page = max(1, \Input::request('page', 1)->toInt());
 			// ตรวจสอบหน้าที่เลือกสูงสุด
 			$totalpage = round($count / $this->perPage);
 			$totalpage += ($totalpage * $this->perPage < $count) ? 1 : 0;
@@ -381,16 +381,16 @@ class Datatable
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = \Input::request('sort', $this->sort);
+		$this->sort = \Input::request('sort', $this->sort)->toString();
 		if (!empty($this->sort)) {
 			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = \Input::request('sort_type', $this->sortType);
+				$this->sortType = \Input::request('sort_type', $this->sortType)->toString();
 				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
 				if (isset($this->model)) {
 					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
 					$query->order($sort.' '.$this->sortType);
 				} elseif (isset($this->datas)) {
-					\Arraytool::sort($this->datas, $this->sort, $this->sortType == 'asc');
+					\ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
 				}
 			}
 		}

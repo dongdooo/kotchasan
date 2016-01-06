@@ -200,7 +200,7 @@ class QueryBuilder extends Query
 		$ret = $this->buildJoin($table, $type, $on);
 		if (is_array($ret)) {
 			$this->sqls['join'][] = $ret[0];
-			$this->values = \Arraytool::replace($this->values, $ret[1]);
+			$this->values = \ArrayTool::replace($this->values, $ret[1]);
 		} else {
 			$this->sqls['join'][] = $ret;
 		}
@@ -376,7 +376,7 @@ class QueryBuilder extends Query
 		$ret = $this->buildWhere($condition, $oprator, $id);
 		if (is_array($ret)) {
 			$this->sqls['where'] = $ret[0];
-			$this->values = \Arraytool::replace($this->values, $ret[1]);
+			$this->values = \ArrayTool::replace($this->values, $ret[1]);
 		} else {
 			$this->sqls['where'] = $ret;
 		}

@@ -415,7 +415,7 @@ abstract class Query extends \KBase
 					$ret = $this->whereValue($item);
 					if (is_array($ret)) {
 						$qs[] = $ret[0];
-						$ps = \Arraytool::replace($ps, $ret[1]);
+						$ps = \ArrayTool::replace($ps, $ret[1]);
 					} else {
 						$qs[] = $ret;
 					}
@@ -458,7 +458,7 @@ abstract class Query extends \KBase
 				foreach ($condition as $item) {
 					$ret = $this->buildWhereValues($item, $oprator, $id);
 					$qs[] = $ret[0];
-					$values = \Arraytool::replace($values, $ret[1]);
+					$values = \ArrayTool::replace($values, $ret[1]);
 				}
 				$condition = implode(' '.$oprator.' ', $qs);
 			} elseif (strpos($condition[0], '(') !== false) {

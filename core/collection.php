@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/collection.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -16,16 +16,16 @@
 class Collection implements Countable, IteratorAggregate, ArrayAccess
 {
 	/**
-	 * ตัวแปรเก็บ properties ของคลาส
+	 * ตัวแปรเก็บสมาชิกของคลาส
 	 *
-	 * @var Object
+	 * @var array
 	 */
 	private $datas = array();
 
 	/**
 	 * Create new collection
 	 *
-	 * @param array $items
+	 * @param array $items สมาชิกเริ่มต้นของ Collection
 	 */
 	public function __construct(array $items = array())
 	{

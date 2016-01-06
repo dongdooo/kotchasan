@@ -102,12 +102,12 @@ class View extends KBase
 		$this->contents['/{SKIN}/'] = \Template::$src;
 		$this->contents['/{ELAPSED}/'] = sprintf('%.3f', microtime(true) - BEGIN_TIME);
 		$this->contents['/{USAGE}/'] = memory_get_peak_usage() / 1024;
-		$this->contents['/{QURIES}/'] = Core\Database\Driver::$query_count;
+		$this->contents['/{QURIES}/'] = Core\Database\Driver::queryCount();
 		$this->contents['/{VERSION}/'] = VERSION;
 		$this->contents['/{LANGUAGE}/'] = \Language::name();
 		$this->contents['/^[\s\t]+/m'] = '';
 		// แทนที่ลงใน index.html
-		echo \Text::pregReplace(array_keys($this->contents), array_values($this->contents), \Template::load('', '', 'index'));
+		echo \Template::pregReplace(array_keys($this->contents), array_values($this->contents), \Template::load('', '', 'index'));
 	}
 
 	/**

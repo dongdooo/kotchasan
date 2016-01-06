@@ -179,16 +179,16 @@ abstract class Driver extends Query
 	 *
 	 * @param array $sqls
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @return bool|array
+	 * @return mixed
 	 */
 	public function execQuery($sqls, $values = array())
 	{
 		$sql = $this->makeQuery($sqls);
 		if (isset($sqls['values'])) {
-			$values = \Arraytool::replace($sqls['values'], $values);
+			$values = \ArrayTool::replace($sqls['values'], $values);
 		}
 		if ($sqls['function'] == 'customQuery') {
-			$result = $this->customQuery($sql, true, $values);
+			$result = $this->customQuery($sql, false, $values);
 		} else {
 			$result = $this->query($sql, $values);
 		}
@@ -220,12 +220,12 @@ abstract class Driver extends Query
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
-	 * @return array|bool พบคืนค่ารายการที่พบเพียงรายการเดียว ไม่พบคืนค่า false
+	 * @return object|bool คืนค่า object ของข้อมูล ไม่พบคืนค่า false
 	 */
 	public function first($table, $condition)
 	{
 		$result = $this->select($table, $condition, array(), 1);
-		return sizeof($result) == 1 ? $result[0] : false;
+		return sizeof($result) == 1 ? (object)$result[0] : false;
 	}
 
 	/**
@@ -261,7 +261,7 @@ abstract class Driver extends Query
 	{
 		if (DB_LOG == true) {
 			$datas = array();
-			$datas[] = $type.' : <em>'.\Text::replaceAll($sql, $values).'</em>';
+			$datas[] = $type.' : <em>'.\KString::replace($sql, $values).'</em>';
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
 					$f = $item['function'];

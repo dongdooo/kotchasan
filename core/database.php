@@ -26,13 +26,11 @@ final class Database
 	 * Create Database Connection
 	 *
 	 * @param string $name ชื่อของการเชื่อมต่อกำหนดค่าใน config
-	 * @return Core\Database\Driver
+	 * @return \static
 	 */
 	public static function create($name = 'mysql')
 	{
-		if (isset(self::$instances[$name])) {
-			$conn = self::$instances[$name];
-		} else {
+		if (empty(self::$instances[$name])) {
 			$param = (object)array(
 				'settings' => (object)array(
 					'char_set' => 'utf8',
@@ -70,10 +68,8 @@ final class Database
 				$class = 'PdoMysqlDriver';
 			}
 			include ROOT_PATH.'core/database/'.strtolower($class).'.php';
-			$db = new $class($name);
-			$conn = $db->connect($param);
-			self::$instances[$name] = $conn;
+			self::$instances[$name] = (new $class($name))->connect($param);
 		}
-		return $conn;
+		return self::$instances[$name];
 	}
 }

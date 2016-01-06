@@ -47,7 +47,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = \Text::toEditor($value);
+				$innerHTML = \KString::toEditor($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}

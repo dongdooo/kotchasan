@@ -93,8 +93,34 @@ class Template
 			$this->items[] = "</div>\n<div class=row>";
 			$this->num = $this->cols;
 		}
-		$this->items[] = \Text::pregReplace(array_keys($datas), array_values($datas), $this->skin);
+		$this->items[] = self::pregReplace(array_keys($datas), array_values($datas), $this->skin);
 		$this->num--;
+	}
+
+	/**
+	 * ฟังก์ชั่น preg_replace
+	 *
+	 * @param array $patt คีย์ใน template
+	 * @param array $replace ข้อความที่จะถูกแทนที่ลงในคีย์
+	 * @param string $skin template
+	 * @return string คืนค่า HTML template
+	 */
+	public static function pregReplace($patt, $replace, $skin)
+	{
+		if (!is_array($patt)) {
+			$patt = array($patt);
+		}
+		if (!is_array($replace)) {
+			$replace = array($replace);
+		}
+		foreach ($patt AS $i => $item) {
+			if (preg_match('/(.*\/(.*?))[e](.*?)$/', $item, $patt) && preg_match('/^([\\\\a-z0-9]+)::([a-z0-9_\\\\]+).*/i', $replace[$i], $func)) {
+				$skin = preg_replace_callback($patt[1].$patt[3], array($func[1], $func[2]), $skin);
+			} else {
+				$skin = preg_replace($item, $replace[$i], $skin);
+			}
+		}
+		return $skin;
 	}
 
 	/**

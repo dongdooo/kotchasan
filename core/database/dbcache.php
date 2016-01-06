@@ -76,7 +76,7 @@ class DbCache
 	 */
 	public function get($sql, $values)
 	{
-		$this->item = $this->db_cache->getItem(\Text::replaceAll($sql, $values));
+		$this->item = $this->db_cache->getItem(\KString::replace($sql, $values));
 		return $this->item->isHit() ? $this->item->get() : false;
 	}
 

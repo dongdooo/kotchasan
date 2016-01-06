@@ -42,9 +42,9 @@ final class Language extends \KBase
 		// โฟลเดอร์ ภาษา
 		$language_folder = self::languageFolder();
 		// ภาษาที่เลือก
-		$lang = \Input::get('GET,COOKIE', 'lang,my_lang');
+		$lang = isset($_GET['lang']) ? $_GET['lang'] : (isset($_COOKIE['my_lang']) ? $_COOKIE['my_lang'] : '');
 		// ตรวจสอบภาษา ใช้ภาษาแรกที่เจอ
-		foreach (array_merge((array)$lang, self::$cfg->languages) as $item) {
+		foreach (\ArrayTool::replace(array($lang => $lang), self::$cfg->languages) as $item) {
 			if (!empty($item)) {
 				if (is_file($language_folder.$item.'.php')) {
 					$language = include $language_folder.$item.'.php';
@@ -185,7 +185,7 @@ final class Language extends \KBase
 		$datas = array();
 		$i = 0;
 		foreach ($languages as $key => $row) {
-			$datas[$i] = \Arraytool::replace(array('id' => $i, 'key' => $key), $row);
+			$datas[$i] = \ArrayTool::replace(array('id' => $i, 'key' => $key), $row);
 			$i++;
 		}
 		return $datas;

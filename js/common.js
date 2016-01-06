@@ -274,7 +274,7 @@ function showDebug() {
 	var _get = function () {
 		return 'action=get&t=' + t;
 	};
-	new GAjax().autoupdate('index/controller/debug/action.php', 5, _get, function (xhr) {
+	new GAjax().autoupdate('index.php/index/controller/debug/action', 5, _get, function (xhr) {
 		var patt = /^([0-9]+)\|(.*)/;
 		var content = $E('debug_layer');
 		forEach(xhr.responseText.split('\n'), function () {
@@ -296,7 +296,7 @@ function showDebug() {
 	});
 	$G('debug_clear').addEvent('click', function () {
 		if (confirm(trans('You want to delete ?'))) {
-			send('index/controller/debug/action.php', 'action=clear', function (xhr) {
+			send('index.php/index/controller/debug/action', 'action=clear', function (xhr) {
 				$E('debug_layer').innerHTML = xhr.responseText;
 			});
 		}

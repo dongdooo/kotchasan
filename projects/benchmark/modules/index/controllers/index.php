@@ -20,7 +20,7 @@ class Controller extends \Controller
 
 	public function index()
 	{
-		$action = \Input::get('action', 'hello');
+		$action = \Input::get('action', 'hello')->text();
 		$this->$action();
 	}
 

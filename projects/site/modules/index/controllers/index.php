@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource index/controllers/index.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -25,19 +25,19 @@ class Controller extends \Controller
 	{
 		\Template::inint(self::$cfg->skin);
 		// ถ้าไม่มีโมดูลเลือกหน้า home
-		$module = \Input::get('module', 'home');
+		$module = \Input::get('module', 'home')->toString();
 		// สร้าง View
 		$view = $this->createView('Index\Index\View');
 		// template default
 		$view->setContents(array(
 			// menu
-			'MENU' => \createClass('Index\Menu\Controller')->render($module),
+			'/{MENU}/' => \createClass('Index\Menu\Controller')->render($module),
 			// web title
-			'TITLE' => self::$cfg->web_title,
+			'/{TITLE}/' => self::$cfg->web_title,
 			// โหลดหน้าที่เลือก (html)
-			'CONTENT' => \Template::load('', '', $module),
+			'/{CONTENT}/' => \Template::load('', '', $module),
 			// แสดงเวลาปัจจุบัน
-			'TIME' => \Date::format()
+			'/{TIME}/' => \Date::format()
 		));
 		// output เป็น HTML
 		$view->renderHTML();

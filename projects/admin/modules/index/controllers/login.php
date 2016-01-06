@@ -86,7 +86,7 @@ class Controller extends \Controller
 		// checkbox
 		$group->add('checkbox', array(
 			'id' => 'bool_remember',
-			'checked' => \Input::cookie('login_remember') == 1 ? true : false,
+			'checked' => \Input::cookie('login_remember')->toBoolean(),
 			'value' => 1,
 			'label' => \Language::get('Remember me'),
 			'labelClass' => 'td right'

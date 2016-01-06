@@ -39,7 +39,6 @@ class Controller extends \Controller
 		$model->updateAll(array('created_at' => \Date::mktimeToSqlDateTime()));
 		// อ่านจำนวนข้อมูลทั้งหมดในตาราง
 		echo 'All '.$model->count().' records.<br>';
-
 		// สุ่ม record มาแก้ไข
 		for ($i = 0; $i < 5; $i++) {
 			$rnd = rand(1, 10000);

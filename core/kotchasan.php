@@ -53,7 +53,7 @@ class Kotchasan extends KBase
 		/* time zone default Thailand */
 		@date_default_timezone_set(self::$cfg->timezone);
 		/* remove slashes (/) ตัวแปร GLOBAL  */
-		self::normalizeRequest();
+		Input::normalizeRequest();
 	}
 
 	/**
@@ -75,46 +75,6 @@ class Kotchasan extends KBase
 	public function run()
 	{
 		return \createClass(self::$defaultRouter)->inint(self::$defaultController);
-
-	}
-
-	/**
-	 * remove slashes (/) ตัวแปร GLOBAL
-	 */
-	public static function normalizeRequest()
-	{
-		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
-			if (!empty($_GET)) {
-				$_GET = self::stripSlashes($_GET);
-			}
-			if (!empty($_POST)) {
-				$_POST = self::stripSlashes($_POST);
-			}
-			if (!empty($_REQUEST)) {
-				$_REQUEST = self::stripSlashes($_REQUEST);
-			}
-		}
-	}
-
-	/**
-	 * remove slashes (/)
-	 *
-	 * @param array|string $data
-	 * @return array|string
-	 */
-	public static function stripSlashes(&$data)
-	{
-		if (is_array($data)) {
-			if (sizeof($data) == 0) {
-				return $data;
-			} else {
-				$keys = array_map('stripslashes', array_keys($data));
-				$data = array_combine($keys, array_values($data));
-				return array_map(array(__CLASS__, 'stripSlashes'), $data);
-			}
-		} else {
-			return stripslashes($data);
-		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource core/email.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -36,7 +36,7 @@ class Email extends Model
 			':email_id' => (int)$id,
 			':language' => \Language::name()
 		);
-		$email = $model->db->customQuery($sql, true, $where, $model->cache);
+		$email = $model->db()->cacheOn()->customQuery($sql, true, $where);
 		if (empty($email)) {
 			return \Language::get('email template not found');
 		} else {
@@ -50,8 +50,8 @@ class Email extends Model
 				'/%ADMINEMAIL%/' => $from,
 				'/%TIME%/' => \Date::format()
 			);
-			$replace = \Arraytool::replace($replace, $datas);
-			\Arraytool::extract($replace, $keys, $values);
+			$replace = \ArrayTool::replace($replace, $datas);
+			\ArrayTool::extract($replace, $keys, $values);
 			$msg = preg_replace($keys, $values, $email['detail']);
 			$subject = preg_replace($keys, $values, $email['subject']);
 			$to = explode(',', $to);

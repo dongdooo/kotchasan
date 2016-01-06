@@ -264,7 +264,7 @@ class Recordset extends Query implements \Iterator
 		$ret = $rs->buildJoin($table, $type, $on);
 		if (is_array($ret)) {
 			$this->sqls['join'][] = $ret[0];
-			$this->values = \Arraytool::replace($this->values, $ret[1]);
+			$this->values = \ArrayTool::replace($this->values, $ret[1]);
 		} else {
 			$this->sqls['join'][] = $ret;
 		}
@@ -329,7 +329,7 @@ class Recordset extends Query implements \Iterator
 		} elseif (empty($this->sqls['select'])) {
 			$sqls['select'] = '*';
 		}
-		$sqls = \Arraytool::replace($this->sqls, $sqls);
+		$sqls = \ArrayTool::replace($this->sqls, $sqls);
 		$sql = $this->db()->makeQuery($sqls);
 		$this->datas = $this->db()->customQuery($sql, true, $this->values);
 		if (empty($this->datas)) {
@@ -484,7 +484,7 @@ class Recordset extends Query implements \Iterator
 				$ret = $this->$func($param);
 				if (is_array($ret)) {
 					$this->sqls[$method] = $ret[0];
-					$this->values = \Arraytool::replace($this->values, $ret[1]);
+					$this->values = \ArrayTool::replace($this->values, $ret[1]);
 				} else {
 					$this->sqls[$method] = $ret;
 				}
@@ -616,7 +616,7 @@ class Recordset extends Query implements \Iterator
 		if ((is_string($where) && $where != '') || !empty($where)) {
 			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->model->getPrimarykey());
 			if (is_array($where)) {
-				$this->values = \Arraytool::replace($this->values, $where[1]);
+				$this->values = \ArrayTool::replace($this->values, $where[1]);
 				$where = $where[0];
 			}
 			$this->sqls['where'] = $where;

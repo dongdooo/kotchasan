@@ -30,10 +30,7 @@ class Model extends Query
 	 */
 	public function __construct()
 	{
-		if (!isset($this->db)) {
-			$this->db = Database::create($this->conn);
-			$this->cache = new Cache();
-		}
+		parent::__construct($this->conn);
 	}
 
 	/**
