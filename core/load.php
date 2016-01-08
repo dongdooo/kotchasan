@@ -148,7 +148,7 @@ function _error_handler($errno, $errstr, $errfile, $errline)
 		default:
 			$type = 'PHP Error';
 	}
-	\Logger::create()->error('<br>'.$type.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
+	\Core\Log\Logger::create()->error('<br>'.$type.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
 }
 
 /**
@@ -167,7 +167,7 @@ function _exception_handler($e)
 	} else {
 		$tract = next($tract);
 	}
-	\Logger::create()->error('<br>Exception : <em>'.$e->getMessage().'</em> in <b>'.$tract['file'].'</b> on line <b>'.$tract['line'].'</b>');
+	\Core\Log\Logger::create()->error('<br>Exception : <em>'.$e->getMessage().'</em> in <b>'.$tract['file'].'</b> on line <b>'.$tract['line'].'</b>');
 }
 if (DEBUG != 2) {
 	set_error_handler('_error_handler');

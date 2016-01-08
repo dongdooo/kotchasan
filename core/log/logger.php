@@ -1,13 +1,16 @@
 <?php
 /*
- * @filesource core/logger.php
+ * @filesource core/log/logger.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
+namespace Core\Log;
+
 use \Psr\Log\LoggerInterface;
 use \Psr\Log\LogLevel;
+use \Core\Log\Exception;
 
 /**
  * Kotchasan Logger Class (PSR-3)
@@ -103,7 +106,7 @@ class Logger implements LoggerInterface
 			fwrite($f, "\n".$message);
 			fclose($f);
 		} else {
-			echo sprintf('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.', 'logs/'.date('Y-m-d').'.php');
+			throw new Exception(sprintf('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.', 'logs/'.date('Y-m-d').'.php'));
 		}
 	}
 }
