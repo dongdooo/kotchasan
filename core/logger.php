@@ -59,8 +59,9 @@ class Logger implements LoggerInterface
 	}
 
 	/**
-	 * สร้าง Application สามารถเรียกใช้ได้ครั้งเดียวเท่านั้น
+	 * create Logger instance (Singleton)
 	 *
+	 * @param array $options
 	 * @return \static
 	 */
 	public static function create(array $options = array())
