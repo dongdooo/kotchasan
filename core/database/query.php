@@ -25,6 +25,12 @@ abstract class Query extends \KBase
 	 * @var Driver
 	 */
 	private $db;
+	/**
+	 * ตัวแปรเก็บคำสั่ง SQL
+	 *
+	 * @var array
+	 */
+	protected $sqls;
 
 	/**
 	 * Class constructor

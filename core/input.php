@@ -84,7 +84,19 @@ class Input
 	 */
 	public static function files()
 	{
-		print_r($_FILES);
+		$files = array();
+		foreach ($_FILES as $name => $properties) {
+			foreach ($properties as $prop => $items) {
+				if (is_array($items)) {
+					foreach ($items as $key => $value) {
+						$files[$name][$key][$prop] = $value;
+					}
+				} else {
+					$files[$name][$prop] = $items;
+				}
+			}
+		}
+		return $files;
 	}
 
 	/**
@@ -117,6 +129,7 @@ class Input
 				} elseif (isset($_GET[$name])) {
 					$result = $_GET[$name];
 				} elseif (isset($_COOKIE[$name])) {
+					$var = null;
 					$result = $_COOKIE[$name];
 				} else {
 					$result = null;
@@ -131,6 +144,7 @@ class Input
 			switch ($var) {
 				case 'GET':
 				case 'POST':
+				case 'REQUEST':
 					return is_array($result) ? new InputItems($result) : new InputItem($result);
 					break;
 				default:

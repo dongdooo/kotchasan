@@ -158,7 +158,7 @@ class Form
 				if (isset($dataPreview)) {
 					$input .= '<div class=usericon><span><img src="'.$previewSrc.'" alt="Image preview" id='.$dataPreview.'></span></div>';
 				}
-				if (isset($label)) {
+				if (isset($label) && isset($id)) {
 					$input .= '<label for="'.$id.'">'.$label.'</label>';
 				}
 				$input .= '<span'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.$element.'</span>';

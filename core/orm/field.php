@@ -8,7 +8,7 @@
 
 namespace Core\Orm;
 
-use Core\Orm\Recordset;
+use \Core\Orm\Recordset;
 
 /**
  * ORM Field base class

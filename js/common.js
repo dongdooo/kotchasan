@@ -269,39 +269,6 @@ function replaceURL(keys, values, url) {
 	u += '?' + us.join('&');
 	return u;
 }
-function showDebug() {
-	var t = 0;
-	var _get = function () {
-		return 'action=get&t=' + t;
-	};
-	new GAjax().autoupdate('index.php/index/controller/debug/action', 5, _get, function (xhr) {
-		var patt = /^([0-9]+)\|(.*)/;
-		var content = $E('debug_layer');
-		forEach(xhr.responseText.split('\n'), function () {
-			var line = patt.exec(this);
-			if (line) {
-				t = floatval(line[1]);
-				var d = mktimeToDate(t);
-				var div = document.createElement('div');
-				var time = document.createElement('time');
-				time.innerHTML = d.dateFormat('d-m-y H:i:s');
-				div.appendChild(time);
-				var p = document.createElement('p');
-				p.innerHTML = line[2];
-				div.appendChild(p);
-				content.appendChild(div);
-				content.scrollTop = content.scrollHeight;
-			}
-		});
-	});
-	$G('debug_clear').addEvent('click', function () {
-		if (confirm(trans('You want to delete ?'))) {
-			send('index.php/index/controller/debug/action', 'action=clear', function (xhr) {
-				$E('debug_layer').innerHTML = xhr.responseText;
-			});
-		}
-	});
-}
 function setSelect(id, value) {
 	forEach($E(id).getElementsByTagName('input'), function () {
 		if (this.type.toLowerCase() == 'checkbox') {

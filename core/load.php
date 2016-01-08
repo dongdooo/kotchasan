@@ -116,44 +116,6 @@ function createClass($className)
 }
 
 /**
- * บันทึก log
- *
- * @param string $erargs
- * @param string $errstr
- * @param string $errfile
- * @param int $errline
- */
-function log_message($erargs, $errstr, $errfile, $errline)
-{
-	// บันทึกข้อความ error ลง log file
-	save_log('<br>'.$erargs.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
-}
-
-/**
- * บันทึก log file รายวัน
- *
- * @param string $message
- */
-function save_log($message)
-{
-	if (\File::makeDirectory(ROOT_PATH.DATA_FOLDER.'logs/')) {
-		// ไฟล์ debug
-		$debug = ROOT_PATH.DATA_FOLDER.'logs/'.date('Y-m-d').'.php';
-		// save
-		if (file_exists($debug)) {
-			$f = fopen($debug, 'a');
-		} else {
-			$f = fopen($debug, 'w');
-			fwrite($f, '<'.'?php exit() ?'.'>');
-		}
-		fwrite($f, "\n".time().'|'.preg_replace('/[\s\n\t\r]+/', ' ', $message));
-		fclose($f);
-	} else {
-		echo sprintf(\Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'), 'logs/'.date('Y-m-d').'.php');
-	}
-}
-
-/**
  * custom error handler
  * ถ้าอยู่ใน mode debug จะแสดง error ถ้าไม่จะเขียนลง log อย่างเดียว
  *
@@ -186,12 +148,11 @@ function _error_handler($errno, $errstr, $errfile, $errline)
 		default:
 			$type = 'PHP Error';
 	}
-	log_message($type, $errstr, $errfile, $errline);
+	\Logger::create()->error('<br>'.$type.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
 }
 
 /**
  * custom exception handler
- * ถ้าอยู่ใน mode debug จะแสดง error ถ้าไม่จะเขียนลง log อย่างเดียว
  *
  * @param Exception $e
  */
@@ -206,7 +167,7 @@ function _exception_handler($e)
 	} else {
 		$tract = next($tract);
 	}
-	log_message('Exception', $e->getMessage(), $tract['file'], $tract['line']);
+	\Logger::create()->error('<br>Exception : <em>'.$e->getMessage().'</em> in <b>'.$tract['file'].'</b> on line <b>'.$tract['line'].'</b>');
 }
 if (DEBUG != 2) {
 	set_error_handler('_error_handler');

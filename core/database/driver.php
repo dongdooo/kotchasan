@@ -273,7 +273,7 @@ abstract class Driver extends Query
 			}
 			if (!empty($datas)) {
 				// บันทึก log
-				save_log(implode('', $datas));
+				\Logger::create()->info(implode('', $datas));
 			}
 		}
 	}
@@ -288,7 +288,8 @@ abstract class Driver extends Query
 	{
 		$trace = debug_backtrace();
 		$trace = next($trace);
-		log_message($sql, $message, $trace['file'], $trace['line']);
+		// บันทึก error
+		\Logger::create()->error('<br>'.$sql.' : <em>'.$message.'</em> in <b>'.$trace['file'].'</b> on line <b>'.$trace['line'].'</b>');
 	}
 
 	/**

@@ -8,7 +8,7 @@
 
 namespace Core\Cache;
 
-use Psr\Cache\CacheItemInterface;
+use \Psr\Cache\CacheItemInterface;
 
 /**
  * Cache Item

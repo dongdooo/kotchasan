@@ -8,10 +8,10 @@
 
 namespace Core\Cache;
 
-use Psr\Cache\CacheItemInterface;
-use Core\Cache\CacheItem as Item;
-use Core\Cache\Cache;
-use Core\Cache\Exception;
+use \Psr\Cache\CacheItemInterface;
+use \Core\Cache\CacheItem as Item;
+use \Core\Cache\Cache;
+use \Core\Cache\Exception;
 
 /**
  * APC cache driver

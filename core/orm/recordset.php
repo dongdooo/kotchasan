@@ -8,11 +8,11 @@
 
 namespace Core\Orm;
 
-use Core\Database\Query;
-use Core\Database\Schema;
-use Core\Database\DbCache as Cache;
-use Core\Cache\CacheItem;
-use Core\Orm\Field;
+use \Core\Database\Query;
+use \Core\Database\Schema;
+use \Core\Database\DbCache as Cache;
+use \Core\Cache\CacheItem;
+use \Core\Orm\Field;
 
 /**
  * ORM model base class
@@ -47,12 +47,6 @@ class Recordset extends Query implements \Iterator
 	 * @var int
 	 */
 	private $perPage;
-	/**
-	 * ตัวแปรเก็บคำสั่ง SQL
-	 *
-	 * @var array
-	 */
-	private $sqls;
 	/**
 	 * ชื่อรองของตาราง
 	 *
@@ -105,7 +99,7 @@ class Recordset extends Query implements \Iterator
 	 * SELECT ....
 	 *
 	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
-	 * @return array|Recordset
+	 * @return array|\static
 	 */
 	public function all($fields = null)
 	{
@@ -177,7 +171,7 @@ class Recordset extends Query implements \Iterator
 	}
 
 	/**
-	 * นับจำนวน record ใช้สำหรับการแบ่งหน้า
+	 * สอบถามจำนวน record ใช้สำหรับการแบ่งหน้า
 	 *
 	 * @return int
 	 */
@@ -228,7 +222,7 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @param int $start
 	 * @param int $end
-	 * @return array|\Core\Orm\Recordset
+	 * @return array|\static
 	 */
 	private function doExecute($start, $end)
 	{
@@ -276,7 +270,7 @@ class Recordset extends Query implements \Iterator
 	 * SELECT ....
 	 *
 	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
-	 * @return array|\Core\Orm\Recordset
+	 * @return array|\static
 	 */
 	public function execute($fields = null)
 	{
@@ -295,9 +289,9 @@ class Recordset extends Query implements \Iterator
 	}
 
 	/**
-	 * เรียกข้อมูลที่ $primaryKey
+	 * สอบถามข้อมูลที่ $primaryKey คืนค่าข้อมูลรายการเดียว
 	 *
-	 * @param int $id
+	 * @param int $id รายการที่ค้นหา
 	 * @return Field
 	 */
 	public function find($id)
@@ -431,7 +425,7 @@ class Recordset extends Query implements \Iterator
 	 * @param string $model model class ของตารางที่ join
 	 * @param string $type เช่น LEFT, RIGHT, INNER...
 	 * @param mixed $on where condition สำหรับการ join
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public function join($model, $type, $on)
 	{
@@ -442,7 +436,7 @@ class Recordset extends Query implements \Iterator
 	 * สร้าง query เรียงลำดับ
 	 *
 	 * @param mixed $sort array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public function order($sorts)
 	{
@@ -518,7 +512,7 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @param int $start ข้อมูลเริ่มต้น
 	 * @param int $count จำนวนผลลัพธ์ที่ต้องการ
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public function take()
 	{
@@ -537,7 +531,7 @@ class Recordset extends Query implements \Iterator
 	 * คืนค่าข้อมูลเป็น Array
 	 * ฟังก์ชั่นนี้ใช้เรียกก่อนการสอบถามข้อมูล
 	 *
-	 * @return \Core\Orm\Recordset
+	 * @return \static
 	 */
 	public function toArray()
 	{
@@ -625,6 +619,15 @@ class Recordset extends Query implements \Iterator
 	}
 
 	/**
+	 * สอบถามจำนวน record ทั้งหมดที่ query แล้ว
+	 *
+	 * @return int
+	 */
+	public function recordCount()
+	{
+		return sizeof($this->datas);
+	}
+	/**
 	 * Magic method สำหรับการอ่านรายการ Model
 	 *
 	 * @param (int) $id
@@ -663,7 +666,7 @@ class Recordset extends Query implements \Iterator
 	 * กำหนดค่า Model ลงใน recordset
 	 *
 	 * @param (int) $id
-	 * @param array|Core\Orm\Field $value
+	 * @param array|Field $value
 	 */
 	public function set($id, $value)
 	{

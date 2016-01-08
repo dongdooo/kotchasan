@@ -568,7 +568,7 @@ class Datatable
 					}
 					if (!empty($buttons)) {
 						$module_id = isset($items['module_id']) ? $items['module_id'] : 0;
-						$row[] = str_replace(array(':id', ':module_id'), array($id, $module_id), $this->td($id, $i, array('class' => 'center'), implode('', $buttons), ''));
+						$row[] = str_replace(array(':id', ':module_id'), array($id, $module_id), $this->td($id, $i, array('class' => 'buttons'), implode('', $buttons), ''));
 					}
 				}
 				if ($this->pmButton) {

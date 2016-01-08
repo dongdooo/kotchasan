@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource index/controllers/index.php
  * @link http://www.kotchasan.com/
  * @copyright 2015 Goragod.com
@@ -96,9 +96,9 @@ class Controller extends \Controller
 		for ($i = 0; $i < 2; $i++) {
 			$rnd = mt_rand(1, 10000);
 			$result = $db->customQuery("SELECT * FROM  `world` WHERE `id`=".$rnd);
-			$db->query("UPDATE `world` SET `name`='Hello World!' WHERE `id`=".$result[0]['id']);
+			$db->query("UPDATE `world` SET `name`='Hello World!' WHERE `id`=".$result[0]->id);
 		}
-		$result = $db->customQuery("SELECT * FROM  `world` WHERE `id`=".$result[0]['id']);
-		echo $result[0]['name'];
+		$result = $db->customQuery("SELECT * FROM  `world` WHERE `id`=".$result[0]->id);
+		echo $result[0]->name;
 	}
 }
