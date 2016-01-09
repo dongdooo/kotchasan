@@ -341,12 +341,12 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @return array
 	 */
-	public function getFileds()
+	public function getFields()
 	{
 		if (empty($this->datas)) {
 			$this->first();
 		}
-		return $this->db()->getFileds();
+		return $this->db()->getFields();
 	}
 
 	/**

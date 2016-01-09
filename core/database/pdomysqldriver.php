@@ -131,7 +131,7 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @return array
 	 */
-	public function getFileds()
+	public function getFields()
 	{
 		$filed_list = array();
 		for ($i = 0, $c = $this->fieldCount(); $i < $c; $i++) {
@@ -140,7 +140,6 @@ class PdoMysqlDriver extends Driver
 				$filed_list[$result['name']] = $result;
 			}
 		}
-		$this->log(__FUNCTION__, var_export($this->result_id, true));
 		return $filed_list;
 	}
 

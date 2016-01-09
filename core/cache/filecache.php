@@ -44,7 +44,7 @@ class FileCache extends Cache
 		//  folder cache
 		$dir = ROOT_PATH.DATA_FOLDER.'cache/';
 		if (!\File::makeDirectory($dir)) {
-			throw new Exception('Folder '.DATA_FOLDER.'cache/ can not be created.');
+			throw new Exception('Folder '.DATA_FOLDER.'cache/ cannot be created.');
 		}
 		$this->cache_dir = $dir;
 		$this->cache_expire = self::$cfg->get('cache_expire', 5);

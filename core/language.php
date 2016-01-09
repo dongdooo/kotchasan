@@ -269,7 +269,7 @@ final class Language extends \KBase
 				fwrite($f, $content);
 				fclose($f);
 			} else {
-				return str_replace('%s', $lang.'.'.$type, \Language::get('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.'));
+				return str_replace('%s', $lang.'.'.$type, \Language::get('The file or folder %s cannot be created or is read-only, please create or adjust the chmod it to 775 or 777.'));
 			}
 		}
 		return '';

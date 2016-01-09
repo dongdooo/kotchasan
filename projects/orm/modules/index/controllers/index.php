@@ -25,7 +25,7 @@ class Controller extends \Controller
 	{
 		// อ่านรายชื่อฟิลด์ของตาราง
 		$model = Recordset::create('Index\World\Model');
-		$fields = $model->getFileds();
+		$fields = $model->getFields();
 		echo implode(', ', array_keys($fields)).'<br>';
 		// ลบข้อมูลทั้งตาราง
 		$model->truncate();
@@ -57,7 +57,7 @@ class Controller extends \Controller
 			$item->delete();
 		}
 		// อ่านรายชื่อฟิลด์ของ query
-		$fields = $model->getFileds();
+		$fields = $model->getFields();
 		echo implode(', ', array_keys($fields)).'<br>';
 		// อ่านจำนวนข้อมูลที่เหลือ
 		echo 'Remain '.Recordset::create('Index\World\Model')->count().' records.<br>';

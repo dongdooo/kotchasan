@@ -8,9 +8,10 @@
 
 namespace Core\Database;
 
-use Core\Database\QueryBuilder;
-use Core\Database\Schema;
+use \Core\Database\QueryBuilder;
+use \Core\Database\Schema;
 use \Core\Database\DbCache as Cache;
+use \Core\Log\Logger;
 
 /**
  * Kotchasan Database driver Class (base class)
@@ -260,21 +261,17 @@ abstract class Driver extends Query
 	protected function log($type, $sql, $values = array())
 	{
 		if (DB_LOG == true) {
-			$datas = array();
-			$datas[] = $type.' : <em>'.\KString::replace($sql, $values).'</em>';
+			$datas = array('<b>'.$type.' :</b> '.\KString::replace($sql, $values));
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
-					$f = $item['function'];
-					if ($f == 'all' || $f == 'first' || $f == 'count' || $f == 'save' || $f == 'find' || $f == 'execute') {
-						$datas[] = '<br>['.$a.'] <b>'.$f.'</b> in <b>'.$item['file'].'</b> line <b>'.$item['line'].'</b>';
+					if ($item['function'] == 'all' || $item['function'] == 'first' || $item['function'] == 'count' || $item['function'] == 'save' || $item['function'] == 'find' || $item['function'] == 'execute') {
+						$datas[] = '<br>['.$a.'] <b>'.$item['function'].'</b> in <b>'.$item['file'].'</b> line <b>'.$item['line'].'</b>';
 						break;
 					}
 				}
 			}
-			if (!empty($datas)) {
-				// บันทึก log
-				\Logger::create()->info(implode('', $datas));
-			}
+			// บันทึก log
+			Logger::create()->info(implode('', $datas));
 		}
 	}
 
@@ -289,7 +286,7 @@ abstract class Driver extends Query
 		$trace = debug_backtrace();
 		$trace = next($trace);
 		// บันทึก error
-		\Logger::create()->error('<br>'.$sql.' : <em>'.$message.'</em> in <b>'.$trace['file'].'</b> on line <b>'.$trace['line'].'</b>');
+		Logger::create()->error($sql.' : <em>'.$message.'</em> in <b>'.$trace['file'].'</b> on line <b>'.$trace['line'].'</b>');
 	}
 
 	/**
@@ -364,7 +361,7 @@ abstract class Driver extends Query
 	 *
 	 * @return array
 	 */
-	abstract public function getFileds();
+	abstract public function getFields();
 
 	/**
 	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง

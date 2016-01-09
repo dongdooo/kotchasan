@@ -153,4 +153,18 @@ class ArrayTool
 		}
 		return $a;
 	}
+
+	/**
+	 * แปลงข้อความ serialize เป็นแอเรย์
+	 *
+	 * @param string $str serialize
+	 * @return array
+	 */
+	public static function unserialize($str)
+	{
+		if ($str != '') {
+			$datas = @unserialize($str);
+		}
+		return isset($datas) && is_array($datas) ? $datas : array();
+	}
 }

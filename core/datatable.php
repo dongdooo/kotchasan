@@ -231,7 +231,7 @@ class Datatable
 			// ฟิลด์ที่กำหนด (หากแตกต่างจาก Model)
 			$this->rs->first($this->fields);
 			// อ่านคอลัมน์ของตาราง
-			$this->columns = $this->rs->getFileds();
+			$this->columns = $this->rs->getFields();
 		} elseif (isset($this->datas)) {
 			// อ่านคอลัมน์จากข้อมูลเราการแรก
 			$this->columns = array();

@@ -32,8 +32,10 @@ class Logger implements LoggerInterface
 	 * @var array
 	 */
 	protected $options = array(
-		'dateFormat' => 'Y-m-d G:i:s',
-		'logFormat' => '[%datetime%] %level%: %message% %context%'
+		'dateFormat' => 'Y-m-d H:i:s',
+		'logFormat' => '[{datetime}] {level}: {message} {context}',
+		'logFilePath' => ROOT_PATH.DATA_FOLDER.'logs/',
+		'extension' => 'php'
 	);
 	/**
 	 * Log Levels
@@ -84,29 +86,45 @@ class Logger implements LoggerInterface
 	 */
 	public function log($level, $message, array $context = array())
 	{
-		if (\File::makeDirectory(ROOT_PATH.DATA_FOLDER.'logs/')) {
-			// save log
-			$file = ROOT_PATH.DATA_FOLDER.'logs/'.date('Y-m-d').'.php';
+		if (\File::makeDirectory($this->options['logFilePath'])) {
+			// ไฟล์ log
+			switch ($level) {
+				case LogLevel::DEBUG:
+				case LogLevel::INFO:
+				case LogLevel::ALERT:
+					$file = $this->options['logFilePath'].date('Y-m-d').'.'.$this->options['extension'];
+					break;
+				default:
+					$file = $this->options['logFilePath'].'error_log.'.$this->options['extension'];
+					break;
+			}
+			// save
 			if (file_exists($file)) {
-				$f = fopen($file, 'a');
+				$f = @fopen($file, 'a');
 			} else {
-				$f = fopen($file, 'w');
-				fwrite($f, '<'.'?php exit() ?'.'>');
+				$f = @fopen($file, 'w');
+				if ($f && $this->options['extension'] == 'php') {
+					fwrite($f, '<'.'?php exit() ?'.'>');
+				}
 			}
-			$patt = array(
-				'datetime' => date($this->options['dateFormat'], time()),
-				'level' => isset($this->logLevels[$level]) ? strtoupper($level) : 'UNKNOW',
-				'message' => preg_replace('/[\s\n\t\r]+/', ' ', $message),
-				'context' => empty($context) ? '' : json_encode($context)
-			);
-			$message = $this->options['logFormat'];
-			foreach ($patt as $key => $value) {
-				$message = str_replace('%'.$key.'%', $value, $message);
+			if ($f) {
+				$patt = array(
+					'datetime' => date($this->options['dateFormat'], time()),
+					'level' => isset($this->logLevels[$level]) ? strtoupper($level) : 'UNKNOW',
+					'message' => $message,
+					'context' => empty($context) ? '' : json_encode($context)
+				);
+				$message = $this->options['logFormat'];
+				foreach ($patt as $key => $value) {
+					$message = str_replace('{'.$key.'}', $value, $message);
+				}
+				fwrite($f, "\n".preg_replace('/[\s\n\t\r]+/', ' ', $message));
+				fclose($f);
+			} else {
+				echo \Language::get('Log file cannot be created or is read-only.');
 			}
-			fwrite($f, "\n".$message);
-			fclose($f);
 		} else {
-			throw new Exception(sprintf('The file or folder %s can not be created or is read-only, please create or adjust the chmod it to 775 or 777.', 'logs/'.date('Y-m-d').'.php'));
+			printf(\Language::get('Directory %s cannot be created or is read-only.'), 'logs/');
 		}
 	}
 }
