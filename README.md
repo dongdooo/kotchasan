@@ -32,6 +32,6 @@
 โค้ดตัวอย่างทั้งหมดอยู่ในโฟลเดอร์ projects/ ถ้าต้องการทดสอบลองเรียกได้ในนั้น
 ส่วนโปรเจ็ค orm มีการเรียกใช้ฐานข้อมูลร่วมด้วย ต้องกำหนดค่าฐานข้อมูลที่ settings/database.php ให้ถูกก่อน
 และต้องสร้างตารางฐานข้อมูลด้วย ตามใน modules/index/models/world.php
-* http://localhost/kotchasan/projects/welcome/ ตัวอย่างการใช้งานอย่างง่าย
-* http://localhost/kotchasan/projects/site/ สร้างเว็บไซต์ด้วย template และมีเมนู แบบง่ายๆ
-* http://localhost/kotchasan/projects/orm/ ตัวอย่างการใช้งานฐานข้อมูล (ORM)
+* http://www.kotchasan.com/projects/welcome/ ตัวอย่างการใช้งานอย่างง่าย
+* http://www.kotchasan.com/projects/site/ สร้างเว็บไซต์ด้วย template และมีเมนู แบบง่ายๆ
+* http://www.kotchasan.com/projects/orm/ ตัวอย่างการใช้งานฐานข้อมูล (ORM)
