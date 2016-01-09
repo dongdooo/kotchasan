@@ -1,10 +1,10 @@
 {
-    "name": "goragod/kotchasan",
-    "description": "Kotchasan PHP Framework",
+	"name": "goragod/kotchasan",
+	"description": "Kotchasan PHP Framework",
 	"keywords": ["framework", "PHP"],
 	"type": "project",
 	"license": "MIT",
-    "require": {
-        "php": ">=5.3.0"
-    }
+	"require": {
+		"php": ">=5.3.0"
+	}
 }
