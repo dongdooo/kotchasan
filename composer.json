@@ -4,6 +4,7 @@
 	"keywords": ["framework", "PHP"],
 	"type": "project",
 	"license": "MIT",
+	"homepage": "http://www.kotchasan.com",
 	"require": {
 		"php": ">=5.3.0"
 	}
