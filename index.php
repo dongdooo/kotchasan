@@ -1,6 +1,6 @@
 <?php
 /*
- * index.php.
+ * index.php
  *
  * @author Goragod Wiriya <admin@goragod.com>
  * @link http://www.kotchasan.com/
@@ -14,12 +14,12 @@ define('APP_PATH', dirname(__FILE__).'/');
  * 1 บันทึกข้อผิดพลาดและคำเตือนลง error_log .php
  * 2 แสดงผลข้อผิดพลาดและคำเตือนออกทางหน้าจอ (ใช้เฉพาะตอนออกแบบเท่านั้น)
  */
-define('DEBUG', 2);
+//define('DEBUG', 0);
 /**
  * false (default)
  * true บันทึกการ query ฐานข้อมูลลง log (ใช้เฉพาะตอนออกแบบเท่านั้น)
  */
-define('DB_LOG', false);
+//define('DB_LOG', false);
 // load Kotchasan
 include APP_PATH.'core/load.php';
 // inint Kotchasan Framework

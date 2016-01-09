@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * tests/bootstrap.php
  *
  * @author Goragod Wiriya <admin@goragod.com>
