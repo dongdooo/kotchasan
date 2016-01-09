@@ -2,9 +2,15 @@
 	"name": "goragod/kotchasan",
 	"description": "Kotchasan PHP Framework",
 	"keywords": ["framework", "PHP"],
-	"type": "project",
 	"license": "MIT",
 	"homepage": "http://www.kotchasan.com",
+	"version": "0.6.0",
+	"authors": [
+		{
+			"name": "Goragod Wiriya",
+			"homepage": "http://www.goragod,com"
+		}
+	],
 	"require": {
 		"php": ">=5.3.0"
 	}
