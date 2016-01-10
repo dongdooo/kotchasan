@@ -1,14 +1,7 @@
 <?php
-/*
- * @filesource core/http/response.php
- * @link http://www.kotchasan.com/
- * @copyright 2016 Goragod.com
- * @license http://www.kotchasan.com/license/
- */
 
-namespace Core\Http;
+namespace Psr\Http\Message;
 
-use \Psr\Http\Message\ResponseInterface;
 /**
  * Representation of an outgoing, server-side response.
  *
@@ -24,15 +17,7 @@ use \Psr\Http\Message\ResponseInterface;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-
-/**
- * Class สำหรับจัดการ URL
- *
- * @author Goragod Wiriya <admin@goragod.com>
- *
- * @since 1.0
- */
-class Response implements ResponseInterface
+interface ResponseInterface extends MessageInterface
 {
 
 	/**
@@ -43,10 +28,7 @@ class Response implements ResponseInterface
 	 *
 	 * @return int Status code.
 	 */
-	public function getStatusCode()
-	{
-
-	}
+	public function getStatusCode();
 
 	/**
 	 * Return an instance with the specified status code and, optionally, reason phrase.
@@ -68,10 +50,7 @@ class Response implements ResponseInterface
 	 * @return self
 	 * @throws \InvalidArgumentException For invalid status code arguments.
 	 */
-	public function withStatus($code, $reasonPhrase = '')
-	{
-
-	}
+	public function withStatus($code, $reasonPhrase = '');
 
 	/**
 	 * Gets the response reason phrase associated with the status code.
@@ -86,8 +65,5 @@ class Response implements ResponseInterface
 	 * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 	 * @return string Reason phrase; must return an empty string if none present.
 	 */
-	public function getReasonPhrase()
-	{
-
-	}
+	public function getReasonPhrase();
 }

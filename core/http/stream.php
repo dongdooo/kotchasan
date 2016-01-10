@@ -2,23 +2,16 @@
 /*
  * @filesource core/http/stream.php
  * @link http://www.kotchasan.com/
- * @copyright 2015 Goragod.com
+ * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
 namespace Core\Http;
 
 use \Psr\Http\Message\StreamInterface;
-/**
- * Describes a data stream.
- *
- * Typically, an instance will wrap a PHP stream; this interface provides
- * a wrapper around the most common operations, including serialization of
- * the entire stream to a string.
- */
 
 /**
- * Class สำหรับจัดการ URL
+ * Data stream
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *
@@ -26,194 +19,280 @@ use \Psr\Http\Message\StreamInterface;
  */
 class Stream implements StreamInterface
 {
+	/**
+	 * stream resource
+	 *
+	 * @var resource
+	 */
+	protected $stream;
+	/**
+	 * stream metadata
+	 *
+	 * @var array
+	 */
+	protected $meta;
+	/**
+	 * stream seekable
+	 *
+	 * @var bool
+	 */
+	protected $seekable;
+	/**
+	 * stream readable
+	 *
+	 * @var bool
+	 */
+	protected $readable;
+	/**
+	 * stream writable
+	 *
+	 * @var bool
+	 */
+	protected $writable;
+	/**
+	 * stream size
+	 *
+	 * @var null|int
+	 */
+	protected $size;
 
 	/**
-	 * Reads all data from the stream into a string, from the beginning to end.
+	 * Create a new Stream.
 	 *
-	 * This method MUST attempt to seek to the beginning of the stream before
-	 * reading data and read the stream until the end is reached.
+	 * @param resource $stream
+	 * @throws InvalidArgumentException $stream ไม่ใช่ resource
+	 */
+	public function __construct($stream)
+	{
+		if (!is_resource($stream)) {
+			throw new \InvalidArgumentException('Stream must be a resource');
+		}
+		$this->stream = $stream;
+	}
+
+	/**
+	 * อ่านข้อมูลทั้งหมดของ stream ส่งออกเป็น string
 	 *
-	 * Warning: This could attempt to load a large amount of data into memory.
-	 *
-	 * This method MUST NOT raise an exception in order to conform with PHP's
-	 * string casting operations.
-	 *
-	 * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
 	 * @return string
 	 */
 	public function __toString()
 	{
+		if (is_resource($this->stream)) {
+			try {
+				$this->rewind();
+				return $this->getContents();
+			} catch (\RuntimeException $e) {
 
+			}
+		}
+		return '';
 	}
 
 	/**
-	 * Closes the stream and any underlying resources.
-	 *
-	 * @return void
+	 * ยกเลิก stream คืนหน่วยความจำ
 	 */
 	public function close()
 	{
-
+		if (isset($this->stream)) {
+			if (is_resource($this->stream)) {
+				fclose($this->stream);
+			}
+			$this->detach();
+		}
 	}
 
 	/**
-	 * Separates any underlying resources from the stream.
+	 * reset ข้อมูลของ Class กลับเป็นค่าเริ่มต้น
 	 *
-	 * After the stream has been detached, the stream is in an unusable state.
-	 *
-	 * @return resource|null Underlying PHP stream, if any
+	 * @return resource|null คืนค่า resource เดิม
 	 */
 	public function detach()
 	{
-
+		$tmp = $this->stream;
+		$this->meta = null;
+		$this->readable = null;
+		$this->seekable = null;
+		$this->size = null;
+		$this->stream = null;
+		$this->writable = null;
+		return $tmp;
 	}
 
 	/**
-	 * Get the size of the stream if known.
+	 * อ่านขนาดของ stream
 	 *
-	 * @return int|null Returns the size in bytes if known, or null if unknown.
+	 * @return int|null ขนาดเป็น byte หรือ null ถ้าไม่รู้ขนาด
 	 */
 	public function getSize()
 	{
-
+		if ($this->size === null) {
+			if (is_resource($this->stream)) {
+				$stats = fstat($this->stream);
+				$this->size = isset($stats['size']) ? $stats['size'] : null;
+			} else {
+				$this->size = null;
+			}
+		}
+		return $this->size;
 	}
 
 	/**
-	 * Returns the current position of the file read/write pointer
+	 * อ่านค่าตำแหน่งของ pointer ปัจจุบัน
 	 *
-	 * @return int Position of the file pointer
+	 * @return int ตำแหน่งของ pointer
 	 * @throws \RuntimeException on error.
 	 */
 	public function tell()
 	{
-
+		$position = is_resource($this->stream) ? ftell($this->stream) : false;
+		if ($position === false) {
+			throw new \RuntimeException('Unable to determine stream position');
+		}
+		return $position;
 	}
 
 	/**
-	 * Returns true if the stream is at the end of the stream.
+	 * ตรวจสอบว่า pointer อยู่ที่จุดสุดท้ายของ stream หรือยัง
 	 *
-	 * @return bool
+	 * @return bool true ถ้าอยู่ที่จุดสิ้นสุดของไฟล์
 	 */
 	public function eof()
 	{
-
+		return is_resource($this->stream) ? feof($this->stream) : true;
 	}
 
 	/**
-	 * Returns whether or not the stream is seekable.
+	 * อ่านความสามารถในการกำหนดตำแหน่งของ pointer
 	 *
-	 * @return bool
+	 * @return bool true ถ้าสามารถ seek ได้
 	 */
 	public function isSeekable()
 	{
-
+		if ($this->seekable === null) {
+			$this->seekable = $this->getMetadata('seekable');
+		}
+		return $this->seekable;
 	}
 
 	/**
-	 * Seek to a position in the stream.
+	 * เลื่อน pointer ไปยังตำแหน่งที่กำหนด
 	 *
-	 * @link http://www.php.net/manual/en/function.fseek.php
-	 * @param int $offset Stream offset
-	 * @param int $whence Specifies how the cursor position will be calculated
-	 *     based on the seek offset. Valid values are identical to the built-in
-	 *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
-	 *     offset bytes SEEK_CUR: Set position to current location plus offset
-	 *     SEEK_END: Set position to end-of-stream plus offset.
+	 * @param int $offset ตำแหน่งของ pointer
+	 * @param int $whence
 	 * @throws \RuntimeException on failure.
 	 */
 	public function seek($offset, $whence = SEEK_SET)
 	{
-
+		if (fseek($this->stream, $offset, $whence) === -1) {
+			throw new \RuntimeException('Error seeking within stream');
+		}
 	}
 
 	/**
-	 * Seek to the beginning of the stream.
+	 * เลื่อน pointer ไปยังจุดเริ่มต้นของ stream
 	 *
-	 * If the stream is not seekable, this method will raise an exception;
-	 * otherwise, it will perform a seek(0).
-	 *
-	 * @see seek()
-	 * @link http://www.php.net/manual/en/function.fseek.php
 	 * @throws \RuntimeException on failure.
 	 */
 	public function rewind()
 	{
-
+		return $this->seek(0);
 	}
 
 	/**
-	 * Returns whether or not the stream is writable.
+	 * ตรวจสอบว่าสามารถเขียน stream ได้หรือไม่
 	 *
-	 * @return bool
+	 * @return bool ถ้าเขียนได้
 	 */
 	public function isWritable()
 	{
-
+		if ($this->writable === null) {
+			$mode = $this->getMetadata('mode');
+			$this->writable = $mode === null ? false : (strstr($mode, 'x') || strstr($mode, 'w') || strstr($mode, 'c') || strstr($mode, 'a') || strstr($mode, '+'));
+		}
+		return $this->writable;
 	}
 
 	/**
-	 * Write data to the stream.
+	 * เขียนข้อมูลลงบน stream
 	 *
-	 * @param string $string The string that is to be written.
-	 * @return int Returns the number of bytes written to the stream.
+	 * @param string $string ข้อมูลที่เขียน
+	 * @return int คืนค่าจำนวน byte ที่เขียน
 	 * @throws \RuntimeException on failure.
 	 */
 	public function write($string)
 	{
-
+		$result = is_resource($this->stream) ? fwrite($this->stream, $string) : false;
+		if ($result === false) {
+			throw new \RuntimeException('Unable to write to stream');
+		} else {
+			$this->size = null;
+		}
+		return $result;
 	}
 
 	/**
-	 * Returns whether or not the stream is readable.
+	 * ตรวจสอบว่าสามารถอ่านข้อมูล stream ได้หรือไม่
 	 *
-	 * @return bool
+	 * @return bool true ถ้าอ่านได้
 	 */
 	public function isReadable()
 	{
-
+		if ($this->readable === null) {
+			$mode = $this->getMetadata('mode');
+			$this->readable = $mode === null ? false : (strstr($mode, 'r') || strstr($mode, '+'));
+		}
+		return $this->readable;
 	}
 
 	/**
-	 * Read data from the stream.
+	 * อ่านข้อมูล stream ตามจำนวนที่กำหนด
 	 *
-	 * @param int $length Read up to $length bytes from the object and return
-	 *     them. Fewer than $length bytes may be returned if underlying stream
-	 *     call returns fewer bytes.
-	 * @return string Returns the data read from the stream, or an empty string
-	 *     if no bytes are available.
-	 * @throws \RuntimeException if an error occurs.
+	 * @param int $length จำนวนที่ต้องการ
+	 * @return string
+	 * @throws \RuntimeException ถ้าไม่สามารถอ่านได้
 	 */
 	public function read($length)
 	{
-
+		$data = is_resource($this->stream) ? read($this->stream, $length) : false;
+		if ($data === false) {
+			throw new \RuntimeException('Unable to read stream contents');
+		}
+		return $data;
 	}
 
 	/**
-	 * Returns the remaining contents in a string
+	 * อ่านข้อมูลทั้งหมดจาก stream
 	 *
 	 * @return string
-	 * @throws \RuntimeException if unable to read or an error occurs while
-	 *     reading.
+	 * @throws \RuntimeException ถ้าไม่สามารถอ่านได้
 	 */
 	public function getContents()
 	{
-
+		$contents = stream_get_contents($this->stream);
+		if ($contents === false) {
+			throw new \RuntimeException('Unable to read stream contents');
+		}
+		return $contents;
 	}
 
 	/**
-	 * Get stream metadata as an associative array or retrieve a specific key.
+	 * อ่านข้อมูลประจำตัวของ stream
 	 *
-	 * The keys returned are identical to the keys returned from PHP's
-	 * stream_get_meta_data() function.
-	 *
-	 * @link http://php.net/manual/en/function.stream-get-meta-data.php
-	 * @param string $key Specific metadata to retrieve.
-	 * @return array|mixed|null Returns an associative array if no key is
-	 *     provided. Returns a specific key value if a key is provided and the
-	 *     value is found, or null if the key is not found.
+	 * @param string $key
+	 * @return array|mixed|null
+	 * array คืนค่าข้อมูลทั้งหมด ถ้าไม่ระบุ $key
+	 * mixed คืนค่าข้อมูลจาก $key ที่กำหนด
+	 * null ไม่พบ $key หรือไม่ใช่ stream
 	 */
 	public function getMetadata($key = null)
 	{
-
+		if ($this->meta === null) {
+			$this->meta = is_resource($this->stream) ? stream_get_meta_data($this->stream) : null;
+		}
+		if ($key === null) {
+			return $this->meta;
+		} else {
+			return isset($this->meta[$key]) ? $this->meta[$key] : null;
+		}
 	}
 }

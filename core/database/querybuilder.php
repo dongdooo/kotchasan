@@ -2,7 +2,7 @@
 /*
  * @filesource core/database/querybuilder.php
  * @link http://www.kotchasan.com/
- * @copyright 2015 Goragod.com
+ * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
@@ -364,7 +364,7 @@ class QueryBuilder extends Query
 	 * @assert where(1)->text() [==] " WHERE `id`=1"
 	 * @assert where(array('id', 1))->text() [==] " WHERE `id`=1"
 	 * @assert where(array('id', '1'))->text() [==] " WHERE `id`='1'"
-	 * @assert where(array('date', '2015-1-1 30:30'))->text() [==] " WHERE `date`='2015-1-1 30:30'"
+	 * @assert where(array('date', '2016-1-1 30:30'))->text() [==] " WHERE `date`='2016-1-1 30:30'"
 	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id`=1"
 	 * @assert where('`id`=1 OR (SELECT ....)')->text() [==] " WHERE `id`=1 OR (SELECT ....)"
 	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id`=1"

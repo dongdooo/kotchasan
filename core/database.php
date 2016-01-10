@@ -2,7 +2,7 @@
 /*
  * @filesource core/database.php
  * @link http://www.kotchasan.com/
- * @copyright 2015 Goragod.com
+ * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
@@ -68,7 +68,8 @@ final class Database
 				$class = 'PdoMysqlDriver';
 			}
 			include ROOT_PATH.'core/database/'.strtolower($class).'.php';
-			self::$instances[$name] = (new $class($name))->connect($param);
+			$obj = new $class($name);
+			self::$instances[$name] = $obj->connect($param);
 		}
 		return self::$instances[$name];
 	}

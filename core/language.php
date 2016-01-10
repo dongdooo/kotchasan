@@ -2,7 +2,7 @@
 /*
  * @filesource core/language.php
  * @link http://www.kotchasan.com/
- * @copyright 2015 Goragod.com
+ * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
@@ -269,7 +269,7 @@ final class Language extends \KBase
 				fwrite($f, $content);
 				fclose($f);
 			} else {
-				return str_replace('%s', $lang.'.'.$type, \Language::get('The file or folder %s cannot be created or is read-only, please create or adjust the chmod it to 775 or 777.'));
+				return sprintf(\Language::get('File %s cannot be created or is read-only.'), $lang.'.'.$type);
 			}
 		}
 		return '';

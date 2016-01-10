@@ -1,14 +1,7 @@
 <?php
-/*
- * @filesource core/http/message.php
- * @link http://www.kotchasan.com/
- * @copyright 2016 Goragod.com
- * @license http://www.kotchasan.com/license/
- */
 
-namespace Core\Http;
+namespace Psr\Http\Message;
 
-use \Psr\Http\Message\MessageInterface;
 /**
  * HTTP messages consist of requests from a client to a server and responses
  * from a server to a client. This interface defines the methods common to
@@ -21,15 +14,7 @@ use \Psr\Http\Message\MessageInterface;
  * @link http://www.ietf.org/rfc/rfc7230.txt
  * @link http://www.ietf.org/rfc/rfc7231.txt
  */
-
-/**
- * Class สำหรับจัดการ URL
- *
- * @author Goragod Wiriya <admin@goragod.com>
- *
- * @since 1.0
- */
-class Message implements MessageInterface
+interface MessageInterface
 {
 
 	/**
@@ -39,10 +24,7 @@ class Message implements MessageInterface
 	 *
 	 * @return string HTTP protocol version.
 	 */
-	public function getProtocolVersion()
-	{
-
-	}
+	public function getProtocolVersion();
 
 	/**
 	 * Return an instance with the specified HTTP protocol version.
@@ -57,10 +39,7 @@ class Message implements MessageInterface
 	 * @param string $version HTTP protocol version
 	 * @return self
 	 */
-	public function withProtocolVersion($version)
-	{
-
-	}
+	public function withProtocolVersion($version);
 
 	/**
 	 * Retrieves all message header values.
@@ -87,10 +66,7 @@ class Message implements MessageInterface
 	 *     key MUST be a header name, and each value MUST be an array of strings
 	 *     for that header.
 	 */
-	public function getHeaders()
-	{
-
-	}
+	public function getHeaders();
 
 	/**
 	 * Checks if a header exists by the given case-insensitive name.
@@ -100,10 +76,7 @@ class Message implements MessageInterface
 	 *     name using a case-insensitive string comparison. Returns false if
 	 *     no matching header name is found in the message.
 	 */
-	public function hasHeader($name)
-	{
-
-	}
+	public function hasHeader($name);
 
 	/**
 	 * Retrieves a message header value by the given case-insensitive name.
@@ -119,10 +92,7 @@ class Message implements MessageInterface
 	 *    header. If the header does not appear in the message, this method MUST
 	 *    return an empty array.
 	 */
-	public function getHeader($name)
-	{
-
-	}
+	public function getHeader($name);
 
 	/**
 	 * Retrieves a comma-separated string of the values for a single header.
@@ -143,10 +113,7 @@ class Message implements MessageInterface
 	 *    concatenated together using a comma. If the header does not appear in
 	 *    the message, this method MUST return an empty string.
 	 */
-	public function getHeaderLine($name)
-	{
-
-	}
+	public function getHeaderLine($name);
 
 	/**
 	 * Return an instance with the provided value replacing the specified header.
@@ -163,10 +130,7 @@ class Message implements MessageInterface
 	 * @return self
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
-	public function withHeader($name, $value)
-	{
-
-	}
+	public function withHeader($name, $value);
 
 	/**
 	 * Return an instance with the specified header appended with the given value.
@@ -184,10 +148,7 @@ class Message implements MessageInterface
 	 * @return self
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
-	public function withAddedHeader($name, $value)
-	{
-
-	}
+	public function withAddedHeader($name, $value);
 
 	/**
 	 * Return an instance without the specified header.
@@ -201,20 +162,14 @@ class Message implements MessageInterface
 	 * @param string $name Case-insensitive header field name to remove.
 	 * @return self
 	 */
-	public function withoutHeader($name)
-	{
-
-	}
+	public function withoutHeader($name);
 
 	/**
 	 * Gets the body of the message.
 	 *
 	 * @return StreamInterface Returns the body as a stream.
 	 */
-	public function getBody()
-	{
-
-	}
+	public function getBody();
 
 	/**
 	 * Return an instance with the specified message body.
@@ -229,8 +184,5 @@ class Message implements MessageInterface
 	 * @return self
 	 * @throws \InvalidArgumentException When the body is not valid.
 	 */
-	public function withBody(StreamInterface $body)
-	{
-
-	}
+	public function withBody(StreamInterface $body);
 }

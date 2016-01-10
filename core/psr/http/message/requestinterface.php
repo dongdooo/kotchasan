@@ -1,23 +1,27 @@
 <?php
-/*
- * @filesource core/http/request.php
- * @link http://www.kotchasan.com/
- * @copyright 2016 Goragod.com
- * @license http://www.kotchasan.com/license/
- */
 
-namespace Core\Http;
-
-use \Psr\Http\Message\RequestInterface;
+namespace Psr\Http\Message;
 
 /**
- * Class สำหรับจัดการ URL
+ * Representation of an outgoing, client-side request.
  *
- * @author Goragod Wiriya <admin@goragod.com>
+ * Per the HTTP specification, this interface includes properties for
+ * each of the following:
  *
- * @since 1.0
+ * - Protocol version
+ * - HTTP method
+ * - URI
+ * - Headers
+ * - Message body
+ *
+ * During construction, implementations MUST attempt to set the Host header from
+ * a provided URI if no Host header is provided.
+ *
+ * Requests are considered immutable; all methods that might change state MUST
+ * be implemented such that they retain the internal state of the current
+ * message and return an instance that contains the changed state.
  */
-class Request implements RequestInterface
+interface RequestInterface extends MessageInterface
 {
 
 	/**
@@ -36,10 +40,7 @@ class Request implements RequestInterface
 	 *
 	 * @return string
 	 */
-	public function getRequestTarget()
-	{
-
-	}
+	public function getRequestTarget();
 
 	/**
 	 * Return an instance with the specific request-target.
@@ -58,20 +59,14 @@ class Request implements RequestInterface
 	 * @param mixed $requestTarget
 	 * @return self
 	 */
-	public function withRequestTarget($requestTarget)
-	{
-
-	}
+	public function withRequestTarget($requestTarget);
 
 	/**
 	 * Retrieves the HTTP method of the request.
 	 *
 	 * @return string Returns the request method.
 	 */
-	public function getMethod()
-	{
-
-	}
+	public function getMethod();
 
 	/**
 	 * Return an instance with the provided HTTP method.
@@ -88,10 +83,7 @@ class Request implements RequestInterface
 	 * @return self
 	 * @throws \InvalidArgumentException for invalid HTTP methods.
 	 */
-	public function withMethod($method)
-	{
-
-	}
+	public function withMethod($method);
 
 	/**
 	 * Retrieves the URI instance.
@@ -102,10 +94,7 @@ class Request implements RequestInterface
 	 * @return UriInterface Returns a UriInterface instance
 	 *     representing the URI of the request.
 	 */
-	public function getUri()
-	{
-
-	}
+	public function getUri();
 
 	/**
 	 * Returns an instance with the provided URI.
@@ -137,8 +126,5 @@ class Request implements RequestInterface
 	 * @param bool $preserveHost Preserve the original state of the Host header.
 	 * @return self
 	 */
-	public function withUri(UriInterface $uri, $preserveHost = false)
-	{
-
-	}
+	public function withUri(UriInterface $uri, $preserveHost = false);
 }

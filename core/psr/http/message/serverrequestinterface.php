@@ -1,14 +1,7 @@
 <?php
-/*
- * @filesource core/http/serverrequest.php
- * @link http://www.kotchasan.com/
- * @copyright 2016 Goragod.com
- * @license http://www.kotchasan.com/license/
- */
 
-namespace Core\Http;
+namespace Psr\Http\Message;
 
-use \Psr\Http\Message\ServerRequestInterface;
 /**
  * Representation of an incoming, server-side HTTP request.
  *
@@ -47,15 +40,7 @@ use \Psr\Http\Message\ServerRequestInterface;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-
-/**
- * Class สำหรับจัดการ URL
- *
- * @author Goragod Wiriya <admin@goragod.com>
- *
- * @since 1.0
- */
-class ServerRequest implements ServerRequestInterface
+interface ServerRequestInterface extends RequestInterface
 {
 
 	/**
@@ -67,10 +52,7 @@ class ServerRequest implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getServerParams()
-	{
-
-	}
+	public function getServerParams();
 
 	/**
 	 * Retrieve cookies.
@@ -82,10 +64,7 @@ class ServerRequest implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getCookieParams()
-	{
-
-	}
+	public function getCookieParams();
 
 	/**
 	 * Return an instance with the specified cookies.
@@ -104,10 +83,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @param array $cookies Array of key/value pairs representing cookies.
 	 * @return self
 	 */
-	public function withCookieParams(array $cookies)
-	{
-
-	}
+	public function withCookieParams(array $cookies);
 
 	/**
 	 * Retrieve query string arguments.
@@ -121,10 +97,7 @@ class ServerRequest implements ServerRequestInterface
 	 *
 	 * @return array
 	 */
-	public function getQueryParams()
-	{
-
-	}
+	public function getQueryParams();
 
 	/**
 	 * Return an instance with the specified query string arguments.
@@ -148,10 +121,7 @@ class ServerRequest implements ServerRequestInterface
 	 *     $_GET.
 	 * @return self
 	 */
-	public function withQueryParams(array $query)
-	{
-
-	}
+	public function withQueryParams(array $query);
 
 	/**
 	 * Retrieve normalized file upload data.
@@ -165,10 +135,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @return array An array tree of UploadedFileInterface instances; an empty
 	 *     array MUST be returned if no data is present.
 	 */
-	public function getUploadedFiles()
-	{
-
-	}
+	public function getUploadedFiles();
 
 	/**
 	 * Create a new instance with the specified uploaded files.
@@ -181,10 +148,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @return self
 	 * @throws \InvalidArgumentException if an invalid structure is provided.
 	 */
-	public function withUploadedFiles(array $uploadedFiles)
-	{
-
-	}
+	public function withUploadedFiles(array $uploadedFiles);
 
 	/**
 	 * Retrieve any parameters provided in the request body.
@@ -201,10 +165,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @return null|array|object The deserialized body parameters, if any.
 	 *     These will typically be an array or object.
 	 */
-	public function getParsedBody()
-	{
-
-	}
+	public function getParsedBody();
 
 	/**
 	 * Return an instance with the specified body parameters.
@@ -234,10 +195,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @throws \InvalidArgumentException if an unsupported argument type is
 	 *     provided.
 	 */
-	public function withParsedBody($data)
-	{
-
-	}
+	public function withParsedBody($data);
 
 	/**
 	 * Retrieve attributes derived from the request.
@@ -250,10 +208,7 @@ class ServerRequest implements ServerRequestInterface
 	 *
 	 * @return array Attributes derived from the request.
 	 */
-	public function getAttributes()
-	{
-
-	}
+	public function getAttributes();
 
 	/**
 	 * Retrieve a single derived request attribute.
@@ -270,10 +225,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @param mixed $default Default value to return if the attribute does not exist.
 	 * @return mixed
 	 */
-	public function getAttribute($name, $default = null)
-	{
-
-	}
+	public function getAttribute($name, $default = null);
 
 	/**
 	 * Return an instance with the specified derived request attribute.
@@ -290,10 +242,7 @@ class ServerRequest implements ServerRequestInterface
 	 * @param mixed $value The value of the attribute.
 	 * @return self
 	 */
-	public function withAttribute($name, $value)
-	{
-
-	}
+	public function withAttribute($name, $value);
 
 	/**
 	 * Return an instance that removes the specified derived request attribute.
@@ -309,8 +258,5 @@ class ServerRequest implements ServerRequestInterface
 	 * @param string $name The attribute name.
 	 * @return self
 	 */
-	public function withoutAttribute($name)
-	{
-
-	}
+	public function withoutAttribute($name);
 }

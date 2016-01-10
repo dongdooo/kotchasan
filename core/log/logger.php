@@ -2,7 +2,7 @@
 /*
  * @filesource core/log/logger.php
  * @link http://www.kotchasan.com/
- * @copyright 2015 Goragod.com
+ * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
@@ -10,7 +10,7 @@ namespace Core\Log;
 
 use \Psr\Log\LoggerInterface;
 use \Psr\Log\LogLevel;
-use \Core\Log\Exception;
+use \Core\Log\LoggerAbstract;
 
 /**
  * Kotchasan Logger Class (PSR-3)
@@ -19,9 +19,8 @@ use \Core\Log\Exception;
  *
  * @since 1.0
  */
-class Logger implements LoggerInterface
+class Logger extends LoggerAbstract implements LoggerInterface
 {
-	use \Psr\Log\LoggerTrait;
 	/**
 	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
 	 */
@@ -34,7 +33,7 @@ class Logger implements LoggerInterface
 	protected $options = array(
 		'dateFormat' => 'Y-m-d H:i:s',
 		'logFormat' => '[{datetime}] {level}: {message} {context}',
-		'logFilePath' => ROOT_PATH.DATA_FOLDER.'logs/',
+		'logFilePath' => 'logs/',
 		'extension' => 'php'
 	);
 	/**
@@ -58,6 +57,7 @@ class Logger implements LoggerInterface
 	 */
 	private function __construct($options)
 	{
+		$this->options['logFilePath'] = ROOT_PATH.DATA_FOLDER.'logs/';
 		foreach ($options as $key => $value) {
 			$this->options[$key] = $value;
 		}
@@ -121,7 +121,7 @@ class Logger implements LoggerInterface
 				fwrite($f, "\n".preg_replace('/[\s\n\t\r]+/', ' ', $message));
 				fclose($f);
 			} else {
-				echo \Language::get('Log file cannot be created or is read-only.');
+				printf(\Language::get('File %s cannot be created or is read-only.'), 'log');
 			}
 		} else {
 			printf(\Language::get('Directory %s cannot be created or is read-only.'), 'logs/');
