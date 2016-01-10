@@ -45,7 +45,6 @@ class Url
 	 * @param array|string $f รับค่าจากตัวแปร $f มาสร้าง query string
 	 * array ส่งมาจาก preg_replace
 	 * string กำหนดเอง
-	 *
 	 * @assert (array(2 => 'module=retmodule')) [==] "?module=retmodule&amp;page=1&amp;sort=id"  [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
 	 * @assert ('module=retmodule') [==] "?module=retmodule&amp;page=1&amp;sort=id" [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
 	 * @return string คืนค่า query string ใหม่ ลบ id=0
