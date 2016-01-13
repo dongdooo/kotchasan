@@ -1,17 +1,17 @@
 <?php
 /*
- * @filesource Cache/ApcCache.php
+ * @filesource  Kotchasan/Cache/ApcCache.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Cache;
+namespace Kotchasan\Cache;
 
-use \Psr\Cache\CacheItemInterface;
-use \Cache\CacheItem as Item;
-use \Cache\Cache;
-use \Cache\Exception;
+use \Kotchasan\Psr\Cache\CacheItemInterface;
+use \Kotchasan\Cache\CacheItem as Item;
+use \Kotchasan\Cache\Cache;
+use \Kotchasan\Cache\Exception;
 
 /**
  * APC cache driver

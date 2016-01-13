@@ -1,13 +1,17 @@
 <?php
 /*
- * @filesource Database/PdoMysqlDriver.php
+ * @filesource Kotchasan/Database/PdoMysqlDriver.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-use \Database\Driver;
-use \Database\DbCache as Cache;
+namespace Kotchasan\Database;
+
+use \Kotchasan\Database\Driver;
+use \Kotchasan\Database\DbCache as Cache;
+use \Kotchasan\ArrayTool;
+use \PDO;
 
 /**
  * PDO MySQL Database Adapter Class
@@ -292,7 +296,7 @@ class PdoMysqlDriver extends Driver
 		}
 		$condition = $this->buildWhere($condition);
 		if (is_array($condition)) {
-			$values = \ArrayTool::replace($values, $condition[1]);
+			$values = ArrayTool::replace($values, $condition[1]);
 			$condition = $condition[0];
 		}
 		$sql = 'UPDATE `'.$table.'` SET '.implode(', ', $sets).' WHERE '.$condition;

@@ -1,14 +1,17 @@
 <?php
 /*
- * @filesource Database/Query.php
+ * @filesource Kotchasan/Database/Query.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Database;
+namespace Kotchasan\Database;
 
-use Database\Driver;
+use \Kotchasan\Database;
+use \Kotchasan\Database\Driver;
+use \Kotchasan\KBase;
+use \Kotchasan\ArrayTool;
 
 /**
  * Database Query (base class)
@@ -17,7 +20,7 @@ use Database\Driver;
  *
  * @since 1.0
  */
-abstract class Query extends \KBase
+abstract class Query extends KBase
 {
 	/**
 	 * database connection
@@ -37,7 +40,7 @@ abstract class Query extends \KBase
 	 */
 	public function __construct($conn)
 	{
-		$this->db = \Database::create($conn);
+		$this->db = Database::create($conn);
 	}
 
 	/**
@@ -421,7 +424,7 @@ abstract class Query extends \KBase
 					$ret = $this->whereValue($item);
 					if (is_array($ret)) {
 						$qs[] = $ret[0];
-						$ps = \ArrayTool::replace($ps, $ret[1]);
+						$ps = ArrayTool::replace($ps, $ret[1]);
 					} else {
 						$qs[] = $ret;
 					}
@@ -464,7 +467,7 @@ abstract class Query extends \KBase
 				foreach ($condition as $item) {
 					$ret = $this->buildWhereValues($item, $oprator, $id);
 					$qs[] = $ret[0];
-					$values = \ArrayTool::replace($values, $ret[1]);
+					$values = ArrayTool::replace($values, $ret[1]);
 				}
 				$condition = implode(' '.$oprator.' ', $qs);
 			} elseif (strpos($condition[0], '(') !== false) {

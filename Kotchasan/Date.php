@@ -1,10 +1,14 @@
 <?php
 /*
- * @filesource Date.php
+ * @filesource Kotchasan/Date.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\Language;
 
 /**
  * คลาสจัดการเกี่ยวกับวันที่และเวลา
@@ -61,7 +65,7 @@ class Date
 		if (empty($mktime)) {
 			$mktime = time();
 		}
-		$lang = \Language::getItems(array(
+		$lang = Language::getItems(array(
 			'DATE_FORMAT',
 			'DATE_SHORT',
 			'DATE_LONG',
@@ -191,7 +195,7 @@ class Date
 			if ($match[1] == 0 || $match[2] == 0) {
 				return '';
 			} else {
-				$lang = \Language::getItems(array(
+				$lang = Language::getItems(array(
 					'MONTH_SHORT',
 					'MONTH_LONG',
 					'YEAR_OFFSET'

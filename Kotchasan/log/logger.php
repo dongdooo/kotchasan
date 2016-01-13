@@ -11,6 +11,7 @@ namespace Log;
 use \Psr\Log\LoggerInterface;
 use \Psr\Log\LogLevel;
 use \Log\AbstractLogger;
+use \Kotchasan\Language;
 
 /**
  * Kotchasan Logger Class (PSR-3)
@@ -121,10 +122,10 @@ class Logger extends AbstractLogger implements LoggerInterface
 				fwrite($f, "\n".preg_replace('/[\s\n\t\r]+/', ' ', $message));
 				fclose($f);
 			} else {
-				printf(\Language::get('File %s cannot be created or is read-only.'), 'log');
+				printf(Language::get('File %s cannot be created or is read-only.'), 'log');
 			}
 		} else {
-			printf(\Language::get('Directory %s cannot be created or is read-only.'), 'logs/');
+			printf(Language::get('Directory %s cannot be created or is read-only.'), 'logs/');
 		}
 	}
 }

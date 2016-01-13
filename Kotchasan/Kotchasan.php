@@ -1,10 +1,14 @@
 <?php
 /*
- * @filesource Kotchasan.php
+ * @filesource Kotchasan/Kotchasan.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\KBase;
 
 /**
  * Kotchasan PHP Framework
@@ -36,7 +40,7 @@ class Kotchasan extends KBase
 	 *
 	 * @var string
 	 */
-	protected static $defaultRouter = 'Router';
+	protected static $defaultRouter = 'Kotchasan\Router';
 
 	/**
 	 * Singleton

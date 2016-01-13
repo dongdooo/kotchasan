@@ -1,15 +1,15 @@
 <?php
 /*
- * @filesource Database/DbCache.php
+ * @filesource Kotchasan/Database/DbCache.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Database;
+namespace Kotchasan\Database;
 
-use \Cache\FileCache as Cache;
-use \Core\Cache\CacheItem as Item;
+use \Kotchasan\Cache\FileCache as Cache;
+use \Kotchasan\Cache\CacheItem as Item;
 
 /**
  * Database Cache Class
@@ -76,7 +76,7 @@ class DbCache
 	 */
 	public function get($sql, $values)
 	{
-		$this->item = $this->db_cache->getItem(\KString::replace($sql, $values));
+		$this->item = $this->db_cache->getItem(\Kotchasan\String::replace($sql, $values));
 		return $this->item->isHit() ? $this->item->get() : false;
 	}
 

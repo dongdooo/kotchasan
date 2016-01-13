@@ -1,10 +1,16 @@
 <?php
 /*
- * @filesource Language.php
+ * @filesource Kotchasan/Language.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\KBase;
+use \Kotchasan\ArrayTool;
+use \Kotchasan\Language;
 
 /**
  * Class สำหรับการโหลด config
@@ -13,7 +19,7 @@
  *
  * @since 1.0
  */
-final class Language extends \KBase
+final class Language extends KBase
 {
 	/**
 	 * ภาษาทั้งหมดที่ติดตั้ง
@@ -44,7 +50,7 @@ final class Language extends \KBase
 		// ภาษาที่เลือก
 		$lang = isset($_GET['lang']) ? $_GET['lang'] : (isset($_COOKIE['my_lang']) ? $_COOKIE['my_lang'] : '');
 		// ตรวจสอบภาษา ใช้ภาษาแรกที่เจอ
-		foreach (\ArrayTool::replace(array($lang => $lang), self::$cfg->languages) as $item) {
+		foreach (ArrayTool::replace(array($lang => $lang), self::$cfg->languages) as $item) {
 			if (!empty($item)) {
 				if (is_file($language_folder.$item.'.php')) {
 					$language = include $language_folder.$item.'.php';
@@ -185,7 +191,7 @@ final class Language extends \KBase
 		$datas = array();
 		$i = 0;
 		foreach ($languages as $key => $row) {
-			$datas[$i] = \ArrayTool::replace(array('id' => $i, 'key' => $key), $row);
+			$datas[$i] = ArrayTool::replace(array('id' => $i, 'key' => $key), $row);
 			$i++;
 		}
 		return $datas;
@@ -269,7 +275,7 @@ final class Language extends \KBase
 				fwrite($f, $content);
 				fclose($f);
 			} else {
-				return sprintf(\Language::get('File %s cannot be created or is read-only.'), $lang.'.'.$type);
+				return sprintf(Language::get('File %s cannot be created or is read-only.'), $lang.'.'.$type);
 			}
 		}
 		return '';

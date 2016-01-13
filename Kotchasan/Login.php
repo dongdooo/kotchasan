@@ -1,10 +1,18 @@
 <?php
 /*
- * @filesource Login.php
+ * @filesource Kotchasan/Login.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\Model;
+use \Kotchasan\LoginInterface;
+use \Kotchasan\Password;
+use \Kotchasan\Language;
+use \Kotchasan\Input;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -13,7 +21,7 @@
  *
  * @since 1.0
  */
-class Login extends \Model implements \LoginInterface
+class Login extends Model implements LoginInterface
 {
 	/**
 	 * ข้อความจาก Login Class
@@ -115,10 +123,10 @@ class Login extends \Model implements \LoginInterface
 	 * เจออันไหนก่อนใช้อันนั้น
 	 *
 	 * @param string $name
-	 * @param \Password $pwd
+	 * @param Password $pwd
 	 * @return string|null คืนค่าข้อความ ไม่พบคืนค่า null
 	 */
-	protected function get($name, \Password $pwd)
+	protected function get($name, Password $pwd)
 	{
 		foreach (array($_POST, $_SESSION, $_COOKIE) as $var) {
 			if (isset($var[$name])) {

@@ -1,10 +1,16 @@
 <?php
 /*
- * @filesource email.php
+ * @filesource Kotchasan/Email.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\ArrayTool;
+use \Kotchasan\Date;
+use \Kotchasan\Language;
 
 /**
  * Email function
@@ -34,11 +40,11 @@ class Email extends Model
 		$where = array(
 			':module' => $module,
 			':email_id' => (int)$id,
-			':language' => \Language::name()
+			':language' => Language::name()
 		);
 		$email = $model->db()->cacheOn()->customQuery($sql, true, $where);
 		if (empty($email)) {
-			return \Language::get('email template not found');
+			return Language::get('email template not found');
 		} else {
 			$email = $email[0];
 			// ผู้ส่ง
@@ -48,10 +54,10 @@ class Email extends Model
 				'/%WEBTITLE%/' => strip_tags(self::$cfg->web_title),
 				'/%WEBURL%/' => WEB_URL,
 				'/%ADMINEMAIL%/' => $from,
-				'/%TIME%/' => \Date::format()
+				'/%TIME%/' => Date::format()
 			);
-			$replace = \ArrayTool::replace($replace, $datas);
-			\ArrayTool::extract($replace, $keys, $values);
+			$replace = ArrayTool::replace($replace, $datas);
+			ArrayTool::extract($replace, $keys, $values);
 			$msg = preg_replace($keys, $values, $email['detail']);
 			$subject = preg_replace($keys, $values, $email['subject']);
 			$to = explode(',', $to);
@@ -99,7 +105,7 @@ class Email extends Model
 				$headers .= "Reply-to: $replyto[0]\r\n";
 				$headers .= "X-Mailer: PHP mailer\r\n";
 				if (!@mail($email, $subject, $msg, $headers)) {
-					$messages = array(\Language::get('Unable to send mail'));
+					$messages = array(Language::get('Unable to send mail'));
 				}
 			}
 		} else {

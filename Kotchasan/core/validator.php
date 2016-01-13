@@ -13,7 +13,7 @@
  *
  * @since 1.0
  */
-class Validator extends KBase
+class Validator extends Kotchasan\KBase
 {
 
 	/**

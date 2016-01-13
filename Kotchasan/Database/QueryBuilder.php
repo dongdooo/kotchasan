@@ -1,15 +1,15 @@
 <?php
 /*
- * @filesource Database/QueryBuilder.php
+ * @filesource Kotchasan/Database/QueryBuilder.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Database;
+namespace Kotchasan\Database;
 
-use \Database\Query;
-use \Database\Driver;
+use \Kotchasan\Database\Query;
+use \Kotchasan\Database\Driver;
 
 /**
  * SQL Query builder
@@ -200,7 +200,7 @@ class QueryBuilder extends Query
 		$ret = $this->buildJoin($table, $type, $on);
 		if (is_array($ret)) {
 			$this->sqls['join'][] = $ret[0];
-			$this->values = \ArrayTool::replace($this->values, $ret[1]);
+			$this->values = ArrayTool::replace($this->values, $ret[1]);
 		} else {
 			$this->sqls['join'][] = $ret;
 		}
@@ -376,7 +376,7 @@ class QueryBuilder extends Query
 		$ret = $this->buildWhere($condition, $oprator, $id);
 		if (is_array($ret)) {
 			$this->sqls['where'] = $ret[0];
-			$this->values = \ArrayTool::replace($this->values, $ret[1]);
+			$this->values = ArrayTool::replace($this->values, $ret[1]);
 		} else {
 			$this->sqls['where'] = $ret;
 		}

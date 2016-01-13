@@ -1,17 +1,19 @@
 <?php
 /*
- * @filesource Database/Driver.php
+ * @filesource Kotchasan/Database/Driver.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Database;
+namespace Kotchasan\Database;
 
-use \Database\QueryBuilder;
-use \Database\Schema;
-use \Database\DbCache as Cache;
-use \Log\Logger;
+use \Kotchasan\Database\QueryBuilder;
+use \Kotchasan\Database\Schema;
+use \Kotchasan\Database\DbCache as Cache;
+use \Kotchasan\Database\Query;
+use \Kotchasan\Log\Logger;
+use \Kotchasan\ArrayTool;
 
 /**
  * Kotchasan Database driver Class (base class)
@@ -186,7 +188,7 @@ abstract class Driver extends Query
 	{
 		$sql = $this->makeQuery($sqls);
 		if (isset($sqls['values'])) {
-			$values = \ArrayTool::replace($sqls['values'], $values);
+			$values = ArrayTool::replace($sqls['values'], $values);
 		}
 		if ($sqls['function'] == 'customQuery') {
 			$result = $this->customQuery($sql, false, $values);
@@ -261,7 +263,7 @@ abstract class Driver extends Query
 	protected function log($type, $sql, $values = array())
 	{
 		if (DB_LOG == true) {
-			$datas = array('<b>'.$type.' :</b> '.\KString::replace($sql, $values));
+			$datas = array('<b>'.$type.' :</b> '.\Kotchasan\String::replace($sql, $values));
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
 					if ($item['function'] == 'all' || $item['function'] == 'first' || $item['function'] == 'count' || $item['function'] == 'save' || $item['function'] == 'find' || $item['function'] == 'execute') {

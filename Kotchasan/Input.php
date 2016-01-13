@@ -1,10 +1,12 @@
 <?php
 /*
- * @filesource Input.php
+ * @filesource Kotchasan/Input.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
 
 /**
  * คลาสสำหรับจัดการตัวแปรต่างๆของ Server

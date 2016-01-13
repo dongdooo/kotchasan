@@ -52,6 +52,7 @@ if (!defined('DB_LOG')) {
  * Vendor Directory
  */
 define('VENDOR_DIR', dirname(__FILE__).DIRECTORY_SEPARATOR);
+
 /**
  *  document root (Server)
  */
@@ -117,11 +118,12 @@ if (!defined('TEMPLATE_ROOT')) {
  * ฟังก์ชั่นใช้สำหรับสร้างคลาส
  *
  * @param string $className ชื่อคลาส
+ * @param mixed $param
  * @return \static
  */
-function createClass($className)
+function createClass($className, $param = null)
 {
-	return new $className();
+	return new $className($param);
 }
 
 /**
@@ -200,25 +202,16 @@ include VENDOR_DIR.'Config.php';
 function autoload($className)
 {
 	$className = str_replace('\\', '/', $className);
-	if (preg_match('/([a-zA-Z]+)\/([a-zA-Z]+)\/([a-zA-Z]+)/', $className, $match)) {
-		if (is_file(APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
-			include APP_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
-			unset($className);
-		} elseif (is_file(ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
+	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match) && is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
+		include VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
+	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match) && is_file(VENDOR_DIR.$match[1].'.php')) {
+		include VENDOR_DIR.$match[1].'.php';
+	} elseif (preg_match('/([a-zA-Z]+)\/([a-zA-Z]+)\/([a-zA-Z]+)/', $className, $match)) {
+		if (is_file(ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
 			include ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
-			unset($className);
 		}
-	}
-	if (isset($className)) {
-		if (preg_match('/^([a-zA-Z]+)Interface$/', $className) && is_file(VENDOR_DIR.'Interfaces/'.$className.'.php')) {
-			include VENDOR_DIR.'Interfaces/'.$className.'.php';
-		} elseif (preg_match('/[\/a-zA-Z]+/', $className)) {
-			if (is_file(VENDOR_DIR.$className.'.php')) {
-				include VENDOR_DIR.$className.'.php';
-			} elseif (is_file(ROOT_PATH.$className.'.php')) {
-				include ROOT_PATH.$className.'.php';
-			}
-		}
+	} elseif (preg_match('/^([\/a-zA-Z]+)$/', $className) && is_file(ROOT_PATH.$className.'.php')) {
+		include ROOT_PATH.$className.'.php';
 	}
 }
 spl_autoload_register('autoload');

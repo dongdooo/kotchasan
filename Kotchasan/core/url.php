@@ -6,6 +6,10 @@
  * @license http://www.kotchasan.com/license/
  */
 
+namespace Kotchasan;
+
+use \Kotchasan\Language;
+
 /**
  * Class สำหรับจัดการ URL
  *
@@ -118,7 +122,7 @@ class Url
 		} else {
 			$start = 1;
 		}
-		$url = '<a href="'.$url.'" title="'.\Language::get('go to page').' :page">:page</a>';
+		$url = '<a href="'.$url.'" title="'.Language::get('go to page').' :page">:page</a>';
 		$splitpage = ($start > 2) ? str_replace(':page', 1, $url) : '';
 		for ($i = $start; $i <= $totalpage && $maxlink > 0; $i++) {
 			$splitpage .= ($i == $page) ? '<strong>'.$i.'</strong>' : str_replace(':page', $i, $url);

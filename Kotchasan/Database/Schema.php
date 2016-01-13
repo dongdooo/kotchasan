@@ -1,15 +1,15 @@
 <?php
 /*
- * @filesource Database/Schema.php
+ * @filesource Kotchasan/Database/Schema.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Database;
+namespace Kotchasan\Database;
 
-use \Database\Driver;
-use \Database\Exception;
+use \Kotchasan\Database\Driver;
+use \Kotchasan\Database\Exception;
 
 /**
  * Database schema

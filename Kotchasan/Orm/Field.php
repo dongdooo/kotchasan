@@ -1,14 +1,14 @@
 <?php
 /*
- * @filesource Orm/Field.php
+ * @filesource Kotchasan/Orm/Field.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/desktop
  */
 
-namespace Orm;
+namespace Kotchasan\Orm;
 
-use \Orm\Recordset;
+use \Kotchasan\Orm\Recordset;
 
 /**
  * ORM Field base class
@@ -17,7 +17,7 @@ use \Orm\Recordset;
  *
  * @since 1.0
  */
-class Field extends \KBase
+class Field extends Kotchasan\KBase
 {
 	/**
 	 * ชื่อของการเชื่อมต่อ ใช้สำหรับโหลด config จาก settings/database.php

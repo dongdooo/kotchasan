@@ -1,18 +1,19 @@
 <?php
 /*
- * @filesource Cache/FileCache.php
+ * @filesource Kotchasan/Cache/FileCache.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Cache;
+namespace Kotchasan\Cache;
 
-use \Psr\Cache\CacheItemPoolInterface;
-use \Psr\Cache\CacheItemInterface;
-use \Cache\CacheItem as Item;
-use \Cache\Cache;
-use \Cache\Exception;
+use \Kotchasan\Psr\Cache\CacheItemPoolInterface;
+use \Kotchasan\Psr\Cache\CacheItemInterface;
+use \Kotchasan\Cache\CacheItem as Item;
+use \Kotchasan\Cache\Cache;
+use \Kotchasan\Cache\Exception;
+use \Kotchasan\File;
 
 /**
  * Filesystem cache driver
@@ -43,7 +44,7 @@ class FileCache extends Cache
 	{
 		//  folder cache
 		$dir = ROOT_PATH.DATA_FOLDER.'cache/';
-		if (!\File::makeDirectory($dir)) {
+		if (!File::makeDirectory($dir)) {
 			throw new Exception('Folder '.DATA_FOLDER.'cache/ cannot be created.');
 		}
 		$this->cache_dir = $dir;

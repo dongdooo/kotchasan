@@ -1,10 +1,17 @@
 <?php
 /*
- * @filesource View.php
+ * @filesource Kotchasan/View.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
+
+use \Kotchasan\KBase;
+use \Kotchasan\Controller;
+use \Kotchasan\Language;
+use \Kotchasan\Template;
 
 /**
  * View base class
@@ -13,12 +20,12 @@
  *
  * @since 1.0
  */
-class View extends \KBase
+class View extends KBase
 {
 	/**
 	 * Controller ที่เรียก View นี้
 	 *
-	 * @var \Controller
+	 * @var Controller
 	 */
 	protected $controller;
 	/**
@@ -45,7 +52,7 @@ class View extends \KBase
 	 *
 	 * @param \Controller $controller
 	 */
-	public function __construct(\Controller $controller)
+	public function __construct(Controller $controller)
 	{
 		$this->controller = $controller;
 	}
@@ -95,19 +102,16 @@ class View extends \KBase
 		if (!empty($this->metas)) {
 			$this->contents['/(<head.*)(<\/head>)/isu'] = '$1'.implode("\n", $this->metas)."\n".'$2';
 		}
-		$this->contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Language::get(array(1=>"$1"))';
+		$this->contents['/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e'] = '\Kotchasan\Language::get(array(1=>"$1"))';
 		$this->contents['/{WEBTITLE}/'] = self::$cfg->web_title;
 		$this->contents['/{WEBDESCRIPTION}/'] = self::$cfg->web_description;
 		$this->contents['/{WEBURL}/'] = WEB_URL;
-		$this->contents['/{SKIN}/'] = \Template::$src;
-		$this->contents['/{ELAPSED}/'] = sprintf('%.3f', microtime(true) - BEGIN_TIME);
-		$this->contents['/{USAGE}/'] = memory_get_peak_usage() / 1024;
-		$this->contents['/{QURIES}/'] = Database\Driver::queryCount();
+		$this->contents['/{SKIN}/'] = Template::$src;
 		$this->contents['/{VERSION}/'] = VERSION;
-		$this->contents['/{LANGUAGE}/'] = \Language::name();
+		$this->contents['/{LANGUAGE}/'] = \Kotchasan\Language::name();
 		$this->contents['/^[\s\t]+/m'] = '';
 		// แทนที่ลงใน index.html
-		echo \Template::pregReplace(array_keys($this->contents), array_values($this->contents), \Template::load('', '', 'index'));
+		echo Template::pregReplace(array_keys($this->contents), array_values($this->contents), Template::load('', '', 'index'));
 	}
 
 	/**

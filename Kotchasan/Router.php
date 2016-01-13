@@ -1,10 +1,12 @@
 <?php
 /*
- * @filesource Router.php
+ * @filesource Kotchasan/Router.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
 
 /**
  * Router class

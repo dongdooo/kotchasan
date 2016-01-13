@@ -1,10 +1,12 @@
 <?php
 /*
- * @filesource Database.php
+ * @filesource Kotchasan/Database.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
+
+namespace Kotchasan;
 
 /**
  * Database class
@@ -68,8 +70,7 @@ final class Database
 				$class = 'PdoMysqlDriver';
 			}
 			include VENDOR_DIR.'Database/'.$class.'.php';
-			$obj = new $class($name);
-			self::$instances[$name] = $obj->connect($param);
+			self::$instances[$name] = createClass('Kotchasan\\Database\\'.$class, $name)->connect($param);
 		}
 		return self::$instances[$name];
 	}

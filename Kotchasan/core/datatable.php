@@ -6,6 +6,11 @@
  * @license http://www.kotchasan.com/license/
  */
 
+namespace Kotchasan;
+
+use \Kotchasan\ArrayTool;
+use \Kotchasan\Language;
+
 /**
  * คลาสสำหรับจัดการแสดงผลข้อมูลจาก Model ในรูปแบบตาราง
  *
@@ -92,7 +97,7 @@ class Datatable
 	private $action;
 	/**
 	 * ถ้ากำหนดรายการนี้จะแสดง checkbox และ ปุ่ม action
-	 * array('delete' => \Language::get('Delete'), 'published' => \Language::get('Published'))
+	 * array('delete' => Language::get('Delete'), 'published' => Language::get('Published'))
 	 * หมายถึงแสดง select สำหรับ ลบ และ เผยแพร่
 	 *
 	 * @var array
@@ -222,7 +227,7 @@ class Datatable
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = \Input::request('count', 30)->toInt();
+			$this->perPage = Input::request('count', 30)->toInt();
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
@@ -290,10 +295,10 @@ class Datatable
 		// form
 		$form = array();
 		if (isset($this->perPage)) {
-			$entries = \Language::get('entries');
+			$entries = Language::get('entries');
 			$form[] = $this->addFilter(array(
 				'name' => 'count',
-				'text' => \Language::get('Show'),
+				'text' => Language::get('Show'),
 				'value' => $this->perPage,
 				'options' => array(10 => '10 '.$entries, 20 => '20 '.$entries, 30 => '30 '.$entries, 40 => '40 '.$entries, 50 => '50 '.$entries, 100 => '100 '.$entries)
 			));
@@ -312,12 +317,12 @@ class Datatable
 		// ปุ่ม Go
 		if (!empty($form)) {
 			$form[] = '<fieldset>';
-			$form[] = '<input type=submit class="button go" value="'.\Language::get('Go').'">';
+			$form[] = '<input type=submit class="button go" value="'.Language::get('Go').'">';
 			$form[] = implode('', $hidden_fields);
 			$form[] = '</fieldset>';
 		}
 		// search
-		$search = \Input::request('search')->text();
+		$search = Input::request('search')->text();
 		if (!empty($this->searchColumns)) {
 			if (!empty($search)) {
 				if (isset($this->model)) {
@@ -328,11 +333,11 @@ class Datatable
 					$qs[] = $this->rs->group($sh, 'OR');
 				} elseif (isset($this->datas)) {
 					// filter ข้อมูลจาก array
-					$this->datas = \ArrayTool::filter($this->datas, $search);
+					$this->datas = ArrayTool::filter($this->datas, $search);
 				}
 			}
 			$form[] = '&nbsp;<fieldset class=search>';
-			$form[] = '<label accesskey=f class="icon-search"><input type=text name=search value="'.$search.'" placeholder="'.\Language::get('Search').'"></label>';
+			$form[] = '<label accesskey=f class="icon-search"><input type=text name=search value="'.$search.'" placeholder="'.Language::get('Search').'"></label>';
 			$form[] = '<input type=submit value="&nbsp;">';
 			$form[] = '</fieldset>';
 		}
@@ -363,7 +368,7 @@ class Datatable
 			$this->perPage = 0;
 		} else {
 			// หน้าที่เลือก
-			$page = max(1, \Input::request('page', 1)->toInt());
+			$page = max(1, Input::request('page', 1)->toInt());
 			// ตรวจสอบหน้าที่เลือกสูงสุด
 			$totalpage = round($count / $this->perPage);
 			$totalpage += ($totalpage * $this->perPage < $count) ? 1 : 0;
@@ -375,22 +380,22 @@ class Datatable
 		}
 		// table caption
 		if (empty($search)) {
-			$caption = \Language::get('All :count entries, displayed :start to :end, page :page of :total pages');
+			$caption = Language::get('All :count entries, displayed :start to :end, page :page of :total pages');
 		} else {
-			$caption = \Language::get('Search <strong>:search</strong> found :count entries, displayed :start to :end, page :page of :total pages');
+			$caption = Language::get('Search <strong>:search</strong> found :count entries, displayed :start to :end, page :page of :total pages');
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = \Input::request('sort', $this->sort)->toString();
+		$this->sort = Input::request('sort', $this->sort)->toString();
 		if (!empty($this->sort)) {
 			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = \Input::request('sort_type', $this->sortType)->toString();
+				$this->sortType = Input::request('sort_type', $this->sortType)->toString();
 				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
 				if (isset($this->model)) {
 					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
 					$query->order($sort.' '.$this->sortType);
 				} elseif (isset($this->datas)) {
-					\ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
+					ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
 				}
 			}
 		}
@@ -545,7 +550,7 @@ class Datatable
 						if ($i == $this->checkCol) {
 							$row[] = '<td headers="r'.$id.'" class="check-column"><a id="check_'.$id.'" class="icon-uncheck"></a></td>';
 						} elseif ($i == $this->dragColumn) {
-							$row[] = '<td class=center><a id="move_'.$id.'" title="'.\Language::get('Drag and drop to reorder').'" class="icon-move"></a></td>';
+							$row[] = '<td class=center><a id="move_'.$id.'" title="'.Language::get('Drag and drop to reorder').'" class="icon-move"></a></td>';
 						}
 						$properties = isset($this->cols[$field]) ? $this->cols[$field] : array();
 						$text = isset($items[$field]) ? $items[$field] : '';
@@ -572,7 +577,7 @@ class Datatable
 					}
 				}
 				if ($this->pmButton) {
-					$row[] = '<td class="icons"><div><a class="icon-plus" title="'.\Language::get('Add').'"></a><a class="icon-minus" title="'.\Language::get('Remove').'"></a></div></td>';
+					$row[] = '<td class="icons"><div><a class="icon-plus" title="'.Language::get('Add').'"></a><a class="icon-minus" title="'.Language::get('Remove').'"></a></div></td>';
 				}
 				$row[] = '</tr>';
 			}

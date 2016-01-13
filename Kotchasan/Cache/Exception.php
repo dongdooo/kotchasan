@@ -1,12 +1,12 @@
 <?php
 /*
- * @filesource Cache/Exception.php
+ * @filesource Kotchasan/Cache/Exception.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Cache;
+namespace Kotchasan\Cache;
 
 /**
  * คลาสสำหรับจัดการข้อผิดพลาดของแคช

@@ -6,6 +6,10 @@
  * @license http://www.kotchasan.com/license/
  */
 
+namespace Kotchasan;
+
+use \Kotchasan\Language;
+
 /**
  * รายชื่อจังหวัด  ของประเทศไทย
  *
@@ -113,7 +117,7 @@ class Province
 	public static function get($iso)
 	{
 		$datas = self::inint();
-		$language = \Language::name();
+		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		return isset($datas[$iso]) ? $datas[$iso][$language] : '';
 	}
@@ -127,7 +131,7 @@ class Province
 	public static function all()
 	{
 		$datas = self::inint();
-		$language = \Language::name();
+		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		$result = array();
 		foreach ($datas as $iso => $values) {

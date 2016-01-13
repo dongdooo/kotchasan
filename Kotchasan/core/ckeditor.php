@@ -1,15 +1,15 @@
 <?php
-/**
- * @filesource ckeditor.php
+/*
+ * @filesource Kotchasan/CKEditor.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-/**
- * used Html class
- */
-use \Html AS Html;
+namespace Kotchasan;
+
+use \Kotchasan\Html;
+use \Kotchasan\String;
 
 /**
  * CKEditor
@@ -47,7 +47,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = \KString::toEditor($value);
+				$innerHTML = \Kotchasan\String::toEditor($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}
