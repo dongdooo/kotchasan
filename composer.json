@@ -17,9 +17,9 @@
 	"require-dev": {
 	},
 	"autoload": {
-		"files": ["load.php"],
+		"files": ["Kotchasan/load.php"],
 		"psr-4": {
-			"": ""
+			"": "Kotchasan/"
 		}
 	}
 }
