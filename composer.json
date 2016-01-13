@@ -5,7 +5,6 @@
 	"keywords": ["framework", "PHP"],
 	"license": "MIT",
 	"homepage": "http://www.kotchasan.com",
-	"version": "0.6.0",
 	"authors": [
 		{
 			"name": "Goragod Wiriya",
@@ -18,7 +17,7 @@
 	"autoload": {
 		"files": ["load.php"],
 		"psr-4": {
-			"Kotchasan\\": "kotchasan/"
+			"": ""
 		}
 	}
 }
