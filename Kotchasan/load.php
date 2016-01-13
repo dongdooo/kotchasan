@@ -69,7 +69,7 @@ if (!defined('APP_ROOT')) {
  * พาธของ Server ตั้งแต่ระดับราก เช่น D:/htdocs/gcms/
  */
 if (!defined('ROOT_PATH')) {
-	define('ROOT_PATH', str_replace(array('\\', 'vendor/goragod/kotchasan/load.php'), array('/', ''), __FILE__));
+	define('ROOT_PATH', APP_PATH);
 }
 /**
  *  http หรือ https
