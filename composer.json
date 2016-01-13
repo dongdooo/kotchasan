@@ -1,5 +1,6 @@
 {
 	"name": "goragod/kotchasan",
+	"type": "library",
 	"description": "Kotchasan PHP Framework",
 	"keywords": ["framework", "PHP"],
 	"license": "MIT",
@@ -13,5 +14,11 @@
 	],
 	"require": {
 		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"files": ["load.php"],
+		"psr-4": {
+			"": ""
+		}
 	}
 }
