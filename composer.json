@@ -1,5 +1,6 @@
 {
 	"name": "goragod/kotchasan",
+	"version": "0.6.0",
 	"type": "library",
 	"description": "Kotchasan PHP Framework",
 	"keywords": ["framework", "PHP"],
