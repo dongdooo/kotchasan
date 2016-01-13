@@ -15,12 +15,6 @@
 	"require": {
 		"php": ">=5.3.0"
 	},
-	"require-dev": {
-		"files": ["Kotchasan/load.php"],
-		"psr-4": {
-			"": "Kotchasan/"
-		}
-	},
 	"autoload": {
 		"files": ["Kotchasan/load.php"],
 		"psr-4": {
