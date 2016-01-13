@@ -1,6 +1,6 @@
 {
 	"name": "goragod/kotchasan",
-	"version": "0.6.0",
+	"version": "0.6.0-dev",
 	"type": "library",
 	"description": "Kotchasan PHP Framework",
 	"keywords": ["framework", "PHP"],
@@ -16,6 +16,10 @@
 		"php": ">=5.3.0"
 	},
 	"require-dev": {
+		"files": ["Kotchasan/load.php"],
+		"psr-4": {
+			"": "Kotchasan/"
+		}
 	},
 	"autoload": {
 		"files": ["Kotchasan/load.php"],
