@@ -18,7 +18,7 @@
 	"autoload": {
 		"files": ["load.php"],
 		"psr-4": {
-			"": ""
+			"Kotchasan\\": "kotchasan/"
 		}
 	}
 }
