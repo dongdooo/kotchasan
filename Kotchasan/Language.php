@@ -11,6 +11,7 @@ namespace Kotchasan;
 use \Kotchasan\KBase;
 use \Kotchasan\ArrayTool;
 use \Kotchasan\Language;
+use \Kotchasan\File;
 
 /**
  * Class สำหรับการโหลด config
@@ -140,7 +141,7 @@ final class Language extends KBase
 		if (!isset(self::$installed_languages)) {
 			$language_folder = self::languageFolder();
 			$files = array();
-			\File::listFiles($language_folder, $files);
+			File::listFiles($language_folder, $files);
 			foreach ($files as $file) {
 				if (preg_match('/(.*\/([a-z]{2,2}))\.(php|js)/', $file, $match)) {
 					self::$installed_languages[$match[2]] = $match[2];

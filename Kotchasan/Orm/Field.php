@@ -17,7 +17,7 @@ use \Kotchasan\Orm\Recordset;
  *
  * @since 1.0
  */
-class Field extends Kotchasan\KBase
+class Field extends \Kotchasan\KBase
 {
 	/**
 	 * ชื่อของการเชื่อมต่อ ใช้สำหรับโหลด config จาก settings/database.php

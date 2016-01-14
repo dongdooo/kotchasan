@@ -21,11 +21,6 @@ define('DEBUG', 2);
  */
 //define('DB_LOG', false);
 // load Kotchasan
-include APP_PATH.'../../core/load.php';
+include APP_PATH.'../../Kotchasan/load.php';
 // inint Kotchasan Framework
 Kotchasan::createWebApplication()->run();
-printf(
-	"\nPHP Version: ".phpversion()." \n%' 8d:%f\n",
-	memory_get_peak_usage(true),
-	microtime(true) - BEGIN_TIME
-);

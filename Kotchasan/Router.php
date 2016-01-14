@@ -23,8 +23,8 @@ class Router
 	 * @var array
 	 */
 	private $rules = array(
-		// index.php/module/method/page/function
-		'/^index\.php\/([a-z]+)\/(model|controller|view)(\/([a-z0-9_]+))?(\/([a-z0-9_]+))?/i' => array('module', 'method', '', 'page', '', 'function'),
+		// index.php/Module/Method/Page/Function
+		'/^index\.php\/([a-zA-Z]+)\/(Model|Controller|View)(\/([a-zA-Z0-9_]+))?(\/([a-zA-Z0-9_]+))?/i' => array('module', 'method', '', 'page', '', 'function'),
 		// index/model/page/function
 		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'method', 'page', 'function'),
 		// index/model/page
@@ -104,14 +104,14 @@ class Router
 	 */
 	public function parseRoutes($path, $modules)
 	{
-		$base_path = preg_quote('/'.str_replace(DOC_ROOT, '', APP_PATH), '/');
+		$base_path = preg_quote('/'.BASE_PATH, '/');
 		// แยกเอาฉพาะ path ที่ส่งมา ไม่รวม path ของ application และ นามสกุล
 		if (preg_match('/^'.$base_path.'(.*)(\.html?|\/)$/u', $path, $match)) {
 			$my_path = $match[1];
 		} elseif (preg_match('/^'.$base_path.'(.*)$/u', $path, $match)) {
 			$my_path = $match[1];
 		}
-		if (isset($my_path) && !preg_match('/^index\.php$/i', $my_path)) {
+		if (!empty($my_path) && !preg_match('/^index\.php$/i', $my_path)) {
 			foreach ($this->rules AS $patt => $items) {
 				if (preg_match($patt, $my_path, $match)) {
 					foreach ($items AS $i => $key) {

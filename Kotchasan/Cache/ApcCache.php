@@ -8,7 +8,7 @@
 
 namespace Kotchasan\Cache;
 
-use \Kotchasan\Psr\Cache\CacheItemInterface;
+use \Psr\Cache\CacheItemInterface;
 use \Kotchasan\Cache\CacheItem as Item;
 use \Kotchasan\Cache\Cache;
 use \Kotchasan\Cache\Exception;

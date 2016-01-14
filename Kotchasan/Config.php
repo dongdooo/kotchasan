@@ -200,7 +200,7 @@ class Config
 		$this->demo_mode = false;
 		$this->web_title = 'Kotchasan PHP Framework';
 		$this->web_description = 'PHP Framework พัฒนาโดยคนไทย';
-		$this->cache_expire = 5;
+		$this->cache_expire = 0;
 		$this->user_icon_h = 50;
 		$this->user_icon_w = 50;
 		$this->user_icon_typies = array('jpg', 'gif', 'png');
@@ -214,13 +214,13 @@ class Config
 		$this->email_SMTPSecure = '';
 		$this->password_key = '1234567890';
 		$this->module_url = 1;
-		if (is_file(APP_ROOT.'settings/config.php')) {
-			$config = include (APP_ROOT.'settings/config.php');
+		if (is_file(ROOT_PATH.'settings/config.php')) {
+			$config = include (ROOT_PATH.'settings/config.php');
 			foreach ($config as $key => $value) {
 				$this->$key = $value;
 			}
 		}
-		if (APP_ROOT != APP_PATH && is_file(APP_PATH.'settings/config.php')) {
+		if (ROOT_PATH != APP_PATH && is_file(APP_PATH.'settings/config.php')) {
 			$config = include (APP_PATH.'settings/config.php');
 			foreach ($config as $key => $value) {
 				$this->$key = $value;

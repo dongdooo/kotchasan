@@ -8,6 +8,9 @@
 
 namespace Kotchasan;
 
+use \Kotchasan\InputItem;
+use \Kotchasan\InputItems;
+
 /**
  * คลาสสำหรับจัดการตัวแปรต่างๆของ Server
  * เช่น $_GET $_POST $_SESSION $_COOKIE $_REQUEST

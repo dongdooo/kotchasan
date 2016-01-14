@@ -107,8 +107,7 @@ class View extends KBase
 		$this->contents['/{WEBDESCRIPTION}/'] = self::$cfg->web_description;
 		$this->contents['/{WEBURL}/'] = WEB_URL;
 		$this->contents['/{SKIN}/'] = Template::$src;
-		$this->contents['/{VERSION}/'] = VERSION;
-		$this->contents['/{LANGUAGE}/'] = \Kotchasan\Language::name();
+		$this->contents['/{LANGUAGE}/'] = Language::name();
 		$this->contents['/^[\s\t]+/m'] = '';
 		// แทนที่ลงใน index.html
 		echo Template::pregReplace(array_keys($this->contents), array_values($this->contents), Template::load('', '', 'index'));

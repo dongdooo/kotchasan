@@ -49,9 +49,9 @@ if (!defined('DB_LOG')) {
 	define('DB_LOG', false);
 }
 /**
- * Vendor Directory
+ * ไดเรคทอรี่ของ Framework
  */
-define('VENDOR_DIR', dirname(__FILE__).DIRECTORY_SEPARATOR);
+define('VENDOR_DIR', str_replace('load.php', '', __FILE__));
 
 /**
  *  document root (Server)
@@ -59,12 +59,6 @@ define('VENDOR_DIR', dirname(__FILE__).DIRECTORY_SEPARATOR);
 if (!defined('DOC_ROOT')) {
 	$doc_root = rtrim($_SERVER['DOCUMENT_ROOT'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 	define('DOC_ROOT', str_replace('\\', '/', $doc_root));
-}
-/**
- * root ของเว็บไซต์
- */
-if (!defined('APP_ROOT')) {
-	define('APP_ROOT', APP_PATH);
 }
 /**
  * พาธของ Server ตั้งแต่ระดับราก เช่น D:/htdocs/gcms/
@@ -92,14 +86,14 @@ if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
  * เช่น kotchasan/
  */
 if (!defined('BASE_PATH')) {
-	define('BASE_PATH', str_replace(DOC_ROOT, '', APP_ROOT));
+	define('BASE_PATH', str_replace(DOC_ROOT, '', APP_PATH));
 }
 
 /**
  * URL ของเว็บไซต์รวม path เช่น http://domain.tld/folder
  */
 if (!defined('WEB_URL')) {
-	define('WEB_URL', $scheme.$host.'/'.BASE_PATH);
+	define('WEB_URL', $scheme.$host.'/'.str_replace(DOC_ROOT, '', ROOT_PATH));
 }
 /**
  * โฟลเดอร์เก็บข้อมูล
@@ -199,19 +193,24 @@ include VENDOR_DIR.'Config.php';
  *
  * @param string $className
  */
-function autoload($className)
-{
+spl_autoload_register(function($className) {
 	$className = str_replace('\\', '/', $className);
 	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match) && is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
 		include VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
 	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match) && is_file(VENDOR_DIR.$match[1].'.php')) {
 		include VENDOR_DIR.$match[1].'.php';
-	} elseif (preg_match('/([a-zA-Z]+)\/([a-zA-Z]+)\/([a-zA-Z]+)/', $className, $match)) {
-		if (is_file(ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php')) {
-			include ROOT_PATH.'modules/'.$match[1].'/'.$match[3].'s/'.$match[2].'.php';
+	} elseif (preg_match('/^([\/a-zA-Z]+)$/', $className)) {
+		if (is_file(VENDOR_DIR.$className.'.php')) {
+			include VENDOR_DIR.$className.'.php';
+		} elseif (is_file(ROOT_PATH.$className.'.php')) {
+			include ROOT_PATH.$className.'.php';
+		} else {
+			list($vendor, $class, $method) = explode('/', $className);
+			if (is_file(APP_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
+				include APP_PATH."modules/{$vendor}/{$method}s/{$class}.php";
+			} elseif (is_file(ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
+				include ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php";
+			}
 		}
-	} elseif (preg_match('/^([\/a-zA-Z]+)$/', $className) && is_file(ROOT_PATH.$className.'.php')) {
-		include ROOT_PATH.$className.'.php';
 	}
-}
-spl_autoload_register('autoload');
+});

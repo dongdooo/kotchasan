@@ -8,8 +8,8 @@
 
 namespace Kotchasan\Cache;
 
-use \Kotchasan\Psr\Cache\CacheItemPoolInterface;
-use \Kotchasan\Psr\Cache\CacheItemInterface;
+use \Psr\Cache\CacheItemPoolInterface;
+use \Psr\Cache\CacheItemInterface;
 use \Kotchasan\Cache\CacheItem as Item;
 use \Kotchasan\Cache\Cache;
 use \Kotchasan\Cache\Exception;
@@ -42,23 +42,25 @@ class FileCache extends Cache
 	 */
 	public function __construct()
 	{
-		//  folder cache
-		$dir = ROOT_PATH.DATA_FOLDER.'cache/';
-		if (!File::makeDirectory($dir)) {
-			throw new Exception('Folder '.DATA_FOLDER.'cache/ cannot be created.');
-		}
-		$this->cache_dir = $dir;
-		$this->cache_expire = self::$cfg->get('cache_expire', 5);
-		// clear old cache every day
-		$d = is_file($dir.'index.php') ? file_get_contents($dir.'index.php') : 0;
-		if ($d != date('d')) {
-			$this->clear();
-			$f = @fopen($dir.'index.php', 'wb');
-			if ($f === false) {
-				throw new Exception('File '.DATA_FOLDER.'cache/index.php cannot be written.');
-			} else {
-				fwrite($f, date('d'));
-				fclose($f);
+		$this->cache_expire = self::$cfg->get('cache_expire', 0);
+		if (!empty($this->cache_expire)) {
+			//  folder cache
+			$dir = ROOT_PATH.DATA_FOLDER.'cache/';
+			if (!File::makeDirectory($dir)) {
+				throw new Exception('Folder '.DATA_FOLDER.'cache/ cannot be created.');
+			}
+			$this->cache_dir = $dir;
+			// clear old cache every day
+			$d = is_file($dir.'index.php') ? file_get_contents($dir.'index.php') : 0;
+			if ($d != date('d')) {
+				$this->clear();
+				$f = @fopen($dir.'index.php', 'wb');
+				if ($f === false) {
+					throw new Exception('File '.DATA_FOLDER.'cache/index.php cannot be written.');
+				} else {
+					fwrite($f, date('d'));
+					fclose($f);
+				}
 			}
 		}
 	}

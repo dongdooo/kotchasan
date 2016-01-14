@@ -1,6 +1,6 @@
 <?php
 
-namespace Kotchasan\Psr\Cache;
+namespace Psr\Cache;
 
 /**
  * CacheItemPoolInterface generates CacheItemInterface objects.

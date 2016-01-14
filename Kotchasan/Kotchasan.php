@@ -6,9 +6,7 @@
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Kotchasan;
-
-use \Kotchasan\KBase;
+use \Kotchasan\Config;
 
 /**
  * Kotchasan PHP Framework
@@ -17,7 +15,7 @@ use \Kotchasan\KBase;
  *
  * @since 1.0
  */
-class Kotchasan extends KBase
+class Kotchasan extends \Kotchasan\KBase
 {
 	/**
 	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
@@ -78,7 +76,7 @@ class Kotchasan extends KBase
 	 */
 	public function run()
 	{
-		return \createClass(self::$defaultRouter)->inint(self::$defaultController);
+		return createClass(self::$defaultRouter)->inint(self::$defaultController);
 	}
 
 	/**

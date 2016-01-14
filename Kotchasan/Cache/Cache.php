@@ -8,8 +8,8 @@
 
 namespace Kotchasan\Cache;
 
-use \Kotchasan\Psr\Cache\CacheItemPoolInterface;
-use \Kotchasan\Psr\Cache\CacheItemInterface;
+use \Psr\Cache\CacheItemPoolInterface;
+use \Psr\Cache\CacheItemInterface;
 use \Kotchasan\Cache\CacheItem as Item;
 use \Kotchasan\KBase;
 

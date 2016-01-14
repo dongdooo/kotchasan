@@ -44,8 +44,8 @@ final class Database
 			);
 			if (is_file(APP_PATH.'settings/database.php')) {
 				$config = include APP_PATH.'settings/database.php';
-			} elseif (is_file(APP_ROOT.'settings/database.php')) {
-				$config = include APP_ROOT.'settings/database.php';
+			} elseif (is_file(ROOT_PATH.'settings/database.php')) {
+				$config = include ROOT_PATH.'settings/database.php';
 			}
 			if (isset($config)) {
 				foreach ($config as $key => $values) {
