@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @filesource projects/admin/index.php.
  *
  * @author Goragod Wiriya <admin@goragod.com>
@@ -7,8 +7,6 @@
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
-// ตัวแปรที่จำเป็นสำหรับ Framework ใช้ระบุ root folder
-define('APP_PATH', dirname(__FILE__).'/');
 /**
  * 0 (default )บันทึกข้อผิดพลาดร้ายแรงลง error_log .php
  * 1 บันทึกข้อผิดพลาดและคำเตือนลง error_log .php
@@ -21,6 +19,6 @@ define('DEBUG', 2);
  */
 //define('DB_LOG', false);
 // load Kotchasan
-include APP_PATH.'../../Kotchasan/load.php';
+include '../../Kotchasan/load.php';
 // inint Kotchasan Framework
 Kotchasan::createWebApplication()->run();

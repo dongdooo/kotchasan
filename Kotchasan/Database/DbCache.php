@@ -10,6 +10,7 @@ namespace Kotchasan\Database;
 
 use \Kotchasan\Cache\FileCache as Cache;
 use \Kotchasan\Cache\CacheItem as Item;
+use \Kotchasan\Text;
 
 /**
  * Database Cache Class
@@ -76,7 +77,7 @@ class DbCache
 	 */
 	public function get($sql, $values)
 	{
-		$this->item = $this->db_cache->getItem(\Kotchasan\String::replace($sql, $values));
+		$this->item = $this->db_cache->getItem(Text::replace($sql, $values));
 		return $this->item->isHit() ? $this->item->get() : false;
 	}
 

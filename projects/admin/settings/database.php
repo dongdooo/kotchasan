@@ -3,10 +3,10 @@
 return array(
 	'mysql' => array(
 		'dbdriver' => 'mysql',
-		'username' => '',
+		'username' => 'plus',
 		'password' => '',
-		'dbname' => '',
-		'prefix' => 'kotchasan'
+		'dbname' => 'gcms_plus',
+		'prefix' => ''
 	),
 	'tables' => array(
 	)

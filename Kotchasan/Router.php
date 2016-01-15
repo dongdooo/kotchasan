@@ -104,7 +104,7 @@ class Router
 	 */
 	public function parseRoutes($path, $modules)
 	{
-		$base_path = preg_quote('/'.BASE_PATH, '/');
+		$base_path = preg_quote(BASE_PATH, '/');
 		// แยกเอาฉพาะ path ที่ส่งมา ไม่รวม path ของ application และ นามสกุล
 		if (preg_match('/^'.$base_path.'(.*)(\.html?|\/)$/u', $path, $match)) {
 			$my_path = $match[1];

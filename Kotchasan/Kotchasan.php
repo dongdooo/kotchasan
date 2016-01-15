@@ -7,6 +7,7 @@
  */
 
 use \Kotchasan\Config;
+use \Kotchasan\Input;
 
 /**
  * Kotchasan PHP Framework
@@ -55,7 +56,7 @@ class Kotchasan extends \Kotchasan\KBase
 		/* time zone default Thailand */
 		@date_default_timezone_set(self::$cfg->timezone);
 		/* remove slashes (/) ตัวแปร GLOBAL  */
-		//Input::normalizeRequest();
+		Input::normalizeRequest();
 	}
 
 	/**

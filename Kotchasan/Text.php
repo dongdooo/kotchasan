@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource Kotchasan/String.php
+ * @filesource Kotchasan/Text.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -15,7 +15,7 @@ namespace Kotchasan;
  *
  * @since 1.0
  */
-class String
+class Text
 {
 
 	/**

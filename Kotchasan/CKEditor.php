@@ -9,7 +9,7 @@
 namespace Kotchasan;
 
 use \Kotchasan\Html;
-use \Kotchasan\String;
+use \Kotchasan\Text;
 
 /**
  * CKEditor
@@ -47,7 +47,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = \Kotchasan\String::toEditor($value);
+				$innerHTML = Text::toEditor($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}

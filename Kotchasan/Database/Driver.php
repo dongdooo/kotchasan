@@ -14,6 +14,7 @@ use \Kotchasan\Database\DbCache as Cache;
 use \Kotchasan\Database\Query;
 use \Kotchasan\Log\Logger;
 use \Kotchasan\ArrayTool;
+use \Kotchasan\Text;
 
 /**
  * Kotchasan Database driver Class (base class)
@@ -263,7 +264,7 @@ abstract class Driver extends Query
 	protected function log($type, $sql, $values = array())
 	{
 		if (DB_LOG == true) {
-			$datas = array('<b>'.$type.' :</b> '.\Kotchasan\String::replace($sql, $values));
+			$datas = array('<b>'.$type.' :</b> '.Text::replace($sql, $values));
 			foreach (debug_backtrace() as $a => $item) {
 				if (isset($item['file']) && isset($item['line'])) {
 					if ($item['function'] == 'all' || $item['function'] == 'first' || $item['function'] == 'count' || $item['function'] == 'save' || $item['function'] == 'find' || $item['function'] == 'execute') {
