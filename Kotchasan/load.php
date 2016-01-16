@@ -14,7 +14,7 @@
  * 1 บันทึกข้อผิดพลาดและคำเตือนลง error_log .php
  * 2 แสดงผลข้อผิดพลาดและคำเตือนออกทางหน้าจอ (เฉพาะตอนออกแบบเท่านั้น)
  *
- * $var integer
+ * @var int
  */
 if (!defined('DEBUG')) {
 	define('DEBUG', 0);
@@ -60,11 +60,11 @@ if (DIRECTORY_SEPARATOR != '/') {
  * พาธของ Application เช่น D:/htdocs/kotchasan/
  */
 if (!defined('APP_PATH')) {
+	$appPath = dirname($_SERVER['SCRIPT_NAME']);
 	if (DIRECTORY_SEPARATOR != '/') {
-		define('APP_PATH', $docRoot.str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])).'/');
-	} else {
-		define('APP_PATH', $docRoot.dirname($_SERVER['SCRIPT_NAME']).'/');
+		$appPath = str_replace('\\', '/', $appPath);
 	}
+	define('APP_PATH', rtrim($docRoot.$appPath, '/').'/');
 }
 /**
  * พาธของ Server ตั้งแต่ระดับราก เช่น D:/htdocs/kotchasan/

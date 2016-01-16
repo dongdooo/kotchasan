@@ -110,7 +110,7 @@ class Email extends \Kotchasan\Model
 			}
 		} else {
 			// ส่งอีเมล์ด้วย PHPMailer
-			include_once VENDOR_DIR.'class.phpmailer.php';
+			include_once VENDOR_DIR.'PHPMailer/class.phpmailer.php';
 			// Create a new PHPMailer instance
 			$mail = new PHPMailer;
 			// Tell PHPMailer to use SMTP
