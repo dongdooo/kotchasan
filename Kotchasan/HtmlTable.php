@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource Kotchasan/Htmltable.php
+ * @filesource Kotchasan/HtmlTable.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -15,7 +15,7 @@ namespace Kotchasan;
  *
  * @since 1.0
  */
-class Htmltable
+class HtmlTable
 {
 	/**
 	 * แอเรย์เก็บข้อมูลส่วน thead
@@ -24,13 +24,13 @@ class Htmltable
 	 */
 	private $thead;
 	/**
-	 * แอเรย์ของ Tablerow เก็บแถวของตาราง (tbody)
+	 * แอเรย์ของ TableRow เก็บแถวของตาราง (tbody)
 	 *
 	 * @var array
 	 */
 	private $tbody;
 	/**
-	 * แอเรย์ของ Tablerow เก็บแถวของตาราง (tfoot)
+	 * แอเรย์ของ TableRow เก็บแถวของตาราง (tfoot)
 	 *
 	 * @var array
 	 */
@@ -96,9 +96,9 @@ class Htmltable
 	/**
 	 * แทรกแถวของ tbody
 	 *
-	 * @param Tablerow $row
+	 * @param TableRow $row
 	 */
-	public function addRow(Tablerow $row)
+	public function addRow(TableRow $row)
 	{
 		$this->tbody[] = $row;
 	}
@@ -106,9 +106,9 @@ class Htmltable
 	/**
 	 * แทรกแถวของ tfoot
 	 *
-	 * @param Tablerow $row
+	 * @param TableRow $row
 	 */
-	public function addFooter(Tablerow $row)
+	public function addFooter(TableRow $row)
 	{
 		$this->tfoot[] = $row;
 	}
@@ -182,7 +182,7 @@ class Htmltable
  *
  * @since 1.0
  */
-class Tablerow
+class TableRow
 {
 	/**
 	 * property ของแถว

@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource KotchasanDatatable.php
+ * @filesource Kotchasan/DataTable.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -19,7 +19,7 @@ use \Kotchasan\Url;
  *
  * @since 1.0
  */
-class Datatable
+class DataTable
 {
 	/**
 	 * id ของตาราง
@@ -268,7 +268,7 @@ class Datatable
 
 	/**
 	 * สร้างตาราง และเริ่มต้นทำงานตาราง
-	 * คืนค่าเป็นโค้ด HTML ของ Datatable
+	 * คืนค่าเป็นโค้ด HTML ของ DataTable
 	 *
 	 * @return string
 	 */

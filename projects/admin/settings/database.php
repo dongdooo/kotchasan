@@ -4,7 +4,7 @@ return array(
 	'mysql' => array(
 		'dbdriver' => 'mysql',
 		'username' => 'plus',
-		'password' => '',
+		'password' => '1234',
 		'dbname' => 'gcms_plus',
 		'prefix' => ''
 	),

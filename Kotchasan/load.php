@@ -185,17 +185,21 @@ include VENDOR_DIR.'Input.php';
  */
 spl_autoload_register(function($className) {
 	$className = str_replace('\\', '/', $className);
-	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match) && is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
-		include VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
-	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match) && is_file(VENDOR_DIR.$match[1].'.php')) {
-		include VENDOR_DIR.$match[1].'.php';
+	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match)) {
+		if (is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
+			include VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
+		}
+	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match)) {
+		if (is_file(VENDOR_DIR.$match[1].'.php')) {
+			include VENDOR_DIR.$match[1].'.php';
+		}
 	} elseif (preg_match('/^([\/a-zA-Z]+)$/', $className)) {
 		if (is_file(VENDOR_DIR.$className.'.php')) {
 			include VENDOR_DIR.$className.'.php';
 		} elseif (is_file(ROOT_PATH.$className.'.php')) {
 			include ROOT_PATH.$className.'.php';
 		} else {
-			list($vendor, $class, $method) = explode('/', $className);
+			list($vendor, $class, $method) = explode('/', strtolower($className));
 			if (is_file(APP_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
 				include APP_PATH."modules/{$vendor}/{$method}s/{$class}.php";
 			} elseif (is_file(ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {

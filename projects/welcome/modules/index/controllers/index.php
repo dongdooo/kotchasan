@@ -1,12 +1,12 @@
 <?php
 /*
- * @filesource Index/Controllers/Menu.php
+ * @filesource index/controllers/index.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Index\Menu;
+namespace Index\Index;
 
 /**
  * default Controller
@@ -17,17 +17,12 @@ namespace Index\Menu;
  */
 class Controller extends \Kotchasan\Controller
 {
-	/*
-	 * inint Controller.
-	 *
-	 * @param array $modules
-	 *
-	 * @return string
-	 */
 
-	public function render($module)
+	/**
+	 * แสดงผล
+	 */
+	public function index()
 	{
-		// สร้างเมนู
-		return $this->createView('Index\Menu\View')->render($module);
+		$this->createView('Index\Index\View')->render();
 	}
 }
