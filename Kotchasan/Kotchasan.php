@@ -6,8 +6,8 @@
  * @license http://www.kotchasan.com/license/
  */
 
+use \Kotchasan\Http\Server;
 use \Kotchasan\Config;
-use \Kotchasan\Input;
 
 /**
  * Kotchasan PHP Framework
@@ -27,42 +27,41 @@ class Kotchasan extends \Kotchasan\KBase
 	 *
 	 * @var string
 	 */
-	protected static $char_set = 'utf-8';
+	private $char_set = 'utf-8';
 	/**
 	 * Controller หลัก
 	 *
 	 * @var string
 	 */
-	protected static $defaultController = 'Index\Index\Controller';
+	private $defaultController = 'Index\Index\Controller';
 	/**
 	 * Router หลัก
 	 *
 	 * @var string
 	 */
-	protected static $defaultRouter = 'Kotchasan\Router';
+	private $defaultRouter = 'Kotchasan\Router';
 
 	/**
 	 * Singleton
 	 */
 	private function __construct()
 	{
-		/* config */
+		/* create Server  */
+		self::$server = new Server;
 		self::$cfg = Config::create();
-		/* charset default UTF-8 */
-		ini_set('default_charset', self::$char_set);
+		/* charset */
+		ini_set('default_charset', $this->char_set);
 		if (extension_loaded('mbstring')) {
-			mb_internal_encoding(self::$char_set);
+			mb_internal_encoding($this->char_set);
 		}
-		/* time zone default Thailand */
+		/* time zone */
 		@date_default_timezone_set(self::$cfg->timezone);
-		/* remove slashes (/) ตัวแปร GLOBAL  */
-		Input::normalizeRequest();
 	}
 
 	/**
 	 * สร้าง Application สามารถเรียกใช้ได้ครั้งเดียวเท่านั้น
 	 *
-	 * @return \static
+	 * @return self
 	 */
 	public static function &createWebApplication()
 	{
@@ -77,26 +76,6 @@ class Kotchasan extends \Kotchasan\KBase
 	 */
 	public function run()
 	{
-		return createClass(self::$defaultRouter)->inint(self::$defaultController);
-	}
-
-	/**
-	 * ฟังก์ชั่นเริ่มต้นใช้งาน session
-	 */
-	public static function inintSession()
-	{
-		if (isset($_GET['sessid']) && preg_match('/[a-zA-Z0-9]{20,}/', $_GET['sessid'])) {
-			session_id($_GET['sessid']);
-		}
-		session_start();
-		if (!ob_get_status()) {
-			if (extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
-				// เปิดใช้งานการบีบอัดหน้าเว็บไซต์
-				ob_start('ob_gzhandler');
-			} else {
-				ob_start();
-			}
-		}
-		return true;
+		createClass($this->defaultRouter)->inint($this->defaultController);
 	}
 }

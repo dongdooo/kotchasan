@@ -10,7 +10,6 @@ namespace Kotchasan\Database;
 
 use \Kotchasan\Database;
 use \Kotchasan\Database\Driver;
-use \Kotchasan\KBase;
 use \Kotchasan\ArrayTool;
 
 /**
@@ -20,7 +19,7 @@ use \Kotchasan\ArrayTool;
  *
  * @since 1.0
  */
-abstract class Query extends KBase
+abstract class Query extends \Kotchasan\KBase
 {
 	/**
 	 * database connection

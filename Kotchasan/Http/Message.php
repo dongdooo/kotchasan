@@ -1,14 +1,14 @@
 <?php
 /*
- * @filesource http/abstractmessage.php
+ * @filesource Kotchasan/Http/Message.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Core\Http;
+namespace Kotchasan\Http;
 
-use \Core\Http\AbstractMessage;
+use \Kotchasan\Http\AbstractMessage;
 
 /**
  * HTTP messages class (PSR-7)

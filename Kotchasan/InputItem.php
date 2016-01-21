@@ -35,6 +35,16 @@ class InputItem
 	}
 
 	/**
+	 * คืนค่าเป็น String
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return (string)$this->value;
+	}
+
+	/**
 	 * สร้าง Object
 	 *
 	 * @param mixed $value
@@ -93,16 +103,6 @@ class InputItem
 	public function toInt()
 	{
 		return (int)$this->value;
-	}
-
-	/**
-	 * คืนค่า Object เป็น String
-	 *
-	 * @return string
-	 */
-	public function toString()
-	{
-		return (string)$this->value;
 	}
 
 	/**

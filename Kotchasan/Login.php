@@ -12,7 +12,6 @@ use \Kotchasan\Model;
 use \Kotchasan\LoginInterface;
 use \Kotchasan\Password;
 use \Kotchasan\Language;
-use \Kotchasan\Input;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -67,7 +66,7 @@ class Login extends Model implements LoginInterface
 		self::$text_email = $model->get('text_email', $pw);
 		self::$text_password = $model->get('text_password', $pw);
 		$login_remember = $model->get('bool_remember', $pw) == 1 ? 1 : 0;
-		$action = Input::request('action')->toString();
+		$action = (string)self::$server->request('action');
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
 			// error มี email อยู่แล้ว (facebook login)
@@ -128,10 +127,16 @@ class Login extends Model implements LoginInterface
 	 */
 	protected function get($name, Password $pwd)
 	{
-		foreach (array($_POST, $_SESSION, $_COOKIE) as $var) {
-			if (isset($var[$name])) {
-				return $var == $_COOKIE ? $pwd->decode($var[$name]) : $var[$name];
-				break;
+		$datas = self::$server->getParsedBody();
+		if (isset($datas[$name])) {
+			return (string)$datas[$name];
+		} else {
+			$datas = self::$server->session($name, null);
+			if ($datas === null) {
+				$datas = self::$server->getCookieParams();
+				return $pwd->decode($datas[$name]);
+			} else {
+				return (string)$datas;
 			}
 		}
 		return null;

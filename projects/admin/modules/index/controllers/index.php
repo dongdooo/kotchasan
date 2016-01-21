@@ -26,12 +26,12 @@ class Controller extends \Kotchasan\Controller
 	public function index()
 	{
 		// session cookie
-		\Kotchasan::inintSession();
+		self::$server->inintSession();
 		// ตรวจสอบการ login
 		$login = Login::create();
 		if (!$login->isMember()) {
 			// forgot or login
-			if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'forgot') {
+			if ((string)self::$server->get('action') == 'forgot') {
 				$main = new \Index\Forgot\Controller;
 			} else {
 				$main = new \Index\Login\Controller;

@@ -1,15 +1,15 @@
 <?php
 /*
- * @filesource http/uri.php
+ * @filesource Kotchasan/Http/Uri.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Core\Http;
+namespace Kotchasan\Http;
 
 use \Psr\Http\Message\UriInterface;
-use \Core\Http\Server;
+use \Kotchasan\Http\Server;
 
 /**
  * Class สำหรับจัดการ Uri (PSR-7)
@@ -64,7 +64,7 @@ class Uri implements UriInterface
 	protected $fragment = '';
 
 	/**
-	 * create Uri
+	 * Create a new Uri.
 	 *
 	 * @param string $uri
 	 * @throws \InvalidArgumentException ถ้า Uri ไม่ถูกต้อง
@@ -115,6 +115,36 @@ class Uri implements UriInterface
 			$fragment = isset($parts['fragment']) ? $parts['fragment'] : '';
 			return new static($scheme, $host, $path, $query, $port, $user, $pass, $fragment);
 		}
+	}
+
+	/**
+	 * สร้าง Uri จากตัวแปร $_SERVER
+	 *
+	 * @return \static
+	 * @throws \InvalidArgumentException ถ้า Uri ไม่ถูกต้อง
+	 */
+	public static function createFromGlobals()
+	{
+		$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+		if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+			$host = trim(current(explode(',', $_SERVER['HTTP_X_FORWARDED_HOST'])));
+		} elseif (empty($_SERVER['HTTP_HOST'])) {
+			$host = $_SERVER['SERVER_NAME'];
+		} else {
+			$host = $_SERVER['HTTP_HOST'];
+		}
+		$pos = strpos($host, ':');
+		if ($pos !== false) {
+			$port = (int)substr($host, $pos + 1);
+			$host = strstr($host, ':', true);
+		} else {
+			$port = isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 80;
+		}
+		$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$query = $_SERVER['QUERY_STRING'];
+		$user = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
+		$pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
+		return new static($scheme, $host, $path, $query, $port, $user, $pass);
 	}
 
 	/**

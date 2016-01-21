@@ -227,9 +227,14 @@ function reload() {
 	window.location = replaceURL('timestamp', new String(new Date().getTime()), window.location.toString());
 }
 function getWebURL() {
-	var p = floatval(window.location.port);
-	p = p == 0 ? 80 : p;
-	return window.location.hostname + (p == 80 ? '' : ':' + p);
+	var port = floatval(window.location.port);
+	var protocol = window.location.protocol;
+	if ((protocol == 'http:' && port == 80) || (protocol == 'https:' && port == 443)) {
+		port = '';
+	} else {
+		port = port > 0 ? ':' + port : '';
+	}
+	return protocol + '//' + window.location.hostname + port;
 }
 function replaceURL(keys, values, url) {
 	var patt = /^(.*)=(.*)$/;

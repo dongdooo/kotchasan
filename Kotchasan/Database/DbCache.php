@@ -63,7 +63,7 @@ class DbCache
 	public static function create()
 	{
 		if (null === static::$instance) {
-			static::$instance = new static();
+			static::$instance = new static;
 		}
 		return static::$instance;
 	}

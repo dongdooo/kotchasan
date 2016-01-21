@@ -228,7 +228,7 @@ class DataTable
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = Input::request('count', 30)->toInt();
+			$this->perPage = self::$server->request('count', 30)->toInt();
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
@@ -323,7 +323,7 @@ class DataTable
 			$form[] = '</fieldset>';
 		}
 		// search
-		$search = Input::request('search')->text();
+		$search = self::$server->request('search')->text();
 		if (!empty($this->searchColumns)) {
 			if (!empty($search)) {
 				if (isset($this->model)) {
@@ -369,7 +369,7 @@ class DataTable
 			$this->perPage = 0;
 		} else {
 			// หน้าที่เลือก
-			$page = max(1, Input::request('page', 1)->toInt());
+			$page = max(1, self::$server->request('page', 1)->toInt());
 			// ตรวจสอบหน้าที่เลือกสูงสุด
 			$totalpage = round($count / $this->perPage);
 			$totalpage += ($totalpage * $this->perPage < $count) ? 1 : 0;
@@ -387,10 +387,10 @@ class DataTable
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = Input::request('sort', $this->sort)->toString();
+		$this->sort = (string)self::$server->request('sort', $this->sort);
 		if (!empty($this->sort)) {
 			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = Input::request('sort_type', $this->sortType)->toString();
+				$this->sortType = (string)self::$server->request('sort_type', $this->sortType);
 				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
 				if (isset($this->model)) {
 					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;

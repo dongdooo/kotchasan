@@ -1,18 +1,18 @@
 <?php
 /*
- * @filesource http/request.php
+ * @filesource Kotchasan/Http/Request.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
  */
 
-namespace Core\Http;
+namespace Kotchasan\Http;
 
 use \Psr\Http\Message\RequestInterface;
 use \Psr\Http\Message\UriInterface;
-use \Core\Http\AbstractMessage;
-use \Core\Http\Stream;
-use \Core\Http\Uri;
+use \Kotchasan\Http\AbstractMessage;
+use \Kotchasan\Http\Stream;
+use \Kotchasan\Http\Uri;
 
 /**
  * Class สำหรับจัดการ URL
@@ -39,16 +39,37 @@ class Request extends AbstractMessage implements RequestInterface
 	/**
 	 * create Request
 	 *
-	 * @param null|string $uri URI for the request, if any.
-	 * @param null|string $method HTTP method for the request, if any.
-	 * @param string|resource|StreamInterface $body Message body, if any.
-	 * @param array $headers Headers for the message, if any.
-	 * @throws \InvalidArgumentException for any invalid value.
+	 * @param null|string $uri URI for the request
+	 * @param null|string $method HTTP method for the request
+	 * @param string|resource|StreamInterface $body Message body
+	 * @param array $headers Headers for the message
+	 * @throws \InvalidArgumentException ถ้ามีข้อผิดพลาด
 	 */
-	public function __construct($uri = null, $method = null, $body = 'php://temp', array $headers = array())
+	public function __construct($uri = null, $method = 'GET', $body = null, array $headers = array())
 	{
-		$this->method = $method;
 		$this->uri = $uri;
+		$this->method = $method;
+		$this->stream = $body ? new Stream($body) : null;
+		foreach ($headers as $name => $value) {
+			$this->filterHeader($name);
+			$this->headers[strtolower($name)] = array(
+				$name,
+				is_array($value) ? $value : (array)$value
+			);
+		}
+	}
+
+	/**
+	 * สร้าง Request จากตัวแปร $_SERVER
+	 *
+	 * @return \static
+	 * @throws \InvalidArgumentException ถ้า Request ไม่ถูกต้อง
+	 */
+	public static function createFromGlobals()
+	{
+		return new static(
+		Uri::createFromGlobals()
+		);
 	}
 
 	/**
@@ -58,6 +79,9 @@ class Request extends AbstractMessage implements RequestInterface
 	 */
 	public function getRequestTarget()
 	{
+		if ($this->requestTarget === null) {
+			$this->requestTarget = $this->uri;
+		}
 		return $this->requestTarget;
 	}
 
@@ -118,6 +142,15 @@ class Request extends AbstractMessage implements RequestInterface
 	{
 		$clone = clone $this;
 		$clone->uri = $uri;
+		if (!$preserveHost) {
+			if ($uri->getHost() !== '') {
+				$clone->headers['Host'] = $uri->getHost();
+			}
+		} else {
+			if ($this->uri->getHost() !== '' && (!$this->hasHeader('Host') || $this->getHeader('Host') === null)) {
+				$clone->headers['Host'] = $uri->getHost();
+			}
+		}
 		return $clone;
 	}
 }

@@ -8,7 +8,6 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\KBase;
 use \Kotchasan\Controller;
 use \Kotchasan\Language;
 use \Kotchasan\Template;
@@ -20,7 +19,7 @@ use \Kotchasan\Template;
  *
  * @since 1.0
  */
-class View extends KBase
+class View extends \Kotchasan\KBase
 {
 	/**
 	 * Controller ที่เรียก View นี้

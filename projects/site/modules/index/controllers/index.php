@@ -9,7 +9,6 @@
 namespace Index\Index;
 
 use \Kotchasan\Template;
-use \Kotchasan\Input;
 use \Kotchasan\Date;
 
 /**
@@ -29,7 +28,7 @@ class Controller extends \Kotchasan\Controller
 	{
 		Template::inint(self::$cfg->skin);
 		// ถ้าไม่มีโมดูลเลือกหน้า home
-		$module = Input::get('module', 'home')->toString();
+		$module = (string)self::$server->get('module', 'home');
 		// สร้าง View
 		$view = $this->createView('\Kotchasan\View');
 		// template default

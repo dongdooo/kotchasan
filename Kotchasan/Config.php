@@ -26,32 +26,32 @@ class Config
 	 *
 	 * @var string
 	 */
-	public $timezone;
+	public $timezone = 'Asia/Bangkok';
 	/**
 	 * ภาษาที่รองรับ
 	 *
 	 * @var array
 	 */
-	public $languages;
+	public $languages = array('th');
 	/**
 	 * template ที่กำลังใช้งานอยู่ (ชื่อโฟลเดอร์)
 	 *
 	 * @var string
 	 */
-	public $skin;
+	public $skin = 'default';
 	/**
 	 * รายชื่อฟิลด์จากตารางสมาชิก สำหรับตรวจสอบการ login
 	 *
 	 * @var array
 	 */
-	public $login_fields;
+	public $login_fields = array('email', 'phone1');
 	/**
 	 * ตั้งค่า การ login ต่อ 1 IP
 	 * true ไม่สามารถ login พร้อมกันหลายบัญชีต่อ 1 เครื่องได้
 	 *
-	 * @var boolean default false
+	 * @var bool default false
 	 */
-	public $member_only_ip;
+	public $member_only_ip = false;
 	/**
 	 * สถานะสมาชิก
 	 * 0 สมาชิกทั่วไป
@@ -59,104 +59,104 @@ class Config
 	 *
 	 * @var array
 	 */
-	public $member_status;
+	public $member_status = array('Member', 'Administrator');
 	/**
 	 * สีของสมาชิกตามสถานะ
 	 *
 	 * @var array
 	 */
-	public $color_status;
+	public $color_status = array('#336600', '#FF0000');
 	/**
 	 * ถ้ากำหนดเป็น true บัญชี demo จะสามารถเข้าระบบแอดมินได้
 	 *
-	 * @var boolean default false
+	 * @var bool default false
 	 */
-	public $demo_mode;
+	public $demo_mode = false;
 	/**
 	 * ชื่อเว็บไซต์
 	 *
 	 * @var string
 	 */
-	public $web_title;
+	public $web_title = 'Kotchasan PHP Framework';
 	/**
 	 * คำอธิบายเกี่ยวกับเว็บไซต์
 	 *
 	 * @var string
 	 */
-	public $web_description;
+	public $web_description = 'PHP Framework พัฒนาโดยคนไทย';
 	/**
 	 * กำหนดอายุของแคช
 	 *
 	 * @var int
 	 */
-	public $cache_expire;
+	public $cache_expire = 0;
 	/**
 	 * ความกว้างสูงสุดของรูปประจำตัวสมาชิก
 	 *
 	 * @var int
 	 */
-	public $user_icon_w;
+	public $user_icon_w = 50;
 	/**
 	 * ความสูงสูงสุดของรูปประจำตัวสมาชิก
 	 *
 	 * @var int
 	 */
-	public $user_icon_h;
+	public $user_icon_h = 50;
 	/**
 	 * ชนิดของรูปถาพที่สามารถอัปโหลดเป็นรูปประจำตัวสมาชิก ได้
 	 *
 	 * @var array
 	 */
-	public $user_icon_typies;
+	public $user_icon_typies = array('jpg', 'gif', 'png');
 	/**
 	 * สมาชิกใหม่ต้องยืนยันอีเมล์
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
-	public $user_activate;
+	public $user_activate = true;
 	/**
 	 * ทีอยู่อีเมล์ใช้เป็นผู้ส่งจดหมาย สำหรับจดหมายที่ไม่ต้องการตอบกลับ เช่น no-reply@domain.tld
 	 *
 	 * @var string
 	 */
-	public $noreply_email;
+	public $noreply_email = 'no-replay@locahost';
 	/**
 	 * ระบุรหัสภาษาของอีเมล์ที่ส่ง เช่น tis-620
 	 *
 	 * @var string
 	 */
-	public $email_charset;
+	public $email_charset = 'tis-620';
 	/**
 	 * เลือกโปรแกรมที่ใช้ในการส่งอีเมล์เป็น PHPMailer
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
-	public $email_use_phpMailer;
+	public $email_use_phpMailer = false;
 	/**
 	 * ชื่อของเมล์เซิร์ฟเวอร์ เช่น localhost หรือ smtp.gmail.com
 	 *
 	 * @var string
 	 */
-	public $email_Host;
+	public $email_Host = 'localhost';
 	/**
 	 * หมายเลขพอร์ตของเมล์เซิร์ฟเวอร์ (ค่าปกติคือ 25, สำหรับ gmail ใช้ 465, 587 สำหรับ DirectAdmin)
 	 *
 	 * @var int
 	 */
-	public $email_Port;
+	public $email_Port = 25;
 	/**
 	 * กำหนดวิธีการตรวจสอบผู้ใช้สำหรับเมล์เซิร์ฟเวอร์
 	 * ถ้ากำหนดเป็น true จะต้องระบุUser+Pasword ของ mailserver ด้วย
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
-	public $email_SMTPAuth;
+	public $email_SMTPAuth = false;
 	/**
 	 * โปรโตคอลการเข้ารหัส SSL สำหรับการส่งอีเมล์ เช่น ssl
 	 *
 	 * @var string
 	 */
-	public $email_SMTPSecure;
+	public $email_SMTPSecure = '';
 	/**
 	 * ชื่อผู้ใช้ mailserver
 	 *
@@ -174,14 +174,20 @@ class Config
 	 *
 	 * @var string
 	 */
-	public $password_key;
+	public $password_key = '1234567890';
 	/**
 	 * กำหนดรูปแบบของ URL ที่สร้างจากระบบ
 	 * ตามที่กำหนดโดย \Settings->urls
 	 *
 	 * @var int
 	 */
-	public $module_url;
+	public $module_url = 1;
+	/**
+	 * default charset
+	 *
+	 * @var string
+	 */
+	public $char_set = 'UTF-8';
 
 	/**
 	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
@@ -190,30 +196,6 @@ class Config
 	 */
 	private function __construct()
 	{
-		$this->timezone = 'Asia/Bangkok';
-		$this->languages = array('th');
-		$this->skin = 'default';
-		$this->login_fields = array('email', 'phone1');
-		$this->member_only_ip = false;
-		$this->member_status = array('Member', 'Administrator');
-		$this->color_status = array('#336600', '#FF0000');
-		$this->demo_mode = false;
-		$this->web_title = 'Kotchasan PHP Framework';
-		$this->web_description = 'PHP Framework พัฒนาโดยคนไทย';
-		$this->cache_expire = 0;
-		$this->user_icon_h = 50;
-		$this->user_icon_w = 50;
-		$this->user_icon_typies = array('jpg', 'gif', 'png');
-		$this->user_activate = true;
-		$this->noreply_email = 'no-replay@'.$_SERVER['HTTP_HOST'];
-		$this->email_charset = 'tis-620';
-		$this->email_use_phpMailer = false;
-		$this->email_Host = 'localhost';
-		$this->email_Port = 25;
-		$this->email_SMTPAuth = false;
-		$this->email_SMTPSecure = '';
-		$this->password_key = '1234567890';
-		$this->module_url = 1;
 		if (is_file(ROOT_PATH.'settings/config.php')) {
 			$config = include (ROOT_PATH.'settings/config.php');
 			foreach ($config as $key => $value) {
@@ -263,7 +245,7 @@ class Config
 				$result = (int)$result;
 			} elseif (is_bool($default)) {
 				// true, false
-				$result = (boolean)$result;
+				$result = (bool)$result;
 			}
 		} else {
 			$result = $default;
@@ -291,7 +273,7 @@ class Config
 	 *
 	 * @param array $config
 	 * @param string $file ไฟล์ config (fullpath)
-	 * @return boolean คืนค่า true ถ้าสำเร็จ
+	 * @return bool คืนค่า true ถ้าสำเร็จ
 	 */
 	public static function save($config, $file)
 	{

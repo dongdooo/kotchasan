@@ -34,7 +34,7 @@ if (DEBUG > 0) {
  *
  * @var string
  */
-define('VERSION', '0.6.0');
+define('VERSION', '1.0.0 beta');
 /**
  * กำหนดการบันทึกการ query ฐานข้อมูล
  * ควรกำหนดเป็น false ขณะใช้งานจริง
@@ -77,7 +77,7 @@ if (!defined('ROOT_PATH')) {
  */
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
 /**
- * host
+ * host name
  */
 if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
 	$host = trim(current(explode(',', $_SERVER['HTTP_X_FORWARDED_HOST'])));
@@ -153,7 +153,7 @@ if (DEBUG != 2) {
 			default:
 				$type = 'PHP Error';
 		}
-		\Log\Logger::create()->error('<br>'.$type.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
+		\Kotchasan\Log\Logger::create()->error('<br>'.$type.' : <em>'.$errstr.'</em> in <b>'.$errfile.'</b> on line <b>'.$errline.'</b>');
 	});
 	set_exception_handler(function($e) {
 		$tract = $e->getTrace();
@@ -165,17 +165,9 @@ if (DEBUG != 2) {
 		} else {
 			$tract = next($tract);
 		}
-		\Log\Logger::create()->error('<br>Exception : <em>'.$e->getMessage().'</em> in <b>'.$tract['file'].'</b> on line <b>'.$tract['line'].'</b>');
+		\Kotchasan\Log\Logger::create()->error('<br>Exception : <em>'.$e->getMessage().'</em> in <b>'.$tract['file'].'</b> on line <b>'.$tract['line'].'</b>');
 	});
 }
-
-/**
- * base class
- */
-include VENDOR_DIR.'KBase.php';
-include VENDOR_DIR.'Kotchasan.php';
-include VENDOR_DIR.'Config.php';
-include VENDOR_DIR.'Input.php';
 
 /**
  * โหลดคลาสโดยอัตโนมัติตามชื่อของ Classname เมื่อมีการเรียกใช้งานคลาส
@@ -208,3 +200,11 @@ spl_autoload_register(function($className) {
 		}
 	}
 });
+
+/**
+ * load base class
+ */
+require VENDOR_DIR.'KBase.php';
+require VENDOR_DIR.'Kotchasan.php';
+require VENDOR_DIR.'Http/Server.php';
+require VENDOR_DIR.'Config.php';

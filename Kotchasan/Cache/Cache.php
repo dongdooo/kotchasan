@@ -11,7 +11,6 @@ namespace Kotchasan\Cache;
 use \Psr\Cache\CacheItemPoolInterface;
 use \Psr\Cache\CacheItemInterface;
 use \Kotchasan\Cache\CacheItem as Item;
-use \Kotchasan\KBase;
 
 /**
  * Kotchasan Caching Class (base class)
@@ -20,7 +19,7 @@ use \Kotchasan\KBase;
  *
  * @since 1.0
  */
-abstract class Cache extends KBase implements CacheItemPoolInterface
+abstract class Cache extends \Kotchasan\KBase implements CacheItemPoolInterface
 {
 	/**
 	 * รายการแคชรอบันทึก

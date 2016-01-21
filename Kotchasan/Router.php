@@ -8,6 +8,8 @@
 
 namespace Kotchasan;
 
+use \Kotchasan\Http\Server;
+
 /**
  * Router class
  *
@@ -15,7 +17,7 @@ namespace Kotchasan;
  *
  * @since 1.0
  */
-class Router
+class Router extends \Kotchasan\KBase
 {
 	/**
 	 * กฏของ Router สำหรับการแยกหน้าเว็บไซต์
@@ -48,14 +50,14 @@ class Router
 	/**
 	 * inint Router
 	 *
-	 * @param string $controller (optional) Controller หลักหากไม่พบ Controller ที่มาจาก URL
-	 * @return \static
+	 * @param string $controller Controller รับค่าจาก Router
+	 * @return self
+	 * @throws \InvalidArgumentException หากไม่พบ Controller
 	 */
-	public function inint($controller = 'Index\Index\Controller')
+	public function inint($controller)
 	{
 		// ตรวจสอบโมดูล
-		$request_uri = explode('?', rawurldecode($_SERVER['REQUEST_URI']));
-		$modules = $this->parseRoutes($request_uri[0], $_GET);
+		$modules = $this->parseRoutes(self::$server);
 		if (isset($modules['module']) && isset($modules['method']) && isset($modules['page'])) {
 			// controller จาก URL
 			$controller = ucwords($modules['module']).'\\'.ucwords($modules['page']).'\\'.ucwords($modules['method']);
@@ -64,10 +66,7 @@ class Router
 			// ใช้ controller เริ่มต้น
 			$function = empty($modules['function']) ? 'index' : $modules['function'];
 		}
-		// ส่งค่าโมดูลที่เลือกไปยังตัวแปร $_GET
-		foreach ($modules as $key => $value) {
-			$_GET[$key] = $value;
-		}
+		self::$server = self::$server->withQueryParams($modules);
 		if (method_exists($controller, $function)) {
 			// เรียก Controller
 			$obj = new $controller;
@@ -81,9 +80,9 @@ class Router
 	}
 
 	/**
-	 * แปลง path เป็น query string ตามที่กำหนดโดย $url_rules
+	 * แยก Path จาก Uri ออกเป็น query string
 	 *
-	 * @param string path เช่น /a/b/c.html
+	 * @param Server $server
 	 * @assert ('/index.php/css/view', array()) [==] array( 'method' => 'view', 'module' => 'css')
 	 * @assert ('/index.php/css/view/index', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css')
 	 * @assert ('/index.php/css/view/index/inint', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css', 'function' => 'inint')
@@ -100,10 +99,12 @@ class Router
 	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
 	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
 	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
-	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
+	 * @param array $modules คืนค่า query string
 	 */
-	public function parseRoutes($path, $modules)
+	protected function parseRoutes(Server $server)
 	{
+		$path = $server->getUri()->getPath();
+		$modules = $server->getQueryParams();
 		$base_path = preg_quote(BASE_PATH, '/');
 		// แยกเอาฉพาะ path ที่ส่งมา ไม่รวม path ของ application และ นามสกุล
 		if (preg_match('/^'.$base_path.'(.*)(\.html?|\/)$/u', $path, $match)) {
@@ -112,6 +113,7 @@ class Router
 			$my_path = $match[1];
 		}
 		if (!empty($my_path) && !preg_match('/^index\.php$/i', $my_path)) {
+			$my_path = rawurldecode($my_path);
 			foreach ($this->rules AS $patt => $items) {
 				if (preg_match($patt, $my_path, $match)) {
 					foreach ($items AS $i => $key) {

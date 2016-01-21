@@ -8,7 +8,7 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\KBase;
+use \Kotchasan\View;
 
 /**
  * Controller base class
@@ -17,14 +17,14 @@ use \Kotchasan\KBase;
  *
  * @since 1.0
  */
-class Controller extends KBase
+class Controller extends \Kotchasan\KBase
 {
 
 	/**
 	 * สร้าง View สำหรับ Controller นี้
 	 *
 	 * @param string $view ชื่อของ View
-	 * @return \View
+	 * @return View
 	 */
 	public function createView($view)
 	{

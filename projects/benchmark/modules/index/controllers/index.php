@@ -8,7 +8,6 @@
 
 namespace Index\Index;
 
-use \Kotchasan\Input;
 use \Kotchasan\Orm\Recordset;
 use \Kotchasan\Database;
 
@@ -24,7 +23,7 @@ class Controller extends \Kotchasan\Controller
 
 	public function index()
 	{
-		$action = Input::get('action', 'hello')->text();
+		$action = self::$server->get('action', 'hello')->text();
 		$this->$action();
 	}
 

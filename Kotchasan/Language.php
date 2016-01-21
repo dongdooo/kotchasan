@@ -8,9 +8,7 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\KBase;
 use \Kotchasan\ArrayTool;
-use \Kotchasan\Language;
 use \Kotchasan\File;
 
 /**
@@ -20,7 +18,7 @@ use \Kotchasan\File;
  *
  * @since 1.0
  */
-final class Language extends KBase
+final class Language extends \Kotchasan\KBase
 {
 	/**
 	 * ภาษาทั้งหมดที่ติดตั้ง
