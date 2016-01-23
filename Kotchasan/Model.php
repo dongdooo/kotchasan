@@ -9,7 +9,7 @@
 namespace Kotchasan;
 
 use \Kotchasan\Database\Query;
-use \Kotchasan\Database\DbCache as Cache;
+use \Kotchasan\Http\Request;
 
 /**
  * Model base class
@@ -29,19 +29,23 @@ class Model extends Query
 
 	/**
 	 * Class constructor
+	 *
+	 * @param Request $request
 	 */
-	public function __construct()
+	public function __construct(Request $request)
 	{
+		$this->request = $request;
 		parent::__construct($this->conn);
 	}
 
 	/**
 	 * create Model
 	 *
+	 * @param Request $request
 	 * @return \static
 	 */
-	public static function create()
+	public static function create(Request $request)
 	{
-		return new static;
+		return new static($request);
 	}
 }

@@ -6,7 +6,7 @@
  * @license http://www.kotchasan.com/license/
  */
 
-use \Kotchasan\Http\Server;
+use \Kotchasan\Http\Request;
 use \Kotchasan\Config;
 
 /**
@@ -16,7 +16,7 @@ use \Kotchasan\Config;
  *
  * @since 1.0
  */
-class Kotchasan extends \Kotchasan\KBase
+class Kotchasan extends Kotchasan\KBase
 {
 	/**
 	 * @var Singleton สำหรับเรียกใช้ class นี้เพียงครั้งเดียวเท่านั้น
@@ -46,8 +46,7 @@ class Kotchasan extends \Kotchasan\KBase
 	 */
 	private function __construct()
 	{
-		/* create Server  */
-		self::$server = new Server;
+		/* config */
 		self::$cfg = Config::create();
 		/* charset */
 		ini_set('default_charset', $this->char_set);
@@ -76,6 +75,6 @@ class Kotchasan extends \Kotchasan\KBase
 	 */
 	public function run()
 	{
-		createClass($this->defaultRouter)->inint($this->defaultController);
+		\createClass($this->defaultRouter, new Request)->inint($this->defaultController);
 	}
 }

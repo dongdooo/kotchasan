@@ -108,6 +108,7 @@ class UploadedFile implements UploadedFileInterface
 	 * ย้ายไฟล์อัปโหลดไปยังที่อยู่ใหม่
 	 *
 	 * @param string $targetPath ที่อยู่ปลายทางที่ต้องการย้าย
+	 * @return bool true ถ้าอัปโหลดเรียบร้อย
 	 * @throws \InvalidArgumentException ข้อผิดพลาดหากที่อยู่ปลายทางไม่สามารถเขียนได้
 	 * @throws \RuntimeException ข้อผิดพลาดการอัปโหลด
 	 */
@@ -132,6 +133,7 @@ class UploadedFile implements UploadedFileInterface
 			}
 		}
 		$this->isMoved = true;
+		return true;
 	}
 
 	/**

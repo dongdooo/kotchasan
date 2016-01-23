@@ -23,7 +23,7 @@ class Controller extends \Kotchasan\Controller
 
 	public function index()
 	{
-		$action = self::$server->get('action', 'hello')->text();
+		$action = $this->request->get('action', 'hello')->toString();
 		$this->$action();
 	}
 

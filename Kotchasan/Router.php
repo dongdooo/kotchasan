@@ -8,8 +8,6 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\Http\Server;
-
 /**
  * Router class
  *
@@ -17,7 +15,7 @@ use \Kotchasan\Http\Server;
  *
  * @since 1.0
  */
-class Router extends \Kotchasan\KBase
+class Router extends \Kotchasan\Container
 {
 	/**
 	 * กฏของ Router สำหรับการแยกหน้าเว็บไซต์
@@ -57,7 +55,7 @@ class Router extends \Kotchasan\KBase
 	public function inint($controller)
 	{
 		// ตรวจสอบโมดูล
-		$modules = $this->parseRoutes(self::$server);
+		$modules = $this->parseRoutes();
 		if (isset($modules['module']) && isset($modules['method']) && isset($modules['page'])) {
 			// controller จาก URL
 			$controller = ucwords($modules['module']).'\\'.ucwords($modules['page']).'\\'.ucwords($modules['method']);
@@ -66,10 +64,9 @@ class Router extends \Kotchasan\KBase
 			// ใช้ controller เริ่มต้น
 			$function = empty($modules['function']) ? 'index' : $modules['function'];
 		}
-		self::$server = self::$server->withQueryParams($modules);
 		if (method_exists($controller, $function)) {
 			// เรียก Controller
-			$obj = new $controller;
+			$obj = new $controller($this->request->withQueryParams($modules));
 			if (method_exists($obj, $function)) {
 				$obj->$function();
 			}
@@ -82,29 +79,12 @@ class Router extends \Kotchasan\KBase
 	/**
 	 * แยก Path จาก Uri ออกเป็น query string
 	 *
-	 * @param Server $server
-	 * @assert ('/index.php/css/view', array()) [==] array( 'method' => 'view', 'module' => 'css')
-	 * @assert ('/index.php/css/view/index', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css')
-	 * @assert ('/index.php/css/view/index/inint', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css', 'function' => 'inint')
-	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'method' => 'model', 'page' => 'updateprofile', 'module' => 'index')
-	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'method' => 'view', 'page' => 'index')
-	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
-	 * @assert ('/module/action/1/2.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
-	 * @assert ('/module/action/1.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1)
-	 * @assert ('/module/1/2.html', array()) [==] array('module' => 'module', 'cat' => 1, 'id' => 2)
-	 * @assert ('/module/1.html', array()) [==] array('module' => 'module', 'cat' => 1)
-	 * @assert ('/module/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ', 'module' => 'module')
-	 * @assert ('/module.html', array()) [==] array('module' => 'module')
-	 * @assert ('/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ')
-	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
-	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
-	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
 	 * @param array $modules คืนค่า query string
 	 */
-	protected function parseRoutes(Server $server)
+	protected function parseRoutes()
 	{
-		$path = $server->getUri()->getPath();
-		$modules = $server->getQueryParams();
+		$path = $this->request->getUri()->getPath();
+		$modules = $this->request->getQueryParams();
 		$base_path = preg_quote(BASE_PATH, '/');
 		// แยกเอาฉพาะ path ที่ส่งมา ไม่รวม path ของ application และ นามสกุล
 		if (preg_match('/^'.$base_path.'(.*)(\.html?|\/)$/u', $path, $match)) {

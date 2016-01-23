@@ -11,6 +11,7 @@ namespace Kotchasan;
 use \Kotchasan\ArrayTool;
 use \Kotchasan\Language;
 use \Kotchasan\Url;
+use \Kotchasan\Http\Request;
 
 /**
  * คลาสสำหรับจัดการแสดงผลข้อมูลจาก Model ในรูปแบบตาราง
@@ -19,7 +20,7 @@ use \Kotchasan\Url;
  *
  * @since 1.0
  */
-class DataTable
+class DataTable extends \Kotchasan\KBase
 {
 	/**
 	 * id ของตาราง
@@ -217,8 +218,9 @@ class DataTable
 	 *
 	 * @param array $param
 	 */
-	public function __construct($param)
+	public function __construct(Request $request, $param)
 	{
+		$this->request = $request;
 		$this->id = 'datatable';
 		foreach ($param as $key => $value) {
 			$this->$key = $value;
@@ -228,7 +230,7 @@ class DataTable
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = self::$server->request('count', 30)->toInt();
+			$this->perPage = $this->request->request('count', 30)->toInt();
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
@@ -276,7 +278,7 @@ class DataTable
 	{
 		$url_query = array();
 		$hidden_fields = array();
-		foreach ($_GET as $key => $value) {
+		foreach ($this->request->getQueryParams() as $key => $value) {
 			$value = rawurlencode($value);
 			$url_query[$key] = $key.'='.$value;
 			// แอเรย์เก็บรายการ input ที่ไม่ต้องสร้าง
@@ -323,7 +325,7 @@ class DataTable
 			$form[] = '</fieldset>';
 		}
 		// search
-		$search = self::$server->request('search')->text();
+		$search = $this->request->request('search')->text();
 		if (!empty($this->searchColumns)) {
 			if (!empty($search)) {
 				if (isset($this->model)) {
@@ -369,7 +371,7 @@ class DataTable
 			$this->perPage = 0;
 		} else {
 			// หน้าที่เลือก
-			$page = max(1, self::$server->request('page', 1)->toInt());
+			$page = max(1, $this->request->request('page', 1)->toInt());
 			// ตรวจสอบหน้าที่เลือกสูงสุด
 			$totalpage = round($count / $this->perPage);
 			$totalpage += ($totalpage * $this->perPage < $count) ? 1 : 0;
@@ -387,10 +389,10 @@ class DataTable
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = (string)self::$server->request('sort', $this->sort);
+		$this->sort = $this->request->request('sort', $this->sort)->toString();
 		if (!empty($this->sort)) {
 			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = (string)self::$server->request('sort_type', $this->sortType);
+				$this->sortType = $this->request->request('sort_type', $this->sortType)->toString();
 				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
 				if (isset($this->model)) {
 					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;

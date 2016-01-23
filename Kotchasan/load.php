@@ -117,13 +117,14 @@ if (!defined('TEMPLATE_ROOT')) {
 /**
  * ฟังก์ชั่นใช้สำหรับสร้างคลาส
  *
- * @param string $className ชื่อคลาส
- * @param mixed $param
+ * @param type $className ชื่อคลาส
+ * @param \Kotchasan\Http\Request $request
+ * @param type $param
  * @return \static
  */
-function createClass($className, $param = null)
+function createClass($className, \Kotchasan\Http\Request $request, $param = null)
 {
-	return new $className($param);
+	return new $className($request, $param);
 }
 /**
  * custom error handler
@@ -206,5 +207,5 @@ spl_autoload_register(function($className) {
  */
 require VENDOR_DIR.'KBase.php';
 require VENDOR_DIR.'Kotchasan.php';
-require VENDOR_DIR.'Http/Server.php';
 require VENDOR_DIR.'Config.php';
+require VENDOR_DIR.'Http/Request.php';

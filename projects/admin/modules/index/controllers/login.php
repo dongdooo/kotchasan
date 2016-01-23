@@ -89,7 +89,7 @@ class Controller extends \Kotchasan\Controller
 		// checkbox
 		$group->add('checkbox', array(
 			'id' => 'bool_remember',
-			'checked' => self::$server->cookie('login_remember')->toBoolean(),
+			'checked' => $this->request->cookie('login_remember')->toBoolean(),
 			'value' => 1,
 			'label' => Language::get('Remember me'),
 			'labelClass' => 'td right'

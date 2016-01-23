@@ -112,7 +112,7 @@ class Email extends \Kotchasan\Model
 			// ส่งอีเมล์ด้วย PHPMailer
 			include_once VENDOR_DIR.'PHPMailer/class.phpmailer.php';
 			// Create a new PHPMailer instance
-			$mail = new PHPMailer;
+			$mail = new \PHPMailer;
 			// Tell PHPMailer to use SMTP
 			$mail->isSMTP();
 			// charset
@@ -138,7 +138,6 @@ class Email extends \Kotchasan\Model
 			// message
 			$mail->MsgHTML(preg_replace('/(<br([\s\/]{0,})>)/', "$1\r\n", $msg));
 			$mail->AltBody = strip_tags($msg);
-
 			foreach (explode(',', $mailto) as $email) {
 				if (preg_match('/^(.*)<(.*)>$/', $email, $match)) {
 					if ($mail->ValidateAddress($match[1])) {

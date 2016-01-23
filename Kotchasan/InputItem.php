@@ -35,16 +35,6 @@ class InputItem
 	}
 
 	/**
-	 * คืนค่าเป็น String
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string)$this->value;
-	}
-
-	/**
 	 * สร้าง Object
 	 *
 	 * @param mixed $value
@@ -116,14 +106,35 @@ class InputItem
 	}
 
 	/**
-	 * ลบ PHP tag และแปลง \ เป็น $#92; ใช้รับข้อมูลจาก editor
-	 * เช่นเนื้อหาของบทความ
+	 * คืนค่าเป็น String
+	 *
+	 * @return string|null คืนค่าเป็น string หรือ null
+	 */
+	public function toString()
+	{
+		return $this->value === null ? null : (string)$this->value;
+	}
+
+	/**
+	 * แปลง tag และ ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
+	 * เช่นหัวข้อของบทความ
 	 *
 	 * @return string
 	 */
-	public function detail()
+	public function topic()
 	{
-		return preg_replace(array('/<\?(.*?)\?>/su', '/\\\/'), array('', '&#92;'), $this->value);
+		return trim(preg_replace('/[\r\n\t\s]+/', ' ', $this->htmlspecialchars()));
+	}
+
+	/**
+	 * แปลง tag และลบช่องว่างหัวท้าย ไม่แปลง &amp;
+	 * สำหรับ URL หรือ email
+	 *
+	 * @return string
+	 */
+	public function url()
+	{
+		return trim($this->htmlspecialchars(false));
 	}
 
 	/**
@@ -180,6 +191,17 @@ class InputItem
 	}
 
 	/**
+	 * ลบ PHP tag และแปลง \ เป็น $#92; ใช้รับข้อมูลจาก editor
+	 * เช่นเนื้อหาของบทความ
+	 *
+	 * @return string
+	 */
+	public function detail()
+	{
+		return preg_replace(array('/<\?(.*?)\?>/su', '/\\\/'), array('', '&#92;'), $this->value);
+	}
+
+	/**
 	 * ลบ tags และ ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
 	 * ใช้เป็น tags หรือ keywords
 	 *
@@ -200,28 +222,6 @@ class InputItem
 	public function quote()
 	{
 		return str_replace("'", '&#39;', $this->value);
-	}
-
-	/**
-	 * แปลง tag และ ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
-	 * เช่นหัวข้อของบทความ
-	 *
-	 * @return string
-	 */
-	public function topic()
-	{
-		return trim(preg_replace('/[\r\n\t\s]+/', ' ', $this->htmlspecialchars()));
-	}
-
-	/**
-	 * แปลง tag และลบช่องว่างหัวท้าย ไม่แปลง &amp;
-	 * สำหรับ URL หรือ email
-	 *
-	 * @return string
-	 */
-	public function url()
-	{
-		return trim($this->htmlspecialchars(false));
 	}
 
 	/**

@@ -11,6 +11,7 @@ namespace Kotchasan;
 use \Kotchasan\Controller;
 use \Kotchasan\Language;
 use \Kotchasan\Template;
+use \Kotchasan\Http\Request;
 
 /**
  * View base class
@@ -19,7 +20,7 @@ use \Kotchasan\Template;
  *
  * @since 1.0
  */
-class View extends \Kotchasan\KBase
+class View extends \Kotchasan\Container
 {
 	/**
 	 * Controller ที่เรียก View นี้
@@ -49,10 +50,12 @@ class View extends \Kotchasan\KBase
 	/**
 	 * Class constructor
 	 *
-	 * @param \Controller $controller
+	 * @param Request $request
+	 * @param Controller $controller
 	 */
-	public function __construct(Controller $controller)
+	public function __construct(Request $request, Controller $controller)
 	{
+		$this->request = $request;
 		$this->controller = $controller;
 	}
 

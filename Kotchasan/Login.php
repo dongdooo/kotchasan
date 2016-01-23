@@ -8,10 +8,10 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\Model;
 use \Kotchasan\LoginInterface;
 use \Kotchasan\Password;
 use \Kotchasan\Language;
+use \Kotchasan\Http\Request;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -20,7 +20,7 @@ use \Kotchasan\Language;
  *
  * @since 1.0
  */
-class Login extends Model implements LoginInterface
+class Login extends \Kotchasan\Container implements LoginInterface
 {
 	/**
 	 * ข้อความจาก Login Class
@@ -56,17 +56,17 @@ class Login extends Model implements LoginInterface
 	 *
 	 * @return \static
 	 */
-	public static function create()
+	public static function create(Request $request)
 	{
-		// create Model
-		$model = new static;
+		// create class
+		$login = new static($request);
 		// การเข้ารหัส
 		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
-		self::$text_email = $model->get('text_email', $pw);
-		self::$text_password = $model->get('text_password', $pw);
-		$login_remember = $model->get('bool_remember', $pw) == 1 ? 1 : 0;
-		$action = (string)self::$server->request('action');
+		self::$text_email = $login->get('text_email', $pw);
+		self::$text_password = $login->get('text_password', $pw);
+		$login_remember = $login->get('bool_remember', $pw) == 1 ? 1 : 0;
+		$action = $request->request('action')->toString();
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
 			// error มี email อยู่แล้ว (facebook login)
@@ -80,7 +80,7 @@ class Login extends Model implements LoginInterface
 			self::$login_message = Language::get('Logout successful');
 		} elseif ($action === 'forgot') {
 			// ลืมรหัสผ่าน
-			return $model->forgot();
+			return $login->forgot();
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
 			if (self::$text_email != '' && self::$text_password != '') {
@@ -93,7 +93,7 @@ class Login extends Model implements LoginInterface
 					self::$login_input = 'text_password';
 				} else {
 					// ตรวจสอบการ login กับฐานข้อมูล
-					$login_result = $model->checkLogin(self::$text_email, self::$text_password);
+					$login_result = $login->checkLogin(self::$text_email, self::$text_password);
 					if (is_string($login_result)) {
 						// ข้อความผิดพลาด
 						self::$login_input = $login_result == 'Incorrect password' ? 'text_password' : 'text_email';
@@ -113,7 +113,7 @@ class Login extends Model implements LoginInterface
 					}
 				}
 			}
-			return $model;
+			return $login;
 		}
 	}
 
@@ -127,19 +127,14 @@ class Login extends Model implements LoginInterface
 	 */
 	protected function get($name, Password $pwd)
 	{
-		$datas = self::$server->getParsedBody();
+		$datas = $this->request->getParsedBody();
 		if (isset($datas[$name])) {
 			return (string)$datas[$name];
-		} else {
-			$datas = self::$server->session($name, null);
-			if ($datas === null) {
-				$datas = self::$server->getCookieParams();
-				return $pwd->decode($datas[$name]);
-			} else {
-				return (string)$datas;
-			}
+		} elseif (isset($_SESSION[$name])) {
+			return (string)$_SESSION[$name];
 		}
-		return null;
+		$datas = $this->request->getCookieParams();
+		return isset($datas[$name]) ? $pwd->decode($datas[$name]) : null;
 	}
 
 	/**

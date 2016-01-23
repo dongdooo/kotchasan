@@ -56,7 +56,7 @@ class DbCache
 	}
 
 	/**
-	 * Create Class
+	 * Create Class (Singleton)
 	 *
 	 * @return \static
 	 */

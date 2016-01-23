@@ -28,13 +28,13 @@ class Controller extends \Kotchasan\Controller
 	{
 		Template::inint(self::$cfg->skin);
 		// ถ้าไม่มีโมดูลเลือกหน้า home
-		$module = (string)self::$server->get('module', 'home');
+		$module = $this->request->get('module', 'home')->toString();
 		// สร้าง View
 		$view = $this->createView('\Kotchasan\View');
 		// template default
 		$view->setContents(array(
 			// menu
-			'/{MENU}/' => createClass('Index\Menu\Controller')->render($module),
+			'/{MENU}/' => createClass('Index\Menu\Controller', $this->request)->render($module),
 			// web title
 			'/{TITLE}/' => self::$cfg->web_title,
 			// โหลดหน้าที่เลือก (html)

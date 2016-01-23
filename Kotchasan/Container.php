@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource Kotchasan/KBase.php
+ * @filesource Kotchasan/Container.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -8,7 +8,6 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\Config;
 use \Kotchasan\Http\Request;
 
 /**
@@ -18,18 +17,16 @@ use \Kotchasan\Http\Request;
  *
  * @since 1.0
  */
-class KBase
+class Container extends \Kotchasan\KBase
 {
+
 	/**
-	 * Config class
+	 * Class constructor
 	 *
-	 * @var Config
+	 * @param Request $request
 	 */
-	static protected $cfg;
-	/**
-	 * Server request class
-	 *
-	 * @var Request
-	 */
-	protected $request;
+	public function __construct(Request $request)
+	{
+		$this->request = $request;
+	}
 }

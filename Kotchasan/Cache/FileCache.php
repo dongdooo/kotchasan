@@ -31,14 +31,16 @@ class FileCache extends Cache
 	 */
 	private $cache_dir = null;
 	/**
-	 * อายุของแคช (วินาที)
+	 * อายุของแคช (วินาที) 0 หมายถึงไม่มีการแคช
 	 *
 	 * @var int
 	 */
-	private $cache_expire;
+	private $cache_expire = 0;
 
 	/**
-	 * Class constructor
+	 * class constructor
+	 *
+	 * @throws Exception
 	 */
 	public function __construct()
 	{

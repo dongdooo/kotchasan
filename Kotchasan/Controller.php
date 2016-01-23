@@ -8,8 +8,6 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\View;
-
 /**
  * Controller base class
  *
@@ -17,17 +15,17 @@ use \Kotchasan\View;
  *
  * @since 1.0
  */
-class Controller extends \Kotchasan\KBase
+class Controller extends \Kotchasan\Container
 {
 
 	/**
 	 * สร้าง View สำหรับ Controller นี้
 	 *
 	 * @param string $view ชื่อของ View
-	 * @return View
+	 * @return \static
 	 */
 	public function createView($view)
 	{
-		return new $view($this);
+		return new $view($this->request, $this);
 	}
 }

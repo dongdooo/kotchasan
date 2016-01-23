@@ -70,7 +70,9 @@ final class Database
 				$class = 'PdoMysqlDriver';
 			}
 			include VENDOR_DIR.'Database/'.$class.'.php';
-			self::$instances[$name] = createClass('Kotchasan\\Database\\'.$class, $name)->connect($param);
+			$class = 'Kotchasan\\Database\\'.$class;
+			self::$instances[$name] = new $class;
+			self::$instances[$name]->connect($param);
 		}
 		return self::$instances[$name];
 	}
