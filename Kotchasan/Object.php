@@ -24,6 +24,8 @@ class Object
 	 * @param object $a
 	 * @param array|object $b
 	 * @return object
+	 * @assert ((object)array('one' => 1), array('two' => 2)) [==] (object)array('one' => 1, 'two' => 2)
+	 * @assert ((object)array('one' => 1), (object)array('two' => 2)) [==] (object)array('one' => 1, 'two' => 2)
 	 */
 	public static function replace($a, $b)
 	{

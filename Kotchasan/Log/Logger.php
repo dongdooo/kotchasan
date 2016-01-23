@@ -88,6 +88,17 @@ class Logger extends AbstractLogger implements LoggerInterface
 	 */
 	public function log($level, $message, array $context = array())
 	{
+		$patt = array(
+			'datetime' => date($this->options['dateFormat'], time()),
+			'level' => isset($this->logLevels[$level]) ? strtoupper($level) : 'UNKNOW',
+			'message' => $message,
+			'context' => empty($context) ? '' : json_encode($context)
+		);
+		$message = $this->options['logFormat'];
+		foreach ($patt as $key => $value) {
+			$message = str_replace('{'.$key.'}', $value, $message);
+		}
+		$message = "\n".preg_replace('/[\s\n\t\r]+/', ' ', $message);
 		if (File::makeDirectory($this->options['logFilePath'])) {
 			// ไฟล์ log
 			switch ($level) {
@@ -110,23 +121,14 @@ class Logger extends AbstractLogger implements LoggerInterface
 				}
 			}
 			if ($f) {
-				$patt = array(
-					'datetime' => date($this->options['dateFormat'], time()),
-					'level' => isset($this->logLevels[$level]) ? strtoupper($level) : 'UNKNOW',
-					'message' => $message,
-					'context' => empty($context) ? '' : json_encode($context)
-				);
-				$message = $this->options['logFormat'];
-				foreach ($patt as $key => $value) {
-					$message = str_replace('{'.$key.'}', $value, $message);
-				}
-				fwrite($f, "\n".preg_replace('/[\s\n\t\r]+/', ' ', $message));
+				fwrite($f, $message);
 				fclose($f);
 			} else {
 				printf(Language::get('File %s cannot be created or is read-only.'), 'log');
 			}
 		} else {
 			printf(Language::get('Directory %s cannot be created or is read-only.'), 'logs/');
+			echo $message;
 		}
 	}
 }

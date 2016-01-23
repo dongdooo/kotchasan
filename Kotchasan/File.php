@@ -23,6 +23,7 @@ class File
 	 *
 	 * @param string $path ไฟล์
 	 * @return string คืนค่า ext ของไฟล์ ตัวอักษรตัวพิมพ์เล็ก
+	 * @assert ('index.php.sql') [==] 'sql'
 	 */
 	public static function ext($path)
 	{

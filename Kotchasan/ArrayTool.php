@@ -21,18 +21,20 @@ class ArrayTool
 	/**
 	 * ฟังก์ชั่น เรียงลำดับ array ตามชื่อฟิลด์
 	 *
-	 * @param pointer $array แอเรย์ที่ต้องการเรียงลำดับ
+	 * @param array $array แอเรย์ที่ต้องการเรียงลำดับ
 	 * @param string $sort_key (optional) คืย์ของ $array ที่ต้องการในการเรียง (default id)
 	 * @param bool $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
+	 * @assert (array(array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'), array('id' => 1, 'value' => 'one'))) [==] array(array('id' => 1, 'value' => 'one'), array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'))
+	 * @return array
 	 */
-	public static function sort(&$array, $sort_key = 'id', $sort_desc = false)
+	public static function sort($array, $sort_key = 'id', $sort_desc = false)
 	{
 		if (!empty($array)) {
 			$temp_array[key($array)] = array_shift($array);
-			foreach ($array AS $key => $val) {
+			foreach ($array as $key => $val) {
 				$offset = 0;
 				$found = false;
-				foreach ($temp_array AS $tmp_key => $tmp_val) {
+				foreach ($temp_array as $tmp_key => $tmp_val) {
 					$v1 = isset($val[$sort_key]) ? strtolower(self::toString('', $val[$sort_key])) : '';
 					$v2 = isset($tmp_val[$sort_key]) ? strtolower(self::toString('', $tmp_val[$sort_key])) : '';
 					if (!$found && $v1 > $v2) {
@@ -46,11 +48,12 @@ class ArrayTool
 				}
 			}
 			if ($sort_desc) {
-				$array = array_reverse($temp_array);
+				return $temp_array;
 			} else {
-				$array = $temp_array;
+				return array_reverse($temp_array);
 			}
 		}
+		return $array;
 	}
 
 	/**
@@ -125,8 +128,8 @@ class ArrayTool
 	 * ฟังก์ชั่นแยก $key และ $value ออกจาก array รองรับข้อมูลรูปแบบแอเรย์ย่อยๆ
 	 *
 	 * @param array $array array('key1' => 'value1', 'key2' => 'value2', array('key3' => 'value3', 'key4' => 'value4'))
-	 * @param array $keys คืนค่า $key
-	 * @param array $values คืนค่า $value
+	 * @param array $keys คืนค่า $key Array ( [0] => key1 [1] => key2 [2] => key3 [3] => key4 )
+	 * @param array $values คืนค่า $value Array ( [0] => value1 [1] => value2 [2] => value3 [3] => value4 )
 	 */
 	public static function extract($array, &$keys, &$values)
 	{
@@ -160,6 +163,7 @@ class ArrayTool
 	 * แปลงข้อความ serialize เป็นแอเรย์
 	 *
 	 * @param string $str serialize
+	 * @assert (serialize(array(1, 2, 3))) [==] array(1, 2, 3)
 	 * @return array
 	 */
 	public static function unserialize($str)

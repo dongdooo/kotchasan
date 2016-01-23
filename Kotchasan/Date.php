@@ -25,6 +25,7 @@ class Date
 	 *
 	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
 	 * @return int
+	 * @assert (mktime(0, 0, 0, 2, 29, 2016)) [==]  29
 	 */
 	public static function day($mktime = 0)
 	{
@@ -36,6 +37,7 @@ class Date
 	 *
 	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นเดือนนี้
 	 * @return int
+	 * @assert (mktime(0, 0, 0, 2, 29, 2016)) [==]  2
 	 */
 	public static function month($mktime = 0)
 	{
@@ -47,6 +49,7 @@ class Date
 	 *
 	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นปีนี้
 	 * @return int
+	 * @assert (mktime(0, 0, 0, 2, 29, 2016)) [==]  2016
 	 */
 	public static function year($mktime = 0)
 	{
@@ -117,6 +120,7 @@ class Date
 	 * @param int $start_date วันที่เริ่มต้นหรือวันเกิด (Unix timestamp)
 	 * @param int $end_date วันที่สิ้นสุดหรือวันนี้ (Unix timestamp)
 	 * @return array คืนค่า ปี เดือน วัน [year, month, day] ที่แตกต่าง
+	 * @assert (mktime(0, 0, 0, 2, 1, 2016), mktime(0, 0, 0, 3, 1, 2016)) [==]  array('year' => 0,'month' => 1, 'day' => 0)
 	 */
 	public static function compare($start_date, $end_date)
 	{
@@ -162,21 +166,11 @@ class Date
 	 *
 	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
 	 * @return string คืนค่าวันที่รูป Y-m-d
+	 * @assert (1453522271) [==]  date('Y-m-d', 1453522271)
 	 */
 	public static function mktimeToSqlDate($mktime = 0)
 	{
 		return date('Y-m-d', empty($mktime) ? time() : $mktime);
-	}
-
-	/**
-	 * แปลงวันที่ จาก mktime เป็น Y-m-d H:i:s สามารถบันทึกลงฐานข้อมูลได้ทันที
-	 *
-	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
-	 * @return string คืนค่า วันที่และเวลาของ mysql เช่น Y-m-d H:i:s
-	 */
-	public static function mktimeToSqlDateTime($mktime = 0)
-	{
-		return date('Y-m-d H:i:s', empty($mktime) ? time() : $mktime);
 	}
 
 	/**
@@ -209,10 +203,22 @@ class Date
 	}
 
 	/**
+	 * แปลงวันที่ จาก mktime เป็น Y-m-d H:i:s สามารถบันทึกลงฐานข้อมูลได้ทันที
+	 *
+	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
+	 * @return string คืนค่า วันที่และเวลาของ mysql เช่น Y-m-d H:i:s
+	 */
+	public static function mktimeToSqlDateTime($mktime = 0)
+	{
+		return date('Y-m-d H:i:s', empty($mktime) ? time() : $mktime);
+	}
+
+	/**
 	 * ฟังก์ชั่น แปลงวันที่และเวลาของ sql เป็น mktime
 	 *
 	 * @param string $date วันที่ในรูปแบบ Y-m-d H:i:s
 	 * @return int คืนค่าเวลาในรูป mktime
+	 * @assert (\Kotchasan\Date::mktimeToSqlDateTime(1453522271)) [==] 1453522271
 	 */
 	public static function sqlDateTimeToMktime($date)
 	{

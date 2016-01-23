@@ -55,7 +55,7 @@ class Router extends \Kotchasan\Container
 	public function inint($controller)
 	{
 		// ตรวจสอบโมดูล
-		$modules = $this->parseRoutes();
+		$modules = $this->parseRoutes($this->request->getUri()->getPath(), $this->request->getQueryParams());
 		if (isset($modules['module']) && isset($modules['method']) && isset($modules['page'])) {
 			// controller จาก URL
 			$controller = ucwords($modules['module']).'\\'.ucwords($modules['page']).'\\'.ucwords($modules['method']);
@@ -77,14 +77,31 @@ class Router extends \Kotchasan\Container
 	}
 
 	/**
-	 * แยก Path จาก Uri ออกเป็น query string
+	 * แยก path คืนค่าเป็น query string
 	 *
-	 * @param array $modules คืนค่า query string
+	 * @param string path เช่น /a/b/c.html
+	 * @param array $modules query string
+	 * @return array
+	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
+	 * @assert ('/index.php/css/view', array()) [==] array( 'method' => 'view', 'module' => 'css')
+	 * @assert ('/index.php/css/view/index', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css')
+	 * @assert ('/index.php/css/view/index/inint', array()) [==] array( 'method' => 'view', 'page' => 'index', 'module' => 'css', 'function' => 'inint')
+	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'method' => 'model', 'page' => 'updateprofile', 'module' => 'index')
+	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'method' => 'view', 'page' => 'index')
+	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
+	 * @assert ('/module/action/1/2.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
+	 * @assert ('/module/action/1.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1)
+	 * @assert ('/module/1/2.html', array()) [==] array('module' => 'module', 'cat' => 1, 'id' => 2)
+	 * @assert ('/module/1.html', array()) [==] array('module' => 'module', 'cat' => 1)
+	 * @assert ('/module/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ', 'module' => 'module')
+	 * @assert ('/module.html', array()) [==] array('module' => 'module')
+	 * @assert ('/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ')
+	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
+	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
+	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
 	 */
-	protected function parseRoutes()
+	public function parseRoutes($path, $modules)
 	{
-		$path = $this->request->getUri()->getPath();
-		$modules = $this->request->getQueryParams();
 		$base_path = preg_quote(BASE_PATH, '/');
 		// แยกเอาฉพาะ path ที่ส่งมา ไม่รวม path ของ application และ นามสกุล
 		if (preg_match('/^'.$base_path.'(.*)(\.html?|\/)$/u', $path, $match)) {

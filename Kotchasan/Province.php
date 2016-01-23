@@ -113,6 +113,7 @@ class Province
 	 *
 	 * @param int $iso
 	 * @return string คืนค่าว่างถ้าไม่พบ
+	 * @assert (102) [==] 'กรุงเทพมหานคร'
 	 */
 	public static function get($iso)
 	{

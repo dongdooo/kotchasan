@@ -292,6 +292,7 @@ class Country
 	 *
 	 * @param int $iso
 	 * @return string คืนค่าว่างถ้าไม่พบ
+	 * @assert ('TH') [==] 'ไทย'
 	 */
 	public static function get($iso)
 	{
