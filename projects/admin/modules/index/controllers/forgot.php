@@ -11,7 +11,6 @@ namespace Index\Forgot;
 use \Kotchasan\Login;
 use \Kotchasan\Html;
 use \Kotchasan\Language;
-use \Kotchasan\Url;
 
 /**
  * Forgot Form
@@ -65,7 +64,7 @@ class Controller extends \Kotchasan\Controller
 		$group = $fieldset->add('groups');
 		// a
 		$group->add('a', array(
-			'href' => Url::next(array('action' => 'login')),
+			'href' => self::$request->getUri()->withParams(array('action' => 'login'), true),
 			'class' => 'td',
 			'title' => Language::get('Administrator area'),
 			'innerHTML' => ''.Language::get('Sign In').' ?'

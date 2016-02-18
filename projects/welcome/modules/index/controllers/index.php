@@ -8,6 +8,8 @@
 
 namespace Index\Index;
 
+use \Kotchasan\Http\Request;
+
 /**
  * default Controller
  *
@@ -20,8 +22,10 @@ class Controller extends \Kotchasan\Controller
 
 	/**
 	 * แสดงผล
+	 *
+	 * @param Request $request
 	 */
-	public function index()
+	public function index(Request $request)
 	{
 		$this->createView('Index\Index\View')->render();
 	}

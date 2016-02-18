@@ -1,203 +1,209 @@
+@page {
+	margin: 0.5cm 1cm;
+}
 body {
-    margin: 0.5cm;
-    font-family: Tahoma, 'Times New Roman', Times, serif;
-    font-size: 10pt;
-    color: #000;
+	margin: 0 auto;
+	font-family: 'Angsana New', Tahoma, Loma, 'Times New Roman', Times, serif;
+	font-size: 9pt;
+	color: #000;
+	max-width: 210mm;
 }
 h1 {
-    font-size: 2em;
-    text-align: center;
+	font-size: 2em;
+	text-align: center;
 }
 h2 {
-    font-size: 1.8em;
-    text-align: center;
+	font-size: 1.8em;
+	text-align: center;
 }
 h3 {
-    font-size: 1.6em;
-    text-align: center;
+	font-size: 1.6em;
+	text-align: center;
 }
 h4 {
-    font-size: 1.4em;
-    text-align: center;
+	font-size: 1.4em;
+	text-align: center;
 }
 h5 {
-    font-size: 1.2em;
-    text-align: center;
+	font-size: 1.2em;
+	text-align: center;
 }
 h6 {
-    font-size: 1em;
+	font-size: 1em;
 }
-p.splitpage {
-    page-break-before: always;
-    margin: 0;
+.splitpage {
+	page-break-before: always;
+	margin: 0;
 }
 footer {
-    margin: 10px 0;
-    background-color: #EEE;
-    padding: 10px;
+	margin: 10px 0;
+	background-color: #EEE;
+	padding: 10px;
 }
 footer p {
-    margin: 0;
-    color: #666;
+	margin: 0;
+	color: #666;
 }
 .create, time {
-    color: #666;
+	color: #666;
 }
 .php {
-    color: #808000;
+	color: #808000;
 }
 .asp {
-    color: #F0F;
+	color: #F0F;
 }
 .css {
-    color: #C0F;
+	color: #C0F;
 }
 .comment {
-    color: #008000;
+	color: #008000;
 }
 .xml {
-    color: #C60;
+	color: #C60;
 }
 .html {
-    color: #008080;
+	color: #008080;
 }
 .sql, .tags {
-    color: #000080;
+	color: #000080;
 }
 .htaccess {
-    color: #036;
+	color: #036;
 }
 .comment {
-    color: #393;
+	color: #393;
 }
 .visited, .count {
-    color: #669517;
+	color: #669517;
 }
 .reply {
-    color: #906;
+	color: #906;
 }
 .ip {
-    color: #FFA444;
+	color: #FFA444;
 }
 i {
-    font-style: italic;
+	font-style: italic;
 }
 a {
-    text-decoration: underline;
-    font-weight: bold;
+	text-decoration: underline;
+	font-weight: bold;
 }
 em {
-    font-style: inherit;
-    font-family: inherit;
-    color: #F00;
+	font-style: inherit;
+	font-family: inherit;
+	color: #F00;
 }
 strong {
-    font-weight: bold;
+	font-weight: bold;
 }
 img {
-    border: none;
-    vertical-align: middle;
-    max-width: 70%;
+	border: none;
+	vertical-align: middle;
+	max-width: 70%;
 }
 del {
-    text-decoration: line-through;
+	text-decoration: line-through;
 }
 u {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 .right {
-    text-align: right;
+	text-align: right !important
 }
 .left {
-    text-align: left;
+	text-align: left !important;
 }
 .center {
-    text-align: center;
+	text-align: center !important;
 }
 code {
-    background-color: #EAFEE9;
-    border-left: 4px solid #F480D1;
-    margin-top: 10px;
-    padding: 5px 0 5px 5px;
-    display: block;
+	background-color: #EAFEE9;
+	border-left: 4px solid #F480D1;
+	margin-top: 10px;
+	padding: 5px 0 5px 5px;
+	display: block;
 }
 blockquote {
-    display: block;
-    font-style: italic;
-    position: relative;
-    padding: 5px 20px;
-    margin: 10px 0;
+	display: block;
+	font-style: italic;
+	position: relative;
+	padding: 5px 20px;
+	margin: 10px 0;
 }
 blockquote > b {
-    font-weight: bold;
-    margin: 0 5px 5px 0;
-    line-height: 2em;
-    clear: right;
-    display: block;
+	font-weight: bold;
+	margin: 0 5px 5px 0;
+	line-height: 2em;
+	clear: right;
+	display: block;
 }
 aside, dl.info {
-    position: relative;
-    background-color: #F4F39E;
-    border-color: #DEE184;
-    margin: 2.5em 0px;
-    padding: 1.5em 1em;
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+	position: relative;
+	background-color: #F4F39E;
+	border-color: #DEE184;
+	margin: 2.5em 0px;
+	padding: 1.5em 1em;
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 p.img {
-    margin: 10px 0;
-    text-align: center;
+	margin: 10px 0;
+	text-align: center;
 }
 table {
-    width: 100%;
-    margin: 10px auto;
-    border-collapse: collapse;
-    border-right: 1px solid #666;
-    border-top: 1px solid #666;
+	width: 100%;
+	margin: 10px auto;
+	border-collapse: collapse;
+	border-right: 1px solid #666;
+	border-top: 1px solid #666;
 }
 table td, table th, table caption {
-    padding: 5px;
+	padding: 5px;
 }
 table caption {
-    text-align: left;
+	text-align: left;
 }
 table > thead > tr > th, table caption {
-    background: #EEE;
-    border-bottom: 1px solid #666;
+	background: #EEE;
+	border-bottom: 1px solid #666;
 }
 table > thead > tr > th {
-    border-left: 1px solid #666;
+	border-left: 1px solid #666;
 }
 table > tbody > tr > td, table > tbody > tr > th {
-    vertical-align: middle;
-    text-align: center;
-    border-bottom: 1px solid #666;
-    border-left: 1px solid #666;
-    background-color: #FFF;
-}
-table > tbody > tr.bg2 > td {
-    background: #EEE;
-}
-table > tbody > tr.bg2 > th {
-    background: #EEE;
+	vertical-align: middle;
+	border-bottom: 1px solid #666;
+	border-left: 1px solid #666;
+	background-color: #FFF;
 }
 table > tbody > tr > th {
-    background: #F5F5F5;
+	text-align: center;
+}
+table > tbody > tr.bg2 > td {
+	background: #EEE;
+}
+table > tbody > tr.bg2 > th {
+	background: #EEE;
+}
+table > tbody > tr > th {
+	background: #F5F5F5;
 }
 table > tbody > tr > th.th {
-    background: #EEE;
+	background: #EEE;
 }
 table > thead > tr > th.th {
-    border-left: 1px solid #666;
+	border-left: 1px solid #666;
 }
 table th > span {
-    display: block;
-    color: #F90;
+	display: block;
+	color: #F90;
 }
 article.r {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 article.r div.detail {
-    margin: 10px;
+	margin: 10px;
 }

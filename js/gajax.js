@@ -670,6 +670,15 @@ GNative.prototype = {
 		}
 		return this;
 	},
+	getText: function () {
+		if (!Object.isNull(this.elem.selectedIndex)) {
+			if (this.elem.selectedIndex == -1) {
+				return null;
+			}
+			return this.elem.options[this.elem.selectedIndex].text;
+		}
+		return this.elem.value;
+	},
 	element: function () {
 		return Object.isString(this.elem) ? document.getElementById(this.elem) : this.elem;
 	},

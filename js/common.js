@@ -97,41 +97,6 @@ function doFormSubmit(xhr) {
 		alert(xhr.responseText);
 	}
 }
-function confirmAction(module, value, ids) {
-	var ret = null;
-	if (module == 'action') {
-		if (value == 'accept') {
-			if (confirm(trans('You want to accept the selected members ?'))) {
-				ret = 'action=accept&id=' + ids;
-			}
-		} else if (value == 'activate') {
-			if (confirm(trans('You want to send a confirmation email to the selected members ?'))) {
-				ret = 'action=activate&id=' + ids;
-			}
-		} else if (value == 'sendpassword') {
-			if (confirm(trans('You want to send a new password to the selected members ?'))) {
-				ret = 'action=sendpassword&id=' + ids;
-			}
-		} else if (value == 'ban') {
-			if (confirm(trans('You want to disable the selected members ?'))) {
-				ret = 'action=ban&id=' + ids;
-			}
-		} else if (value == 'unban') {
-			if (confirm(trans('You want to cancel the suspension of the selected members ?'))) {
-				ret = 'action=unban&id=' + ids;
-			}
-		} else if (value == 'delete') {
-			if (confirm(trans('You want to delete ?'))) {
-				ret = 'action=delete&id=' + ids;
-			}
-		} else {
-			ret = 'action=' + value + '&id=' + ids;
-		}
-	} else if (module == 'status' && confirm(trans('You want to change the status ?'))) {
-		ret = 'action=status&value=' + value + '&id=' + ids;
-	}
-	return ret;
-}
 function checkUsername() {
 	var patt = /[a-zA-Z0-9]+/;
 	var value = this.input.value;

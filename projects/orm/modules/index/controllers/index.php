@@ -8,6 +8,7 @@
 
 namespace Index\Index;
 
+use \Kotchasan\Http\Request;
 use \Index\World\Model as World;
 use \Kotchasan\Date;
 use \Kotchasan\Orm\Recordset;
@@ -22,14 +23,19 @@ use \Kotchasan\Orm\Recordset;
 class Controller extends \Kotchasan\Controller
 {
 
-	public function index()
+	/**
+	 * แสดงผล
+	 *
+	 * @param Request $request
+	 */
+	public function index(Request $request)
 	{
 		// อ่านรายชื่อฟิลด์ของตาราง
-		$model = Recordset::create('Index\World\Model');
-		$fields = $model->getFields();
+		$rs = Recordset::create('Index\World\Model');
+		$fields = $rs->getFields();
 		echo implode(', ', array_keys($fields)).'<br>';
 		// ลบข้อมูลทั้งตาราง
-		$model->truncate();
+		$rs->truncate();
 		// insert new record
 		for ($i = 0; $i < 10000; $i++) {
 			$query = World::create();
@@ -37,28 +43,28 @@ class Controller extends \Kotchasan\Controller
 			$query->save();
 		}
 		// อัปเดททุก record
-		$model->updateAll(array('created_at' => Date::mktimeToSqlDateTime()));
+		$rs->updateAll(array('created_at' => Date::mktimeToSqlDateTime()));
 		// อ่านจำนวนข้อมูลทั้งหมดในตาราง
-		echo 'All '.$model->count().' records.<br>';
+		echo 'All '.$rs->count().' records.<br>';
 		// สุ่ม record มาแก้ไข
 		for ($i = 0; $i < 5; $i++) {
 			$rnd = rand(1, 10000);
-			$world = $model->find($rnd);
+			$world = $rs->find($rnd);
 			$world->name = 'Hello World!';
 			$world->save();
 		}
 		// query รายการที่มีการแก้ไข
-		$model->where(array('name', '!=', ''));
+		$rs->where(array('name', '!=', ''));
 		// อ่านจำนวนข้อมูลที่พบ
-		echo 'Found '.$model->count().' records.<br>';
+		echo 'Found '.$rs->count().' records.<br>';
 		// แสดงผลรายการที่พบ
-		foreach ($model->all('id', 'name') as $item) {
+		foreach ($rs->all('id', 'name') as $item) {
 			echo $item->id.'='.$item->name.'<br>';
 			// ลบรายการที่กำลังแสดงผล
 			$item->delete();
 		}
 		// อ่านรายชื่อฟิลด์ของ query
-		$fields = $model->getFields();
+		$fields = $rs->getFields();
 		echo implode(', ', array_keys($fields)).'<br>';
 		// อ่านจำนวนข้อมูลที่เหลือ
 		echo 'Remain '.Recordset::create('Index\World\Model')->count().' records.<br>';

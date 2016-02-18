@@ -11,7 +11,6 @@ namespace Index\Login;
 use \Kotchasan\Login;
 use \Kotchasan\Html;
 use \Kotchasan\Language;
-use \Kotchasan\Url;
 
 /**
  * Login Form
@@ -81,7 +80,7 @@ class Controller extends \Kotchasan\Controller
 		$group = $fieldset->add('groups');
 		// a
 		$group->add('a', array(
-			'href' => Url::next(array('action' => 'forgot')),
+			'href' => self::$request->getUri()->withParams(array('action' => 'forgot'), true),
 			'class' => 'td',
 			'title' => Language::get('Request new password'),
 			'innerHTML' => ''.Language::get('Forgot').' ?'
@@ -89,7 +88,7 @@ class Controller extends \Kotchasan\Controller
 		// checkbox
 		$group->add('checkbox', array(
 			'id' => 'bool_remember',
-			'checked' => $this->request->cookie('login_remember')->toBoolean(),
+			'checked' => self::$request->cookie('login_remember')->toBoolean(),
 			'value' => 1,
 			'label' => Language::get('Remember me'),
 			'labelClass' => 'td right'

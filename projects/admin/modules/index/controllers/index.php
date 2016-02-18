@@ -8,6 +8,7 @@
 
 namespace Index\Index;
 
+use \Kotchasan\Http\Request;
 use \Kotchasan\Login;
 
 /**
@@ -22,19 +23,21 @@ class Controller extends \Kotchasan\Controller
 
 	/**
 	 * แสดงผล
+	 *
+	 * @param Request $request
 	 */
-	public function index()
+	public function index(Request $request)
 	{
 		// session cookie
-		$this->request->inintSession();
+		$request->inintSession();
 		// ตรวจสอบการ login
-		$login = Login::create($this->request);
+		$login = Login::create();
 		if (!$login->isMember()) {
 			// forgot or login
-			if ($this->request->get('action')->toString() == 'forgot') {
-				$main = new \Index\Forgot\Controller($this->request);
+			if ($request->get('action')->toString() == 'forgot') {
+				$main = new \Index\Forgot\Controller();
 			} else {
-				$main = new \Index\Login\Controller($this->request);
+				$main = new \Index\Login\Controller();
 			}
 			echo $main->render();
 		} else {

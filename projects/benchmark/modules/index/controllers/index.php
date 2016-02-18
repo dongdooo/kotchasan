@@ -8,6 +8,7 @@
 
 namespace Index\Index;
 
+use \Kotchasan\Http\Request;
 use \Kotchasan\Orm\Recordset;
 use \Kotchasan\Database;
 
@@ -21,9 +22,14 @@ use \Kotchasan\Database;
 class Controller extends \Kotchasan\Controller
 {
 
-	public function index()
+	/**
+	 * แสดงผล
+	 *
+	 * @param Request $request
+	 */
+	public function index(Request $request)
 	{
-		$action = $this->request->get('action', 'hello')->toString();
+		$action = $request->get('action', 'hello')->toString();
 		$this->$action();
 	}
 
