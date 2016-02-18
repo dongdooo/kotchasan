@@ -37,7 +37,7 @@ final class Database
 				'settings' => (object)array(
 					'char_set' => 'utf8',
 					'dbdriver' => 'mysql',
-					'hostname' => '127.0.0.1'
+					'hostname' => 'localhost'
 				),
 				'tables' => (object)array(
 				)

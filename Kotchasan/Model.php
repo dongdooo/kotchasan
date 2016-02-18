@@ -29,23 +29,19 @@ class Model extends Query
 
 	/**
 	 * Class constructor
-	 *
-	 * @param Request $request
 	 */
-	public function __construct(Request $request)
+	public function __construct()
 	{
-		$this->request = $request;
 		parent::__construct($this->conn);
 	}
 
 	/**
 	 * create Model
 	 *
-	 * @param Request $request
 	 * @return \static
 	 */
-	public static function create(Request $request)
+	public static function create()
 	{
-		return new static($request);
+		return new static;
 	}
 }

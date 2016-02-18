@@ -96,7 +96,7 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @param string $sql
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return int|bool สำเร็จคืนค่าจำนวนแถวที่มีผล ไม่สำเร็จคืนค่า false
 	 */
 	protected function doQuery($sql, $values = array())
 	{
@@ -109,7 +109,7 @@ class PdoMysqlDriver extends Driver
 			}
 			self::$query_count++;
 			$this->log(__FUNCTION__, $sql, $values);
-			return true;
+			return $query->rowCount();
 		} catch (PDOException $e) {
 			$this->logError($sql, $e->getMessage());
 			return false;

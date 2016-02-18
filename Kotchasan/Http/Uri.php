@@ -18,7 +18,7 @@ use \Kotchasan\Http\Server;
  *
  * @since 1.0
  */
-class Uri implements UriInterface
+class Uri extends \Kotchasan\KBase implements UriInterface
 {
 	/**
 	 * Uri scheme
@@ -455,5 +455,149 @@ class Uri implements UriInterface
 		return preg_replace_callback('/(?:[^a-zA-Z0-9_\-\.~:@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/', function ($match) {
 			return rawurlencode($match[0]);
 		}, $path);
+	}
+
+	/**
+	 * ฟังก์ชั่นสร้าง URL สำหรับส่งต่อ Query string จากหน้าหนึ่งไปยังอีกหน้าหนึ่ง
+	 * เพื่อให้สามารถสร้าง URL ที่สามารถส่งกลับไปยังหน้าเดิมได้โดย ฟังก์ชั่น back()
+	 *
+	 * @param array $query_string
+	 * @return string
+	 */
+	public function createBackUri($query_string)
+	{
+		$qs = array();
+		foreach ($this->parseQueryParams($this->query) AS $key => $value) {
+			$qs['_'.ltrim($key, '_')] = rawurlencode($value);
+		}
+		foreach ($query_string AS $key => $value) {
+			if (is_int($key)) {
+				$qs[] = $value;
+			} else {
+				$qs[$key] = $value;
+			}
+		}
+		return $this->withQuery($this->paramsToQuery($qs, true));
+	}
+
+	/**
+	 * ฟังก์ชั่น แยก Querystring ออกเป็น array
+	 *
+	 * @param string $query
+	 * @return array
+	 * @assert ('module=home&id=1&visited') [==] array('module' => 'home', 'id'=>1, 0 => 'visited')
+	 */
+	public function parseQueryParams($query)
+	{
+		$result = array();
+		if (!empty($query)) {
+			foreach (explode('&', str_replace('&amp;', '&', $query)) as $item) {
+				if (preg_match('/^(.*)=(.*)?$/', $item, $match)) {
+					$result[$match[1]] = $match[2];
+				} else {
+					$result[] = $item;
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * ฟังก์ชั่นแปลง Queryparams เป็น Querystring
+	 *
+	 * @param array $params
+	 * @param bool $encode false เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
+	 * @return string
+	 * @assert (array('module' => 'home', 'id'=>1, 0 => 'visited')) [==] ('module=home&id=1&visited'
+	 */
+	public function paramsToQuery($params, $encode)
+	{
+		$qs = array();
+		foreach ($params as $key => $value) {
+			if (is_int($key)) {
+				$qs[] = $value;
+			} else {
+				$qs[] = $key.'='.$value;
+			}
+		}
+		return implode($encode ? '&amp;' : '&', $qs);
+	}
+
+	/**
+	 * ฟังก์ชั่นแทนที่ Query params ลงใน URL
+	 *
+	 * @param array $params
+	 * @param bool $encode false (default) เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
+	 * @return \self
+	 */
+	public function withParams($params, $encode = false)
+	{
+		$qs = array();
+		foreach ($this->parseQueryParams($this->query) as $key => $value) {
+			$qs[$key] = $value;
+		}
+		foreach ($params as $key => $value) {
+			$qs[$key] = $value;
+		}
+		return $this->withQuery($this->paramsToQuery($qs, $encode));
+	}
+
+	/**
+	 * ฟังก์ชั่นแสดงผลตัวแบ่งหน้า
+	 *
+	 * @param int $totalpage จำนวนหน้าทั้งหมด
+	 * @param int $page หน้าปัจจุบัน
+	 * @param int $maxlink (optional) จำนวนตัวเลือกแบ่งหน้าสูงสุด ค่าปกติ 9
+	 * @return string
+	 */
+	public function pagination($totalpage, $page, $maxlink = 9)
+	{
+		if ($totalpage > $maxlink) {
+			$start = $page - floor($maxlink / 2);
+			if ($start < 1) {
+				$start = 1;
+			} elseif ($start + $maxlink > $totalpage) {
+				$start = $totalpage - $maxlink + 1;
+			}
+		} else {
+			$start = 1;
+		}
+		$url = '<a href="'.$this->withParams(array('page' => ':page'), true).'" title="{LNG_go to page} :page">:page</a>';
+		$splitpage = ($start > 2) ? str_replace(':page', 1, $url) : '';
+		for ($i = $start; $i <= $totalpage && $maxlink > 0; $i++) {
+			$splitpage .= ($i == $page) ? '<strong title="{LNG_showing page '.$i.'}">'.$i.'</strong>' : str_replace(':page', $i, $url);
+			$maxlink--;
+		}
+		$splitpage .= ($i < $totalpage) ? str_replace(':page', $totalpage, $url) : '';
+		return empty($splitpage) ? '<strong>1</strong>' : $splitpage;
+	}
+
+	/**
+	 * แปลง POST เป็น query string สำหรับการส่งกลับไปหน้าเดิม ที่มาจากการโพสต์ด้วยฟอร์ม
+	 *
+	 * @param string $url URL ที่ต้องการส่งกลับ
+	 * @param array $querys query string ที่ต้องการส่งกลับไปด้วย
+	 * @assert ('index.php', array('id'=>1)) [==] "index.php?id=1&module=test&page=1&sort=id"  [[$_POST = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
+	 * @assert ('index.php', array('page'=>2, 'module'=>'mymodule')) [==] "index.php?page=2&module=mymodule&sort=id"  [[$_POST = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
+	 * @return string URL+query string
+	 */
+	public function postBack($url, $querys)
+	{
+		foreach (self::$request->getParsedBody() as $key => $value) {
+			if (preg_match('/^_{1,}(.*)$/', $key, $match)) {
+				$key = $match[1];
+				if (!isset($querys[$key])) {
+					$querys[$key] = $value;
+				}
+			}
+		}
+		$qs = array();
+		foreach ($querys as $key => $value) {
+			if (!($key == 'id' && $value == 0)) {
+				$qs[$key] = $key.'='.rawurlencode($value);
+			}
+		}
+		$qs['time'] = time();
+		return $url.(strpos($url, '?') === false ? '?' : '&').implode('&', $qs);
 	}
 }

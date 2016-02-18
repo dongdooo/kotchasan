@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource Kotchasan/InputItems.php
+ * @filesource Kotchasan/Inputs.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -17,12 +17,12 @@ use \Kotchasan\InputItem;
  *
  * @since 1.0
  */
-class InputItems implements \Iterator
+class Inputs implements \Iterator
 {
 	/**
 	 * ตัวแปรเก็บ properties ของคลาส
 	 *
-	 * @var Object
+	 * @var array
 	 */
 	private $datas = array();
 
@@ -35,6 +35,27 @@ class InputItems implements \Iterator
 	{
 		foreach ($items as $key => $value) {
 			$this->datas[$key] = InputItem::create($value);
+		}
+	}
+
+	/**
+	 * magic function คืนค่าข้อมูลสำหรับ input ชนิด array
+	 *
+	 * @param string $name
+	 * @param array $arguments
+	 * @return array
+	 * @throws \InvalidArgumentException ถ้าไม่มี method ที่ต้องการ
+	 */
+	public function __call($name, $arguments)
+	{
+		if (method_exists('\Kotchasan\InputItem', $name)) {
+			$result = array();
+			foreach ($this->datas as $key => $item) {
+				$result[$key] = $item->$name();
+			}
+			return $result;
+		} else {
+			throw new \InvalidArgumentException('Method '.$name.' not found');
 		}
 	}
 
@@ -57,28 +78,39 @@ class InputItems implements \Iterator
 		reset($this->datas);
 	}
 
+	/**
+	 * @return InputItem
+	 */
 	public function current()
 	{
 		$var = current($this->datas);
 		return $var;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function key()
 	{
 		$var = key($this->datas);
 		return $var;
 	}
 
+	/**
+	 * @return InputItem
+	 */
 	public function next()
 	{
 		$var = next($this->datas);
 		return $var;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function valid()
 	{
 		$key = key($this->datas);
-		$var = ($key !== NULL && $key !== FALSE);
-		return $var;
+		return ($key !== NULL && $key !== FALSE);
 	}
 }

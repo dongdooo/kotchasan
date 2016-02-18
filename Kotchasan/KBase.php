@@ -31,5 +31,5 @@ class KBase
 	 *
 	 * @var Request
 	 */
-	protected $request;
+	static protected $request;
 }

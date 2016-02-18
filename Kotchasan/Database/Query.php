@@ -177,9 +177,9 @@ abstract class Query extends \Kotchasan\KBase
 			}
 			$ret = implode(', ', $rets);
 		} else {
-			if (preg_match('/^([\(\'"])(.*)(\\1|\))([\s]+as)?[\s`]+([a-z0-9_]+)[`]?$/i', $fields, $match)) {
+			if (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $fields, $match)) {
 				// (...) alias
-				$ret = "$match[1]$match[2]$match[3] AS `$match[5]`";
+				$ret = "$match[1]($match[2]) AS `$match[5]`";
 			} elseif (preg_match('/^([0-9]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
 				// 0 as alias
 				$ret = $match[1].' AS `'.$match[3].'`';
@@ -484,10 +484,10 @@ abstract class Query extends \Kotchasan\KBase
 						$qs[] = ":$condition[0]$k";
 						$values[":$condition[0]$k"] = $v;
 					}
-					$condition = "`$condition[0]` $operator (".implode(',', $qs).")";
+					$condition = $this->fieldName($condition[0]).' '.$operator.' ('.implode(',', $qs).')';
 				} else {
 					$values[":$condition[0]"] = $condition[2];
-					$condition = "`$condition[0]` $condition[1] :$condition[0]";
+					$condition = $this->fieldName($condition[0]).' '.$condition[1].' :'.$condition[0];
 				}
 			}
 		} elseif (is_int($condition)) {
@@ -533,19 +533,27 @@ abstract class Query extends \Kotchasan\KBase
 			} elseif (preg_match('/^(\-?[0-9\s\.]+|true|false)$/i', $value)) {
 				// value เป็น ตัวเลข จุดทศนิยม เครื่องหมาย - / , และ true, false
 				// เช่น ตัวเลข, จำนวนเงิน, boolean
-				$result = $key.$operator.(is_string($value) ? "'$value'" : $value);
+				$result = "$key $operator ".(is_string($value) ? "'$value'" : $value);
 			} elseif (preg_match('/^[0-9\s\-:]+$/', $value)) {
 				// วันที่
-				$result = $key.$operator."'$value'";
+				$result = "$key $operator '$value'";
 			} elseif (preg_match('/^\((.*)\)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $value, $match)) {
 				// value เป็น query string
-				$result = $key.$operator."($match[1]) AS `$match[3]`";
+				$result = "$key $operator ($match[1]) AS `$match[3]`";
 			} elseif (preg_match('/^([A-Z0-9]{1,2})\.([a-zA-Z0-9_]+)$/', $value, $match)) {
 				// U.id
-				$result = $key.$operator.$match[1].'.`'.$match[2].'`';
+				if ($operator == 'IN' || $operator == 'NOT IN') {
+					$result = "$key $operator ($match[1].`$match[2]`)";
+				} else {
+					$result = "$key $operator $match[1].`$match[2]`";
+				}
 			} elseif (preg_match('/^([a-z0-9_]+)\.([a-z0-9_]+)$/i', $value, $match)) {
 				// value เป็น table.field
-				$result = $key.$operator.'`'.$match[1].'`.`'.$match[2].'`';
+				if ($operator == 'IN' || $operator == 'NOT IN') {
+					$result = "$key $operator (`$match[1]`.`$match[2]`)";
+				} else {
+					$result = "$key $operator `$match[1]`.`$match[2]`";
+				}
 			} else {
 				// value เป็น string
 				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));

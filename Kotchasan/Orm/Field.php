@@ -45,7 +45,7 @@ class Field extends \Kotchasan\KBase
 	protected $table;
 
 	/**
-	 * Create new Model
+	 * class constructor
 	 *
 	 * @param array|object $param ข้อมูลเริ่มต้น
 	 */
@@ -77,7 +77,7 @@ class Field extends \Kotchasan\KBase
 	 */
 	public function delete()
 	{
-		$rs = Recordset::create(get_called_class());
+		$rs = new Recordset(get_called_class());
 		return $rs->delete(array($this->primaryKey, (int)$this->{$this->primaryKey}), 1);
 	}
 
@@ -86,7 +86,7 @@ class Field extends \Kotchasan\KBase
 	 */
 	public function save()
 	{
-		$rs = Recordset::create(get_called_class());
+		$rs = new Recordset(get_called_class());
 		if ($this->exists) {
 			$rs->update(array($this->primaryKey, (int)$this->{$this->primaryKey}), $this);
 		} else {

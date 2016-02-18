@@ -16,7 +16,7 @@ use \Kotchasan\Orm\Field;
 use \Kotchasan\ArrayTool;
 
 /**
- * ORM model base class
+ * Recordset base class
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *
@@ -37,11 +37,11 @@ class Recordset extends Query implements \Iterator
 	 */
 	private $firstRecord;
 	/**
-	 * คลาส Model
+	 * คลาส Field
 	 *
 	 * @var Field
 	 */
-	private $model;
+	private $field;
 	/**
 	 * จำนวนรายการต่อหน้า สำหรับใช้ในการแบ่งหน้า
 	 *
@@ -78,17 +78,17 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * create new Recordset
 	 *
-	 * @param string $model ชื่อ Model
+	 * @param string $field ชื่อของ Field
 	 */
-	public function __construct($model)
+	public function __construct($field)
 	{
-		$this->model = new $model();
-		parent::__construct($this->model->getConn());
+		$this->field = new $field;
+		parent::__construct($this->field->getConn());
 		$this->sqls = array();
 		$this->values = array();
-		$this->inintTableName($this->model->getTable());
-		if (method_exists($this->model, 'getConfig')) {
-			$result = $this->model->getConfig();
+		$this->inintTableName($this->field->getTable());
+		if (method_exists($this->field, 'getConfig')) {
+			$result = $this->field->getConfig();
 			foreach ($result as $key => $value) {
 				$this->queryBuilder($key, $value);
 			}
@@ -96,10 +96,21 @@ class Recordset extends Query implements \Iterator
 	}
 
 	/**
+	 * create new Recordset
+	 *
+	 * @param string $filed ชื่อ Field
+	 * @return \static
+	 */
+	public static function create($filed)
+	{
+		return new static($filed);
+	}
+
+	/**
 	 * query ข้อมูลทุกรายการ
 	 * SELECT ....
 	 *
-	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
+	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย field
 	 * @return array|\static
 	 */
 	public function all($fields = null)
@@ -116,18 +127,6 @@ class Recordset extends Query implements \Iterator
 			$this->sqls['select'] = '*';
 		}
 		return $this->doExecute(0, 0);
-	}
-
-	/**
-	 * create new Recordset
-	 *
-	 * @param string $model ชื่อ Model
-	 * @return \static
-	 */
-	public static function create($model)
-	{
-		$obj = new static($model);
-		return $obj;
 	}
 
 	/**
@@ -205,7 +204,7 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function delete($condition = array(), $all = false, $oprator = 'AND')
 	{
-		$ret = $this->buildWhereValues($condition, $oprator, $this->model->getPrimarykey());
+		$ret = $this->buildWhereValues($condition, $oprator, $this->field->getPrimarykey());
 		$sqls = array(
 			'delete' => '`'.$this->table_name.'`',
 			'where' => $ret[0]
@@ -232,7 +231,7 @@ class Recordset extends Query implements \Iterator
 		if ($this->toArray) {
 			return $result;
 		} else {
-			$class = get_class($this->model);
+			$class = get_class($this->field);
 			$this->datas = array();
 			foreach ($result as $item) {
 				$this->datas[] = new $class($item);
@@ -244,17 +243,17 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * INNER JOIN table ON ....
 	 *
-	 * @param string $model model class ของตารางที่ join
+	 * @param string $field field class ของตารางที่ join
 	 * @param string $type เช่น LEFT, RIGHT, INNER...
 	 * @param mixed $on where condition สำหรับการ join
 	 * @return \static
 	 */
-	private function doJoin($model, $type, $on)
+	private function doJoin($field, $type, $on)
 	{
-		if (preg_match('/^([a-zA-Z0-9\\\\]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})?$/', $model, $match)) {
-			$model = $match[1];
+		if (preg_match('/^([a-zA-Z0-9\\\\]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})?$/', $field, $match)) {
+			$field = $match[1];
 		}
-		$rs = Recordset::create($model);
+		$rs = new Recordset($field);
 		$table = $rs->tableWithAlias(isset($match[4]) ? $match[4] : null);
 		$ret = $rs->buildJoin($table, $type, $on);
 		if (is_array($ret)) {
@@ -270,7 +269,7 @@ class Recordset extends Query implements \Iterator
 	 * query ข้อมูลที่มีการแบ่งหน้า
 	 * SELECT ....
 	 *
-	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
+	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย field
 	 * @return array|\static
 	 */
 	public function execute($fields = null)
@@ -304,7 +303,7 @@ class Recordset extends Query implements \Iterator
 	 * Query ข้อมูลรายการเดียว
 	 * SELECT .... LIMIT 1
 	 *
-	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย model
+	 * @param array|string $fields (options) null หมายถึง SELECT ตามที่กำหนดโดย field
 	 * @return bool|array|Field ไม่พบคืนค่า false พบคืนค่า record ของข้อมูลรายการเดียว
 	 */
 	public function first($fields = null)
@@ -332,7 +331,7 @@ class Recordset extends Query implements \Iterator
 		} elseif ($this->toArray) {
 			return $this->datas[0];
 		} else {
-			$class = get_class($this->model);
+			$class = get_class($this->field);
 			return new $class($this->datas[0]);
 		}
 	}
@@ -376,19 +375,19 @@ class Recordset extends Query implements \Iterator
 	{
 		if (empty($table)) {
 			$class = get_called_class();
-			if (preg_match('/[a-z]+\\\\([a-z_]+)\\\\Model/i', $class, $match)) {
+			if (preg_match('/[a-z0-9]+\\\\([a-z0-9_]+)\\\\Model/i', $class, $match)) {
 				$t = strtolower($match[1]);
-			} elseif (preg_match('/Models\\\\([a-z_]+)/i', $class, $match)) {
+			} elseif (preg_match('/Models\\\\([a-z0-9_]+)/i', $class, $match)) {
 				$t = strtolower($match[1]);
 			} else {
 				$t = strtolower($class);
 			}
 			$this->table_name = $this->tableWithPrefix($t);
 			$this->table_alias = $t;
-		} elseif (preg_match('/([a-zA-Z_]+)(\s+(as|AS))?\s+([A-Z0-9]{1,2})/', $table, $match)) {
+		} elseif (preg_match('/([a-z0-9A-Z_]+)(\s+(as|AS))?\s+([A-Z0-9]{1,2})/', $table, $match)) {
 			$this->table_name = $this->tableWithPrefix($match[1]);
 			$this->table_alias = $match[4];
-		} elseif (preg_match('/([a-zA-Z_]+)(\s+(as|AS))?\s+([a-zA-Z0-9]{1,2})/', $table, $match)) {
+		} elseif (preg_match('/([a-z0-9A-Z_]+)(\s+(as|AS))?\s+([a-zA-Z0-9]{1,2})/', $table, $match)) {
 			$this->table_name = $this->tableWithPrefix($match[1]);
 			$this->table_alias = $match[4];
 		} else {
@@ -401,15 +400,15 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * insert ข้อมูล
 	 *
-	 * @param Field $model
+	 * @param Field $field
 	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
-	public function insert(Field $model)
+	public function insert(Field $field)
 	{
 		$save = array();
-		foreach (Schema::create($this->db())->fields($this->table_name) as $field) {
-			if (isset($model->$field)) {
-				$save[$field] = $model->$field;
+		foreach (Schema::create($this->db())->fields($this->table_name) as $item) {
+			if (isset($field->$item)) {
+				$save[$item] = $field->$item;
 			}
 		}
 		if (empty($save)) {
@@ -423,14 +422,14 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * INNER JOIN table ON ....
 	 *
-	 * @param string $model model class ของตารางที่ join
+	 * @param string $field field class ของตารางที่ join
 	 * @param string $type เช่น LEFT, RIGHT, INNER...
 	 * @param mixed $on where condition สำหรับการ join
 	 * @return \static
 	 */
-	public function join($model, $type, $on)
+	public function join($field, $type, $on)
 	{
-		return $this->doJoin($model, $className, $on);
+		return $this->doJoin($field, $className, $on);
 	}
 
 	/**
@@ -609,7 +608,7 @@ class Recordset extends Query implements \Iterator
 	public function where($where = array(), $oprator = 'AND')
 	{
 		if ((is_string($where) && $where != '') || !empty($where)) {
-			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->model->getPrimarykey());
+			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->field->getPrimarykey());
 			if (is_array($where)) {
 				$this->values = ArrayTool::replace($this->values, $where[1]);
 				$where = $where[0];

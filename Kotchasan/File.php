@@ -79,7 +79,7 @@ class File
 	 *
 	 * @param string $dir
 	 * @param int $mode (optional) default 0755
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function makeDirectory($dir, $mode = 0755)
 	{

@@ -71,12 +71,33 @@ class Template
 	 */
 	public static function create($owner, $module, $name, $cols = 0)
 	{
-		$obj = new static();
+		$obj = new static;
 		$obj->skin = $obj->load($owner, $module, $name);
 		$obj->items = array();
 		$obj->cols = (int)$cols;
 		$obj->num = $obj->cols;
 		return $obj;
+	}
+
+	/**
+	 * โหลด template จากไฟล์
+	 *
+	 * @param string $filename
+	 * @param int $cols 0 (default) แสดงผลแบบปกติ มากกว่า 0 แสดงผลด้วยกริด
+	 * @throws \InvalidArgumentException ถ้าไม่พบไฟล์
+	 */
+	public static function createFromFile($filename, $cols = 0)
+	{
+		if (is_file($filename)) {
+			$obj = new static;
+			$obj->skin = file_get_contents($filename);
+			$obj->items = array();
+			$obj->cols = (int)$cols;
+			$obj->num = $obj->cols;
+			return $obj;
+		} else {
+			throw new \InvalidArgumentException(Language::get('Template file not found'));
+		}
 	}
 
 	/**
@@ -130,11 +151,12 @@ class Template
 	 */
 	public function render()
 	{
-		if (empty($this->cols)) {
-			return isset($this->items) ? implode("\n", $this->items) : $this->skin;
-		} else {
-			return isset($this->items) ? "<div class=row>\n".implode("\n", $this->items)."\n</div>" : $this->skin;
+		if (empty($this->items)) {
+			return $this->skin;
+		} elseif (empty($this->cols)) {
+			return implode("\n", $this->items);
 		}
+		return "<div class=row>\n".implode("\n", $this->items)."\n</div>";
 	}
 
 	/**
@@ -148,7 +170,7 @@ class Template
 	 */
 	public static function load($owner, $module, $name)
 	{
-		$src = TEMPLATE_ROOT.self::$src;
+		$src = self::getPath();
 		if ($module != '' && is_file($src.$module.'/'.$name.'.html')) {
 			$result = file_get_contents($src.$module.'/'.$name.'.html');
 		} elseif ($owner != '' && is_file($src.$owner.'/'.$name.'.html')) {
@@ -159,5 +181,15 @@ class Template
 			$result = '';
 		}
 		return $result;
+	}
+
+	/**
+	 * คืนค่าโฟลเดอร์ของ template
+	 *
+	 * @return string
+	 */
+	public static function getPath()
+	{
+		return TEMPLATE_ROOT.self::$src;
 	}
 }

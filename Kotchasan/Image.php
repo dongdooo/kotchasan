@@ -17,23 +17,12 @@ namespace Kotchasan;
  */
 class Image
 {
-
 	/**
-	 * ฟังก์ชั่น อ่านข้อมูลรูปภาพ จาก Exif
+	 * คุณภาพของรูปภาพ
 	 *
-	 * @param string $img path ของไฟล์รูปภาพ
-	 * @return array [width, height, mime] ของรูปภาพ
+	 * @var int
 	 */
-	public static function info($img)
-	{
-		// Exif
-		$info = getImageSize($img);
-		return array(
-			'width' => $info[0],
-			'height' => $info[1],
-			'mime' => $info['mime']
-		);
-	}
+	static private $quality = 75;
 
 	/**
 	 * ฟังก์ชั่น ตัดรูปภาพ ตามขนาดที่กำหนด
@@ -42,14 +31,14 @@ class Image
 	 *
 	 * @param string $source path และชื่อไฟล์ของไฟล์รูปภาพต้นฉบับ
 	 * @param string $target path และชื่อไฟล์ของไฟล์รูปภาพปลายทาง
-	 * @param array $info [width, height, mime] ของรูปภาพ
 	 * @param int $thumbwidth ความกว้างของรูปภาพที่ต้องการ
 	 * @param int $thumbheight ความสูงของรูปภาพที่ต้องการ
 	 * @param string $watermark (optional) ข้อความลายน้ำ
-	 * @return boolean สำเร็จคืนค่า true
+	 * @return bool สำเร็จคืนค่า true
 	 */
-	public static function crop($source, $target, $info, $thumbwidth, $thumbheight, $watermark = '')
+	public static function crop($source, $target, $thumbwidth, $thumbheight, $watermark = '')
 	{
+		$info = getImageSize($source);
 		switch ($info['mime']) {
 			case 'image/gif':
 				$o_im = imageCreateFromGIF($source);
@@ -66,8 +55,8 @@ class Image
 			default:
 				return false;
 		}
-		$wm = $info['width'] / $thumbwidth;
-		$hm = $info['height'] / $thumbheight;
+		$wm = $info[0] / $thumbwidth;
+		$hm = $info[1] / $thumbheight;
 		$h_height = $thumbheight / 2;
 		$w_height = $thumbwidth / 2;
 		$t_im = ImageCreateTrueColor($thumbwidth, $thumbheight);
@@ -75,34 +64,34 @@ class Image
 		$int_height = 0;
 		$adjusted_width = $thumbwidth;
 		$adjusted_height = $thumbheight;
-		if ($info['width'] > $info['height']) {
-			$adjusted_width = ceil($info['width'] / $hm);
+		if ($info[0] > $info[1]) {
+			$adjusted_width = ceil($info[0] / $hm);
 			$half_width = $adjusted_width / 2;
 			$int_width = $half_width - $w_height;
 			if ($adjusted_width < $thumbwidth) {
-				$adjusted_height = ceil($info['height'] / $wm);
+				$adjusted_height = ceil($info[1] / $wm);
 				$half_height = $adjusted_height / 2;
 				$int_height = $half_height - $h_height;
 				$adjusted_width = $thumbwidth;
 				$int_width = 0;
 			}
-		} elseif (($info['width'] < $info['height']) || ($info['width'] == $info['height'])) {
-			$adjusted_height = ceil($info['height'] / $wm);
+		} elseif (($info[0] < $info[1]) || ($info[0] == $info[1])) {
+			$adjusted_height = ceil($info[1] / $wm);
 			$half_height = $adjusted_height / 2;
 			$int_height = $half_height - $h_height;
 			if ($adjusted_height < $thumbheight) {
-				$adjusted_width = ceil($info['width'] / $hm);
+				$adjusted_width = ceil($info[0] / $hm);
 				$half_width = $adjusted_width / 2;
 				$int_width = $half_width - $w_height;
 				$adjusted_height = $thumbheight;
 				$int_height = 0;
 			}
 		}
-		ImageCopyResampled($t_im, $o_im, -$int_width, -$int_height, 0, 0, $adjusted_width, $adjusted_height, $info['width'], $info['height']);
+		ImageCopyResampled($t_im, $o_im, -$int_width, -$int_height, 0, 0, $adjusted_width, $adjusted_height, $info[0], $info[1]);
 		if ($watermark != '') {
 			$t_im = self::watermarkText($t_im, $watermark);
 		}
-		$ret = @ImageJPEG($t_im, $target);
+		$ret = @ImageJPEG($t_im, $target, self::$quality);
 		imageDestroy($o_im);
 		imageDestroy($t_im);
 		return $ret;
@@ -118,20 +107,20 @@ class Image
 	 * @param string $source path และชื่อไฟล์ของไฟล์รูปภาพต้นฉบับ
 	 * @param string $target path ของไฟล์รูปภาพปลายทาง
 	 * @param string $name ชื่อไฟล์ของรูปภาพปลายทาง
-	 * @param array $info [width, height, mime] ของรูปภาพ
 	 * @param int $width ขนาดสูงสุดของรูปภาพที่ต้องการ
 	 * @param string $watermark (optional) ข้อความลายน้ำ
-	 * @return array|boolean คืนค่าแอเรย์ [name, width, height, mime] ของรูปภาพปลายทาง หรือ false ถ้าไม่สามารถดำเนินการได้
+	 * @return array|bool คืนค่าแอเรย์ [name, width, height, mime] ของรูปภาพปลายทาง หรือ false ถ้าไม่สามารถดำเนินการได้
 	 */
-	public static function resizeImage($source, $target, $name, $info, $width, $watermark = '')
+	public static function resize($source, $target, $name, $width, $watermark = '')
 	{
-		if ($info['width'] > $width || $info['height'] > $width) {
-			if ($info['width'] <= $info['height']) {
+		$info = getImageSize($source);
+		if ($info[0] > $width || $info[1] > $width) {
+			if ($info[0] <= $info[1]) {
 				$h = $width;
-				$w = round($h * $info['width'] / $info['height']);
+				$w = round($h * $info[0] / $info[1]);
 			} else {
 				$w = $width;
-				$h = round($w * $info['height'] / $info['width']);
+				$h = round($w * $info[1] / $info[0]);
 			}
 			switch ($info['mime']) {
 				case 'image/gif':
@@ -155,7 +144,7 @@ class Image
 				$t_im = self::watermarkText($t_im, $watermark);
 			}
 			$newname = substr($name, 0, strrpos($name, '.')).'.jpg';
-			if (!@ImageJPEG($t_im, $target.$newname)) {
+			if (!@ImageJPEG($t_im, $target.$newname, self::$quality)) {
 				$ret = false;
 			} else {
 				$ret['name'] = $newname;
@@ -168,8 +157,8 @@ class Image
 			return $ret;
 		} elseif (@copy($source, $target.$name)) {
 			$ret['name'] = $name;
-			$ret['width'] = $info['width'];
-			$ret['height'] = $info['height'];
+			$ret['width'] = $info[0];
+			$ret['height'] = $info[1];
 			$ret['mime'] = $info['mime'];
 			return $ret;
 		}

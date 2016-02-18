@@ -86,21 +86,26 @@ class HtmlTable
 	/**
 	 * แทรกแถวของ thead
 	 *
-	 * @param array $headers
+	 * @param array $header
 	 */
-	public function addHeader($headers)
+	public function addHeader($header)
 	{
-		$this->thead[] = $headers;
+		$this->thead[] = $header;
 	}
 
 	/**
 	 * แทรกแถวของ tbody
 	 *
-	 * @param TableRow $row
+	 * @param array $row
+	 * @param array $attributes
 	 */
-	public function addRow(TableRow $row)
+	public function addRow($row, $attributes = array())
 	{
-		$this->tbody[] = $row;
+		$tr = TableRow::create($attributes);
+		foreach ($row as $td) {
+			$tr->addCell($td);
+		}
+		$this->tbody[] = $tr;
 	}
 
 	/**
@@ -248,8 +253,8 @@ class TableRow
 			foreach ($td as $key => $value) {
 				if ($key == 'scope') {
 					$tag = 'th';
+					$prop['scope'] = 'scope="'.$value.'"';
 					if (isset($this->properties['id'])) {
-						$prop['scope'] = 'scope="'.$value.'"';
 						$prop['id'] = 'id="r'.$this->properties['id'].'"';
 					}
 				} elseif ($key != 'text') {

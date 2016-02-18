@@ -170,14 +170,15 @@ class Html
 	{
 		$ajax = false;
 		$prop = array('method' => 'post');
+		$gform = true;
 		foreach ($attributes as $key => $value) {
-			if ($key === 'ajax' || $key === 'action' || $key === 'onsubmit' || $key === 'confirmsubmit' || $key === 'elements' || $key === 'script') {
+			if ($key === 'ajax' || $key === 'action' || $key === 'onsubmit' || $key === 'confirmsubmit' || $key === 'elements' || $key === 'script' || $key === 'gform') {
 				$$key = $value;
 			} else {
 				$prop[$key] = $value;
 			}
 		}
-		if (isset($prop['id'])) {
+		if (isset($prop['id']) && $gform) {
 			$script = 'new GForm("'.$prop['id'].'"';
 			if (isset($action)) {
 				if ($ajax) {
@@ -194,9 +195,14 @@ class Html
 				$script .= '.onsubmit('.$onsubmit.')';
 			}
 			$script .=';';
+			$form_inputs = Form::get2Input();
+		} elseif (isset($action)) {
+			$prop['action'] = $action;
 		}
 		self::$form = new static('form', $prop);
-		self::$form->rows = Form::get2Input();
+		if (!empty($form_inputs)) {
+			self::$form->rows = $form_inputs;
+		}
 		if (isset($script)) {
 			self::$form->javascript[] = $script;
 		}

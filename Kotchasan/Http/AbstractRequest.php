@@ -24,7 +24,7 @@ use \Kotchasan\Http\Uri;
 class AbstractRequest extends AbstractMessage implements RequestInterface
 {
 	/**
-	 * @var UriInterface
+	 * @var Uri
 	 */
 	protected $uri;
 	/**
@@ -88,7 +88,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	/**
 	 * อ่าน Uri
 	 *
-	 * @return UriInterface
+	 * @return Uri
 	 */
 	public function getUri()
 	{
@@ -101,7 +101,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	/**
 	 * กำหนดค่า Uri
 	 *
-	 * @param UriInterface $uri
+	 * @param Uri $uri
 	 * @param bool $preserveHost
 	 * @return self
 	 */

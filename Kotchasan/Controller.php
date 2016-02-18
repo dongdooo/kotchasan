@@ -15,17 +15,17 @@ namespace Kotchasan;
  *
  * @since 1.0
  */
-class Controller extends \Kotchasan\Container
+class Controller extends \Kotchasan\KBase
 {
 
 	/**
 	 * สร้าง View สำหรับ Controller นี้
 	 *
 	 * @param string $view ชื่อของ View
-	 * @return \static
+	 * @return \Kotchasan\View
 	 */
 	public function createView($view)
 	{
-		return new $view($this->request, $this);
+		return new $view($this);
 	}
 }

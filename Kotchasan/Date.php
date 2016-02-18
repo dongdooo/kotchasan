@@ -57,16 +57,18 @@ class Date
 	}
 
 	/**
-	 * ฟังก์ชั่น แปลงเวลา (mktime) เป็นวันที่ตามรูปแบบที่กำหนด สามารถคืนค่าวันเดือนปี พศ. ได้ ขึ้นกับไฟล์ภาษา
+	 * ฟังก์ชั่นแปลงเวลาเป็นวันที่ตามรูปแบบที่กำหนด สามารถคืนค่าวันเดือนปี พศ. ได้ ขึ้นกับไฟล์ภาษา
 	 *
-	 * @param int $mktime เวลารูปแบบ Unix timestamp, ไม่ระบุ เป็นวันนี้
+	 * @param int|string $time int เวลารูปแบบ Unix timestamp, string เวลารูปแบบ Y-m-d หรือ Y-m-d H:i:s ถ้าไม่ระบุหมายถึงวันนี้
 	 * @param string $format รูปแบบของวันที่ที่ต้องการ (ถ้าไม่ระบุจะใช้รูปแบบที่มาจากระบบภาษา DATE_FORMAT)
 	 * @return string วันที่และเวลาตามรูปแบบที่กำหนดโดย $format
 	 */
-	public static function format($mktime = 0, $format = '')
+	public static function format($time = 0, $format = '')
 	{
-		if (empty($mktime)) {
-			$mktime = time();
+		if (empty($time)) {
+			$time = time();
+		} elseif (is_string($time) && preg_match('/([0-9]+){1,4}-([0-9]+){1,2}-([0-9]+){1,2}(\s([0-9]+){1,2}:([0-9]+){1,2}:([0-9]+){1,2})?/', $time, $match)) {
+			$time = mktime(empty($match[4]) ? 0 : (int)$match[4], empty($match[5]) ? 0 : (int)$match[5], empty($match[6]) ? 0 : (int)$match[6], (int)$match[2], (int)$match[3], (int)$match[1]);
 		}
 		$lang = Language::getItems(array(
 			'DATE_FORMAT',
@@ -90,26 +92,27 @@ class Date
 						$ret .= $item;
 						break;
 					case 'D':
-						$ret .= $lang['DATE_SHORT'][date('w', $mktime)];
+						$ret .= $lang['DATE_SHORT'][date('w', $time)];
 						break;
 					case 'l':
-						$ret .= $lang['DATE_LONG'][date('w', $mktime)];
+						$ret .= $lang['DATE_LONG'][date('w', $time)];
 						break;
 					case 'M':
-						$ret .= $lang['MONTH_SHORT'][date('n', $mktime)];
+						$ret .= $lang['MONTH_SHORT'][date('n', $time)];
 						break;
 					case 'F':
-						$ret .= $lang['MONTH_LONG'][date('n', $mktime)];
+						$ret .= $lang['MONTH_LONG'][date('n', $time)];
 						break;
 					case 'Y':
-						$ret .= (int)date('Y', $mktime) + $lang['YEAR_OFFSET'];
+						$ret .= (int)date('Y', $time) + $lang['YEAR_OFFSET'];
 						break;
 					default:
-						$ret .= date($item, $mktime);
+						$ret .= trim($item) == '' ? ' ' : date($item, $time);
+						break;
 				}
 			}
 		} else {
-			$ret = date($format, $mktime);
+			$ret = date($format, $time);
 		}
 		return $ret;
 	}
@@ -171,35 +174,6 @@ class Date
 	public static function mktimeToSqlDate($mktime = 0)
 	{
 		return date('Y-m-d', empty($mktime) ? time() : $mktime);
-	}
-
-	/**
-	 * แปลงวันที่ในรูป Y-m-d เป็นวันที่และเวลา เช่น 1 มค. 2555 00:00:00.
-	 *
-	 * @param string $date วันที่ในรูป Y-m-d หรือ Y-m-d h:i:s
-	 * @param bool $short (optional) true=เดือนแบบสั้น, false=เดือนแบบยาว (default true)
-	 * @param bool $time (optional) true=คืนค่าเวลาด้วยถ้ามี, false=ไม่ต้องคืนค่าเวลา (default true)
-	 * @return string คืนค่า วันที่และเวลา
-	 */
-	public static function sqlDateToDate($date, $short = true, $time = true)
-	{
-		if (preg_match('/([0-9]+){0,4}-([0-9]+){0,2}-([0-9]+){0,2}(\s([0-9]+){0,2}:([0-9]+){0,2}:([0-9]+){0,2})?/', $date, $match)) {
-			$match[1] = (int)$match[1];
-			$match[2] = (int)$match[2];
-			if ($match[1] == 0 || $match[2] == 0) {
-				return '';
-			} else {
-				$lang = Language::getItems(array(
-					'MONTH_SHORT',
-					'MONTH_LONG',
-					'YEAR_OFFSET'
-				));
-				$month = $short ? $lang['MONTH_SHORT'] : $lang['MONTH_LONG'];
-				return $match[3].' '.$month[$match[2]].' '.((int)$match[1] + (int)$lang['YEAR_OFFSET'] ).($time && isset($match[4]) ? $match[4] : '');
-			}
-		} else {
-			return '';
-		}
 	}
 
 	/**

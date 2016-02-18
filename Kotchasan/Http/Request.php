@@ -12,7 +12,8 @@ use \Psr\Http\Message\RequestInterface;
 use \Kotchasan\Http\Stream;
 use \Kotchasan\Http\UploadedFile;
 use \Kotchasan\InputItem;
-use \Kotchasan\InputItems;
+use \Kotchasan\Inputs;
+use \Kotchasan\Files;
 
 /**
  * คลาสสำหรับจัดการตัวแปรต่างๆจาก Server
@@ -40,7 +41,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	private $parsedBody;
 	/**
-	 * @var array
+	 * @var Files
 	 */
 	private $uploadedFiles;
 	/**
@@ -87,7 +88,7 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * คืนค่าจากตัวแปร $_GET
+	 * คืนค่าจากตัวแปร GET
 	 *
 	 * @return null|array|object
 	 */
@@ -113,7 +114,7 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * คืนค่าจากตัวแปร $_POST
+	 * คืนค่าจากตัวแปร POST
 	 *
 	 * @return null|array|object
 	 */
@@ -138,22 +139,22 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * คืนค่าไฟล์อัปโหลด $_FILES
+	 * คืนค่าไฟล์อัปโหลด FILES
 	 *
-	 * @return array แอเรย์ของ UploadedFileInterface
+	 * @return Files
 	 */
 	public function getUploadedFiles()
 	{
 		if ($this->uploadedFiles === null) {
-			$this->uploadedFiles = array();
+			$this->uploadedFiles = new Files;
 			if (isset($_FILES)) {
 				foreach ($_FILES as $name => $file) {
 					if (is_array($file['name'])) {
 						foreach ($file['name'] as $key => $value) {
-							$this->uploadedFiles[$name][$key] = new UploadedFile($file['tmp_name'][$key], $value, $file['type'][$key], $file['size'][$key], $file['error'][$key]);
+							$this->uploadedFiles->add($key, $file['tmp_name'][$key], $value, $file['type'][$key], $file['size'][$key], $file['error'][$key]);
 						}
 					} else {
-						$this->uploadedFiles[$name] = new UploadedFile($file['tmp_name'], $file['name'], $file['type'], $file['size'], $file['error']);
+						$this->uploadedFiles->add($name, $file['tmp_name'], $file['name'], $file['type'], $file['size'], $file['error']);
 					}
 				}
 			}
@@ -224,11 +225,11 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปร $_GET
+	 * อ่านค่าจากตัวแปร GET
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return InputItem|InputItems InputItem หรือ Collection ของ InputItem
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
 	public function get($name, $default = null)
 	{
@@ -236,7 +237,7 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปร $_POST
+	 * อ่านค่าจากตัวแปร POST
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
@@ -248,11 +249,11 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปร $_POST $_GET $_COOKIE ตามลำดับ
+	 * อ่านค่าจากตัวแปร POST GET COOKIE ตามลำดับ
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return InputItem|InputItems InputItem หรือ Collection ของ InputItem
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
 	public function request($name, $default = null)
 	{
@@ -267,11 +268,11 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปร $_SESSION
+	 * อ่านค่าจากตัวแปร SESSION
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return InputItem|InputItems InputItem หรือ Collection ของ InputItem
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
 	public function session($name, $default = null)
 	{
@@ -279,11 +280,11 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * อ่านค่าจากตัวแปร $_COOKIE
+	 * อ่านค่าจากตัวแปร COOKIE
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return InputItem|InputItems InputItem หรือ Collection ของ InputItem
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
 	public function cookie($name, $default = '')
 	{
@@ -351,36 +352,9 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * รับค่าจาก input เช่น $_GET หรือ $_POST
-	 * มีการฟิลเตอร์ข้อมูลตามชื่อของ input
-	 *
-	 * @param array $array $_GET หรือ $_POST
-	 * @return array
-	 */
-	public function filter($array)
-	{
-		$result = array();
-		foreach ($array as $key => $value) {
-			if (preg_match('/^(text|topic|detail|textarea|email|url|bool|boolean|number|int|float|double|date)_([a-zA-Z0-9_]+)/', $key, $match)) {
-				if (is_array($value)) {
-					foreach ($value as $k => $v) {
-						$result[$match[2]][$k] = $this->filterByType($match[1], $v);
-					}
-				} else {
-					$result[$match[2]] = $this->filterByType($match[1], $value);
-				}
-			} elseif (preg_match('/^[^_][a-z0-9_]+$/', $key)) {
-				// อื่นๆ
-				$result[$key] = $value;
-			}
-		}
-		return $result;
-	}
-
-	/**
 	 * remove slashes (/)
 	 *
-	 * @param array $vars ตัวแปร Global เช่น $_POST $_GET
+	 * @param array $vars ตัวแปร Global เช่น POST GET
 	 */
 	private function normalize($vars)
 	{
@@ -410,63 +384,17 @@ class Request extends AbstractRequest implements RequestInterface
 	/**
 	 * อ่านค่าจาก $source
 	 *
-	 * @param array $source ตัวแปร $_GET $_POST
+	 * @param array $source ตัวแปร GET POST
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return InputItem|InputItems InputItem หรือ Collection ของ InputItem
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
 	private function createInputItem($source, $name, $default)
 	{
 		if (isset($source[$name])) {
-			return is_array($source[$name]) ? new InputItems($source[$name]) : new InputItem($source[$name]);
+			return is_array($source[$name]) ? new Inputs($source[$name]) : new InputItem($source[$name]);
 		} else {
 			return new InputItem($default);
 		}
-	}
-
-	/**
-	 * ตรวจสอบตัวแปรตามที่กำหนดโดย $key
-	 *
-	 * @param string $key ประเภทของฟังก์ชั่นที่ต้องการใช้ทดสอบ
-	 * @param mixed $value ตัวแปรที่ต้องการทดสอบ
-	 * @return mixed คืนค่าข้อมูลตามชนิดของ $key
-	 */
-	private function filterByType($key, $value)
-	{
-		if ($key === 'text') {
-			// input text
-			return InputItem::create($value)->text();
-		} elseif ($key === 'topic') {
-			// topic
-			return InputItem::create($value)->topic();
-		} elseif ($key === 'detail') {
-			// ckeditor
-			return InputItem::create($value)->detail();
-		} elseif ($key === 'textarea') {
-			// textarea
-			return InputItem::create($value)->textarea();
-		} elseif ($key === 'url' || $key === 'email') {
-			// http://www.domain.tld และ email
-			return InputItem::create($value)->url();
-		} elseif ($key === 'bool' || $key === 'boolean') {
-			// true หรือ false เท่านั้น
-			return InputItem::create($value)->toBoolean();
-		} elseif ($key === 'number') {
-			// ตัวเลขเท่านั้น
-			return preg_replace('/[^\d]/', '', $value);
-		} elseif ($key === 'int') {
-			// ตัวเลขและเครื่องหมายลบ
-			return (int)$value;
-		} elseif ($key === 'double') {
-			// ตัวเลขรวมทศนิยม
-			return (double)$value;
-		} elseif ($key === 'float') {
-			// ตัวเลขรวมทศนิยม
-			return (float)$value;
-		} elseif ($key === 'date') {
-			// วันที่
-			return preg_replace('/[^\d\s\-:]/', '', $value);
-		}
-		return null;
 	}
 }

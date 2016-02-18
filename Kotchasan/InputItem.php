@@ -52,7 +52,7 @@ class InputItem
 	 */
 	public function toArray()
 	{
-		return (array)$this->value;
+		return is_array($this->value) ? $this->value : array($this->value);
 	}
 
 	/**
@@ -222,6 +222,47 @@ class InputItem
 	public function quote()
 	{
 		return str_replace("'", '&#39;', $this->value);
+	}
+
+	/**
+	 * ฟังก์ชั่นลบอักขระที่ไม่ต้องการออก
+	 *
+	 * @param string $format Regular Expression อักขระที่ยอมรับ เช่น \d\s\-:
+	 * @return string
+	 */
+	public function filter($format)
+	{
+		return trim(preg_replace('/[^'.$format.']/', '', $this->value));
+	}
+
+	/**
+	 * วันที่และเวลา
+	 *
+	 * @return string
+	 */
+	public function date()
+	{
+		return $this->filter('\d\s\-:');
+	}
+
+	/**
+	 * ค่าสี
+	 *
+	 * @return string
+	 */
+	public function color()
+	{
+		return $this->filter('\#a-zA-Z0-9');
+	}
+
+	/**
+	 * ตัวเลข
+	 *
+	 * @return string
+	 */
+	public function number()
+	{
+		return $this->filter('\d');
 	}
 
 	/**

@@ -1404,7 +1404,7 @@ GForm.prototype = {
 				if (val == '') {
 					this.addClass('required');
 					if (e) {
-						this.invalid(data.title !== '' ? data.title : trans('Please fill out'));
+						this.invalid(data.title !== '' ? data.title : trans('Please fill in'));
 					}
 				} else {
 					this.reset();
@@ -1636,7 +1636,7 @@ GForm.prototype = {
 				forEach(elements, function () {
 					var val = this.element.value;
 					if (this.required !== null && val == '') {
-						var title = this.title !== '' ? this.title : trans('Please fill out');
+						var title = this.title !== '' ? this.title : trans('Please fill in');
 						alert(title);
 						this.element.addClass('required').highlight().focus();
 						ret = false;

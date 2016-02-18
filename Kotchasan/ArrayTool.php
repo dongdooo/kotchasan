@@ -160,6 +160,26 @@ class ArrayTool
 	}
 
 	/**
+	 * ฟังก์ชั่นรวมแอเรย์ แทนที่แอเร์ยย่อยด้วย
+	 *
+	 * @param array $a
+	 * @param array|object $b
+	 * @assert (array(1 => 1, 2 => 2, 3 => 'three'), array(1 => 'one', 2 => 'two')) [==] array(1 => 'one', 2 => 'two', 3 => 'three')
+	 * @return array
+	 */
+	public static function merge($a, $b)
+	{
+		foreach ($b as $key => $value) {
+			if (is_array($a[$key])) {
+				$a[$key] = self::merge($a[$key], $value);
+			} else {
+				$a[$key] = $value;
+			}
+		}
+		return $a;
+	}
+
+	/**
 	 * แปลงข้อความ serialize เป็นแอเรย์
 	 *
 	 * @param string $str serialize

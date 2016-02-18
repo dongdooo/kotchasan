@@ -10,8 +10,7 @@ namespace Kotchasan;
 
 use \Kotchasan\ArrayTool;
 use \Kotchasan\Language;
-use \Kotchasan\Url;
-use \Kotchasan\Http\Request;
+use \Kotchasan\Orm\Recordset;
 
 /**
  * คลาสสำหรับจัดการแสดงผลข้อมูลจาก Model ในรูปแบบตาราง
@@ -218,9 +217,8 @@ class DataTable extends \Kotchasan\KBase
 	 *
 	 * @param array $param
 	 */
-	public function __construct(Request $request, $param)
+	public function __construct($param)
 	{
-		$this->request = $request;
 		$this->id = 'datatable';
 		foreach ($param as $key => $value) {
 			$this->$key = $value;
@@ -230,12 +228,12 @@ class DataTable extends \Kotchasan\KBase
 		}
 		// รายการต่อหน้ามาจากการ POST หรือ GET
 		if (isset($this->perPage)) {
-			$this->perPage = $this->request->request('count', 30)->toInt();
+			$this->perPage = self::$request->request('count', 30)->toInt();
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
-			// Recordset
-			$this->rs = \Kotchasan\Orm\Recordset::create($this->model);
+			// create Recordset
+			$this->rs = new Recordset($this->model);
 			// ฟิลด์ที่กำหนด (หากแตกต่างจาก Model)
 			$this->rs->first($this->fields);
 			// อ่านคอลัมน์ของตาราง
@@ -278,11 +276,11 @@ class DataTable extends \Kotchasan\KBase
 	{
 		$url_query = array();
 		$hidden_fields = array();
-		foreach ($this->request->getQueryParams() as $key => $value) {
+		foreach (self::$request->getQueryParams() as $key => $value) {
 			$value = rawurlencode($value);
 			$url_query[$key] = $key.'='.$value;
 			// แอเรย์เก็บรายการ input ที่ไม่ต้องสร้าง
-			if ($key !== 'search' && $key !== 'count' && $key !== 'page') {
+			if ($key !== 'search' && $key !== 'count' && $key !== 'page' && $key !== 'action') {
 				$hidden_fields[$key] = '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 			}
 		}
@@ -310,11 +308,12 @@ class DataTable extends \Kotchasan\KBase
 		foreach ($this->filters as $key => $items) {
 			$form[] = $this->addFilter($items);
 			unset($hidden_fields[$items['name']]);
-			// ไม่ Query รายการที่เป็นค่าว่าง
-			if (isset($items['value']) && $items['value'] != '' && !empty($items['options'])) {
-				if (in_array($items['value'], array_keys($items['options']))) {
-					$qs[] = array($key, $items['value']);
-				}
+			if (!isset($items['default'])) {
+				$items['default'] = '';
+			}
+			// ไม่ Query รายการ default
+			if (!empty($items['options']) && isset($items['value']) && $items['value'] !== $items['default'] && in_array($items['value'], array_keys($items['options']), true)) {
+				$qs[] = array($key, $items['value']);
 			}
 		}
 		// ปุ่ม Go
@@ -325,7 +324,7 @@ class DataTable extends \Kotchasan\KBase
 			$form[] = '</fieldset>';
 		}
 		// search
-		$search = $this->request->request('search')->text();
+		$search = self::$request->request('search')->text();
 		if (!empty($this->searchColumns)) {
 			if (!empty($search)) {
 				if (isset($this->model)) {
@@ -371,7 +370,7 @@ class DataTable extends \Kotchasan\KBase
 			$this->perPage = 0;
 		} else {
 			// หน้าที่เลือก
-			$page = max(1, $this->request->request('page', 1)->toInt());
+			$page = max(1, self::$request->request('page', 1)->toInt());
 			// ตรวจสอบหน้าที่เลือกสูงสุด
 			$totalpage = round($count / $this->perPage);
 			$totalpage += ($totalpage * $this->perPage < $count) ? 1 : 0;
@@ -389,10 +388,10 @@ class DataTable extends \Kotchasan\KBase
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = $this->request->request('sort', $this->sort)->toString();
+		$this->sort = self::$request->request('sort', $this->sort)->toString();
 		if (!empty($this->sort)) {
 			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = $this->request->request('sort_type', $this->sortType)->toString();
+				$this->sortType = self::$request->request('sort_type', $this->sortType)->toString();
 				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
 				if (isset($this->model)) {
 					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
@@ -414,6 +413,8 @@ class DataTable extends \Kotchasan\KBase
 			$end = $start + $this->perPage - 1;
 			// รายการแรก
 			$start = $start - 2;
+		} else {
+			$end = 0;
 		}
 		if (!empty($this->headers)) {
 			// property ของ ตาราง
@@ -472,7 +473,9 @@ class DataTable extends \Kotchasan\KBase
 			// thead
 			$content[] = '<thead><tr>'.implode('', $row).'</tr></thead>';
 			// tbody
-			$content[] = '<tbody>'.$this->tbody($start, $end).'</tbody>';
+			if (!empty($this->datas)) {
+				$content[] = '<tbody>'.$this->tbody($start, $end).'</tbody>';
+			}
 			// tfoot
 			if ($this->checkCol > -1) {
 				$row = array();
@@ -499,9 +502,7 @@ class DataTable extends \Kotchasan\KBase
 			}
 			// แบ่งหน้า
 			if (!empty($this->perPage)) {
-				$url_query['page'] = 'page=:page';
-				$url = '?'.implode('&amp;', $url_query);
-				$content[] = '<div class="splitpage">'.Url::pagination($totalpage, $page, $url).'</div>';
+				$content[] = '<div class="splitpage">'.self::$request->getUri()->pagination($totalpage, $page).'</div>';
 			}
 		}
 		$content[] = '</div>';
@@ -535,6 +536,7 @@ class DataTable extends \Kotchasan\KBase
 		$n = 0;
 		foreach ($this->datas as $o => $items) {
 			if (empty($this->perPage) || ($n > $start && $n < $end)) {
+				$src_items = $items;
 				if (isset($this->onRow)) {
 					$items = call_user_func($this->onRow, $items);
 				}
@@ -576,7 +578,15 @@ class DataTable extends \Kotchasan\KBase
 					}
 					if (!empty($buttons)) {
 						$module_id = isset($items['module_id']) ? $items['module_id'] : 0;
-						$row[] = str_replace(array(':id', ':module_id'), array($id, $module_id), $this->td($id, $i, array('class' => 'buttons'), implode('', $buttons), ''));
+						$patt = array();
+						$replace = array();
+						$keys = array_keys($src_items);
+						rsort($keys);
+						foreach ($keys as $k) {
+							$patt[] = ":$k";
+							$replace[] = $src_items[$k];
+						}
+						$row[] = str_replace($patt, $replace, $this->td($id, $i, array('class' => 'buttons'), implode('', $buttons), ''));
 					}
 				}
 				if ($this->pmButton) {

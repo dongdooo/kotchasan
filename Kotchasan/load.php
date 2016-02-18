@@ -34,7 +34,7 @@ if (DEBUG > 0) {
  *
  * @var string
  */
-define('VERSION', '1.0.0 beta');
+define('VERSION', '1.0.0 beta2');
 /**
  * กำหนดการบันทึกการ query ฐานข้อมูล
  * ควรกำหนดเป็น false ขณะใช้งานจริง
@@ -117,15 +117,15 @@ if (!defined('TEMPLATE_ROOT')) {
 /**
  * ฟังก์ชั่นใช้สำหรับสร้างคลาส
  *
- * @param type $className ชื่อคลาส
- * @param \Kotchasan\Http\Request $request
- * @param type $param
+ * @param string $className ชื่อคลาส
+ * @param mixed $param
  * @return \static
  */
-function createClass($className, \Kotchasan\Http\Request $request, $param = null)
+function createClass($className, $param = null)
 {
-	return new $className($request, $param);
+	return new $className($param);
 }
+
 /**
  * custom error handler
  * ถ้าอยู่ใน mode debug จะแสดง error ถ้าไม่จะเขียนลง log อย่างเดียว
@@ -171,34 +171,48 @@ if (DEBUG != 2) {
 }
 
 /**
+ * ตรวจสอบและคืนค่าชื่อไฟล์รวมพาธของคลาส
+ *
+ * @param string $className
+ * @return string|null คืนค่าไฟล์รวมพาธของคลาส ถ้าไม่พบคืนค่า null
+ */
+function getClassPath($className)
+{
+	$className = str_replace('\\', '/', $className);
+	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match)) {
+		if (is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
+			return VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
+		}
+	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match)) {
+		if (is_file(VENDOR_DIR.$match[1].'.php')) {
+			return VENDOR_DIR.$match[1].'.php';
+		}
+	} elseif (preg_match('/^([\/a-zA-Z0-9]+)$/', $className)) {
+		if (is_file(VENDOR_DIR.$className.'.php')) {
+			return VENDOR_DIR.$className.'.php';
+		} elseif (is_file(ROOT_PATH.$className.'.php')) {
+			return ROOT_PATH.$className.'.php';
+		} else {
+			list($vendor, $class, $method) = explode('/', strtolower($className));
+			if (is_file(APP_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
+				return APP_PATH."modules/{$vendor}/{$method}s/{$class}.php";
+			} elseif (is_file(ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
+				return ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php";
+			}
+		}
+	}
+	return null;
+}
+/**
  * โหลดคลาสโดยอัตโนมัติตามชื่อของ Classname เมื่อมีการเรียกใช้งานคลาส
  * PSR-4
  *
  * @param string $className
  */
 spl_autoload_register(function($className) {
-	$className = str_replace('\\', '/', $className);
-	if (preg_match('/^Kotchasan\/([a-zA-Z]+)Interface$/', $className, $match)) {
-		if (is_file(VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php')) {
-			include VENDOR_DIR.'Interfaces/'.$match[1].'Interface.php';
-		}
-	} elseif (preg_match('/^Kotchasan\/([\/a-zA-Z]+)$/', $className, $match)) {
-		if (is_file(VENDOR_DIR.$match[1].'.php')) {
-			include VENDOR_DIR.$match[1].'.php';
-		}
-	} elseif (preg_match('/^([\/a-zA-Z]+)$/', $className)) {
-		if (is_file(VENDOR_DIR.$className.'.php')) {
-			include VENDOR_DIR.$className.'.php';
-		} elseif (is_file(ROOT_PATH.$className.'.php')) {
-			include ROOT_PATH.$className.'.php';
-		} else {
-			list($vendor, $class, $method) = explode('/', strtolower($className));
-			if (is_file(APP_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
-				include APP_PATH."modules/{$vendor}/{$method}s/{$class}.php";
-			} elseif (is_file(ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
-				include ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php";
-			}
-		}
+	$file = getClassPath($className);
+	if ($file !== null) {
+		require $file;
 	}
 });
 

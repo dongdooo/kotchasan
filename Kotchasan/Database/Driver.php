@@ -161,6 +161,7 @@ abstract class Driver extends Query
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ
+	 * @return int|bool สำเร็จคืนค่าจำนวนแถวที่มีผล ไม่สำเร็จคืนค่า false
 	 */
 	public function delete($table, $condition, $limit = 1)
 	{
@@ -175,7 +176,7 @@ abstract class Driver extends Query
 		if (is_int($limit) && $limit > 0) {
 			$sql .= ' LIMIT '.$limit;
 		}
-		return $this->doQuery($sql, $values) === false ? false : true;
+		return $this->doQuery($sql, $values);
 	}
 
 	/**
@@ -302,7 +303,7 @@ abstract class Driver extends Query
 	public function query($sql, $values = array())
 	{
 		$result = $this->doQuery($sql, $values);
-		if (!$result) {
+		if ($result === false) {
 			$this->logError($sql, $this->error_message);
 		}
 		return $result;

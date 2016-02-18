@@ -17,7 +17,7 @@ use \Kotchasan\Html;
  *
  * @since 1.0
  */
-class Form
+class Form extends \Kotchasan\KBase
 {
 	/**
 	 * ชื่อ tag
@@ -330,11 +330,13 @@ class Form
 	/**
 	 * ฟังก์ชั่นสร้าง input ชนิด hidden สำหรับใช้ในฟอร์ม
 	 * ใช้ประโยชน์ในการสร้าง URL เพื่อส่งกลับไปยังหน้าเดิมหลังจาก submit แล้ว
+	 *
+	 * @return array
 	 */
 	public static function get2Input()
 	{
 		$hiddens = array();
-		foreach ($_GET AS $key => $value) {
+		foreach (self::$request->getQueryParams() AS $key => $value) {
 			if (preg_match('/^[_]+(.*)$/', $key, $match)) {
 				$hiddens[] = '<input type="hidden" name="_'.$match[1].'" value="'.$value.'">';
 			}

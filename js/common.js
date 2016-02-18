@@ -132,9 +132,21 @@ function confirmAction(module, value, ids) {
 	}
 	return ret;
 }
+function checkUsername() {
+	var patt = /[a-zA-Z0-9]+/;
+	var value = this.input.value;
+	var id = '&id=' + floatval($E('id').value);
+	if (value == '') {
+		this.invalid(this.title);
+	} else if (patt.test(value)) {
+		return 'action=username&value=' + encodeURIComponent(value) + id;
+	} else {
+		this.invalid(this.title);
+	}
+}
 function checkEmail() {
 	var value = this.input.value;
-	var id = '&id=' + floatval($E('int_id').value);
+	var id = '&id=' + floatval($E('id').value);
 	if (value == '') {
 		this.invalid(this.title);
 	} else if (INVALID_EMAIL.test(value)) {
@@ -145,14 +157,14 @@ function checkEmail() {
 }
 function checkPhone() {
 	var value = this.input.value;
-	var id = '&id=' + floatval($E('int_id').value);
+	var id = '&id=' + floatval($E('id').value);
 	if (value != '') {
 		return 'action=phone&value=' + encodeURIComponent(value) + id;
 	}
 }
 function checkDisplayname() {
 	var value = this.input.value;
-	var id = '&id=' + floatval($E('int_id').value);
+	var id = '&id=' + floatval($E('id').value);
 	if (value == '') {
 		this.invalid(this.title);
 	} else if (value.length < 2) {
@@ -162,29 +174,21 @@ function checkDisplayname() {
 	}
 }
 function checkPassword() {
-	var id = '&id=' + floatval($E('int_id').value);
-	var Password = $E('text_password');
-	var Repassword = $E('text_repassword');
-	if (this.input == Password) {
-		if (Password.value !== '' && !INVALID_PASSWORD.test(Password.value)) {
+	var id = '&id=' + floatval($E('id').value);
+	var Password = $E('password');
+	var Repassword = $E('repassword');
+	if (Password.value == '' && Repassword.value == '') {
+		if (id == 0) {
 			Password.Validator.invalid(Password.Validator.title);
-		} else if (Password.value == '' && id == 0) {
-			Password.Validator.invalid(Password.Validator.title);
-		} else if (Password.value == '' && id > 0) {
+		} else {
 			Password.Validator.reset();
-		} else if (Password.value.length < 4) {
-			Password.Validator.invalid(Password.Validator.title);
-		} else {
-			Password.Validator.valid();
 		}
+		Repassword.Validator.reset();
+	} else if (Password.value == Repassword.value) {
+		Repassword.Validator.valid();
+		Password.Validator.valid();
 	} else {
-		if (id > 0 && Password.value == '' && Repassword.value == '') {
-			Repassword.Validator.reset();
-		} else if (Password.value != Repassword.value) {
-			Repassword.Validator.invalid(Repassword.Validator.title);
-		} else {
-			Repassword.Validator.valid();
-		}
+		this.input.Validator.invalid(Password.Validator.title);
 	}
 }
 function checkAntispam() {
@@ -197,8 +201,7 @@ function checkAntispam() {
 }
 function checkIdcard() {
 	var value = this.input.value;
-	var ids = this.input.id.split('_');
-	var id = $E(ids[0] + '_id').value.toInt();
+	var id = '&id=' + floatval($E('id').value);
 	var i, sum;
 	if (value.length != 13) {
 		this.invalid(this.title);
@@ -207,7 +210,7 @@ function checkIdcard() {
 			sum += parseFloat(value.charAt(i)) * (13 - i);
 		}
 		if ((11 - sum % 11) % 10 != parseFloat(value.charAt(12))) {
-			this.invalid(IDCARD_INVALID);
+			this.invalid(this.title);
 		} else {
 			return 'action=idcard&value=' + encodeURIComponent(value) + '&id=' + id;
 		}
@@ -226,7 +229,7 @@ function checkAlias() {
 function reload() {
 	window.location = replaceURL('timestamp', new String(new Date().getTime()), window.location.toString());
 }
-function getWebURL() {
+function getWebUri() {
 	var port = floatval(window.location.port);
 	var protocol = window.location.protocol;
 	if ((protocol == 'http:' && port == 80) || (protocol == 'https:' && port == 443)) {
@@ -234,7 +237,7 @@ function getWebURL() {
 	} else {
 		port = port > 0 ? ':' + port : '';
 	}
-	return protocol + '//' + window.location.hostname + port;
+	return protocol + '//' + window.location.hostname + port + '/';
 }
 function replaceURL(keys, values, url) {
 	var patt = /^(.*)=(.*)$/;

@@ -20,7 +20,7 @@ use \Kotchasan\Http\Request;
  *
  * @since 1.0
  */
-class Login extends \Kotchasan\Container implements LoginInterface
+class Login extends \Kotchasan\KBase implements LoginInterface
 {
 	/**
 	 * ข้อความจาก Login Class
@@ -56,22 +56,22 @@ class Login extends \Kotchasan\Container implements LoginInterface
 	 *
 	 * @return \static
 	 */
-	public static function create(Request $request)
+	public static function create()
 	{
 		// create class
-		$login = new static($request);
+		$login = new static;
 		// การเข้ารหัส
 		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
 		self::$text_email = $login->get('text_email', $pw);
 		self::$text_password = $login->get('text_password', $pw);
 		$login_remember = $login->get('bool_remember', $pw) == 1 ? 1 : 0;
-		$action = $request->request('action')->toString();
+		$action = self::$request->request('action')->toString();
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
 			// error มี email อยู่แล้ว (facebook login)
 			self::$login_message = Language::get('This email is already registered');
-		} elseif ($action === 'logout') {
+		} elseif ($action === 'logout' && self::$text_email === null) {
 			// logout ลบ session และ cookie
 			unset($_SESSION['login']);
 			$time = time();
@@ -86,10 +86,10 @@ class Login extends \Kotchasan\Container implements LoginInterface
 			if (self::$text_email != '' && self::$text_password != '') {
 				// ตรวจสอบการกรอก
 				if (self::$text_email == '') {
-					self::$login_message = Language::get('Please fill out').' '.Language::get('Email');
+					self::$login_message = Language::get('Please fill out this form');
 					self::$login_input = 'text_email';
 				} elseif (self::$text_password == '') {
-					self::$login_message = Language::get('Please fill out').' '.Language::get('Password');
+					self::$login_message = Language::get('Please fill out this form');
 					self::$login_input = 'text_password';
 				} else {
 					// ตรวจสอบการ login กับฐานข้อมูล
@@ -105,13 +105,16 @@ class Login extends \Kotchasan\Container implements LoginInterface
 						// save login cookie
 						$time = time() + 2592000;
 						if ($login_remember == 1) {
-							setcookie('login_email', $pw->encode($login_result->email), $time, '/');
+							setcookie('login_email', $pw->encode(self::$text_email), $time, '/');
 							setcookie('login_password', $pw->encode(self::$text_password), $time, '/');
 							setcookie('login_remember', $login_remember, $time, '/');
 						}
 						setcookie('login_id', $login_result->id, $time, '/');
 					}
 				}
+			} elseif (self::$text_email !== null) {
+				self::$login_message = Language::get('Please fill out this form');
+				self::$login_input = 'text_email';
 			}
 			return $login;
 		}
@@ -127,13 +130,13 @@ class Login extends \Kotchasan\Container implements LoginInterface
 	 */
 	protected function get($name, Password $pwd)
 	{
-		$datas = $this->request->getParsedBody();
+		$datas = self::$request->getParsedBody();
 		if (isset($datas[$name])) {
 			return (string)$datas[$name];
 		} elseif (isset($_SESSION[$name])) {
 			return (string)$_SESSION[$name];
 		}
-		$datas = $this->request->getCookieParams();
+		$datas = self::$request->getCookieParams();
 		return isset($datas[$name]) ? $pwd->decode($datas[$name]) : null;
 	}
 

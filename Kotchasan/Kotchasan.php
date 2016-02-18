@@ -27,25 +27,27 @@ class Kotchasan extends Kotchasan\KBase
 	 *
 	 * @var string
 	 */
-	private $char_set = 'utf-8';
+	public $char_set = 'utf-8';
 	/**
 	 * Controller หลัก
 	 *
 	 * @var string
 	 */
-	private $defaultController = 'Index\Index\Controller';
+	public $defaultController = 'Index\Index\Controller';
 	/**
 	 * Router หลัก
 	 *
 	 * @var string
 	 */
-	private $defaultRouter = 'Kotchasan\Router';
+	public $defaultRouter = 'Kotchasan\Router';
 
 	/**
 	 * Singleton
 	 */
 	private function __construct()
 	{
+		/* Request Class */
+		self::$request = new Request;
 		/* config */
 		self::$cfg = Config::create();
 		/* charset */
@@ -75,6 +77,7 @@ class Kotchasan extends Kotchasan\KBase
 	 */
 	public function run()
 	{
-		\createClass($this->defaultRouter, new Request)->inint($this->defaultController);
+		$router = new $this->defaultRouter;
+		$router->inint($this->defaultController);
 	}
 }

@@ -20,7 +20,7 @@ use \Kotchasan\Http\Request;
  *
  * @since 1.0
  */
-class View extends \Kotchasan\Container
+class View extends \Kotchasan\KBase
 {
 	/**
 	 * Controller ที่เรียก View นี้
@@ -50,12 +50,10 @@ class View extends \Kotchasan\Container
 	/**
 	 * Class constructor
 	 *
-	 * @param Request $request
 	 * @param Controller $controller
 	 */
-	public function __construct(Request $request, Controller $controller)
+	public function __construct(Controller $controller)
 	{
-		$this->request = $request;
 		$this->controller = $controller;
 	}
 
@@ -96,9 +94,11 @@ class View extends \Kotchasan\Container
 	}
 
 	/**
-	 * ouput เป็น HTML
+	 * ส่งออกเป็น HTML
+	 *
+	 * @param string $template HTML Template ถ้าไม่กำหนดมาจะใช้ index.html
 	 */
-	public function renderHTML()
+	public function renderHTML($template = null)
 	{
 		// default for template
 		if (!empty($this->metas)) {
@@ -111,8 +111,12 @@ class View extends \Kotchasan\Container
 		$this->contents['/{SKIN}/'] = Template::$src;
 		$this->contents['/{LANGUAGE}/'] = Language::name();
 		$this->contents['/^[\s\t]+/m'] = '';
-		// แทนที่ลงใน index.html
-		echo Template::pregReplace(array_keys($this->contents), array_values($this->contents), Template::load('', '', 'index'));
+		// แทนที่ลงใน Template
+		if ($template === null) {
+			// ถ้าไม่ได้กำหนดมาใช้ index.html
+			$template = Template::load('', '', 'index');
+		}
+		echo Template::pregReplace(array_keys($this->contents), array_values($this->contents), $template);
 	}
 
 	/**
@@ -128,5 +132,53 @@ class View extends \Kotchasan\Container
 		}
 		// output content
 		echo $content;
+	}
+
+	/**
+	 * ฟังก์ชั่น แทนที่ query string ด้วยข้อมูลจาก get สำหรับส่งต่อไปยัง URL ถัดไป
+	 *
+	 * @param array|string $f รับค่าจากตัวแปร $f มาสร้าง query string
+	 * array ส่งมาจาก preg_replace
+	 * string กำหนดเอง
+	 * @assert (array(2 => 'module=retmodule')) [==] "?module=retmodule&amp;page=1&amp;sort=id"  [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
+	 * @assert ('module=retmodule') [==] "?module=retmodule&amp;page=1&amp;sort=id" [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
+	 * @return string คืนค่า query string ใหม่ ลบ id=0
+	 */
+	public static function back($f)
+	{
+		$uri = self::$request->getUri();
+		$query_url = array();
+		foreach (explode('&', str_replace('&amp;', '&', $uri->getQuery())) as $item) {
+			if (preg_match('/^(_)?(.*)=(.*)$/', $item, $match)) {
+				if ($match[1] === '_') {
+					$query_url[$match[2]] = $match[3];
+				} elseif (!isset($query_url[$match[2]])) {
+					$query_url[$match[2]] = $match[3];
+				}
+			} else {
+				$query_url[] = $item;
+			}
+		}
+		if (is_array($f)) {
+			$f = isset($f[2]) ? $f[2] : null;
+		}
+		if (!empty($f)) {
+			foreach (explode('&', str_replace('&amp;', '&', $f)) as $item) {
+				if (preg_match('/^(.*)=(.*)$/', $item, $match)) {
+					$query_url[$match[1]] = $match[2];
+				} else {
+					$query_url[] = $item;
+				}
+			}
+			$temp = $query_url;
+			$query_url = array();
+			foreach ($temp as $key => $value) {
+				if (!(($key == 'id' && $value == 0) ||
+				($key == 'action' && ($value == 'login' || $value == 'logout')))) {
+					$query_url[$key] = $value;
+				}
+			}
+		}
+		return $uri->withQuery($uri->paramsToQuery($query_url, true));
 	}
 }
