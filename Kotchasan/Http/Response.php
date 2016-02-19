@@ -17,7 +17,7 @@ use \Psr\Http\Message\ResponseInterface;
  *
  * @since 1.0
  */
-class Response implements ResponseInterface
+class Response extends Message implements ResponseInterface
 {
 	/**
 	 * @var int
@@ -30,7 +30,7 @@ class Response implements ResponseInterface
 
 	/**
 	 * create Response
-	 * 
+	 *
 	 * @param int $code
 	 * @param string $reasonPhrase
 	 */

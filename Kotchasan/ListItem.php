@@ -81,30 +81,25 @@ class ListItem
 	}
 
 	/**
-	 * อ่านข้อมูลที่ $index
+	 * อ่านข้อมูลที่ $key
 	 *
-	 * @param string $index
-	 * @return mixed คืนค่ารายการที่ $index ถ้าไม่พบคืนค่า null
+	 * @param string $key
+	 * @return mixed คืนค่ารายการที่ $key ถ้าไม่พบคืนค่า null
 	 */
-	public function get($index)
+	public function get($key)
 	{
-		if (isset($this->datas[$index])) {
-			$result = $this->datas[$index];
-		} else {
-			$result = null;
-		}
-		return $result;
+		return array_key_exists($key, $this->datas) ? $this->datas[$key] : null;
 	}
 
 	/**
-	 * เพิ่มรายการใหม่ที่ลำดับสุดท้าย ถ้ามี $index อยู่แล้วจะแทนที่รายการเดิม
+	 * เพิ่มรายการใหม่ที่ลำดับสุดท้าย ถ้ามี $key อยู่แล้วจะแทนที่รายการเดิม
 	 *
-	 * @param string $index
+	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function set($index, $value)
+	public function set($key, $value)
 	{
-		$this->datas[$index] = $value;
+		$this->datas[$key] = $value;
 	}
 
 	/**
@@ -130,13 +125,13 @@ class ListItem
 	/**
 	 * ลบรายการที่กำหนด
 	 *
-	 * @param string $index ของรายการที่ต้องการจะลบ
-	 * @return boolean คืนค่า true ถ้าสำเร็จ, false ถ้าไม่พบ
+	 * @param string $key ของรายการที่ต้องการจะลบ
+	 * @return bool คืนค่า true ถ้าสำเร็จ, false ถ้าไม่พบ
 	 */
-	public function delete($index)
+	public function delete($key)
 	{
-		if (isset($this->datas[$index])) {
-			unset($this->datas[$index]);
+		if (array_key_exists($key, $this->datas)) {
+			unset($this->datas[$key]);
 			return true;
 		}
 		return false;
@@ -165,46 +160,42 @@ class ListItem
 	}
 
 	/**
-	 * เพิ่มรายการใหม่ต่อจากรายการที่ $index
+	 * เพิ่มรายการใหม่ต่อจากรายการที่ $key
 	 *
-	 * @param mixed $index
+	 * @param mixed $key
 	 * @param mixed $item รายการใหม่
 	 */
-	public function insert($index, $item)
+	public function insert($key, $item)
 	{
-		if (is_int($index) && $index == sizeof($this->datas)) {
+		if (is_int($key) && $key == sizeof($this->datas)) {
 			$this->datas[] = $item;
 		} else {
 			$temp = $this->datas;
 			$this->datas = array();
-			foreach ($temp AS $key => $value) {
-				if ($key == $index) {
-					$this->datas[$key] = $value;
-					$this->datas[$index] = $item;
-				} else {
-					$this->datas[$key] = $value;
+			foreach ($temp AS $k => $value) {
+				$this->datas[$k] = $value;
+				if ($k == $key) {
+					$this->datas[$key] = $item;
 				}
 			}
 		}
 	}
 
 	/**
-	 * เพิ่มรายการใหม่ก่อนรายการที่ $index
+	 * เพิ่มรายการใหม่ก่อนรายการที่ $key
 	 *
-	 * @param mixed $index
+	 * @param mixed $key
 	 * @param mixed $item รายการใหม่
 	 */
-	public function insertBefore($index, $item)
+	public function insertBefore($key, $item)
 	{
 		$temp = $this->datas;
 		$this->datas = array();
-		foreach ($temp AS $key => $value) {
-			if ($key == $index) {
-				$this->datas[$index] = $item;
-				$this->datas[$key] = $value;
-			} else {
-				$this->datas[$key] = $value;
+		foreach ($temp AS $k => $value) {
+			if ($k == $key) {
+				$this->datas[$key] = $item;
 			}
+			$this->datas[$k] = $value;
 		}
 	}
 
@@ -223,7 +214,7 @@ class ListItem
 	 * โหลดแอเรย์จากไฟล์
 	 *
 	 * @param string $file ชื่อไฟล์ที่ต้องการโหลดรวม path
-	 * @return \Core\ListItem
+	 * @return \self
 	 */
 	public function loadFromFile($file)
 	{
@@ -238,7 +229,7 @@ class ListItem
 	/**
 	 * บันทึกเป็นไฟล์
 	 *
-	 * @return boolean true ถ้าสำเร็จ
+	 * @return bool true ถ้าสำเร็จ
 	 */
 	public function saveToFile()
 	{
@@ -248,7 +239,7 @@ class ListItem
 			$datas = array();
 			foreach ($this->datas as $key => $value) {
 				if (is_array($value)) {
-					$datas[] = (is_int($key) ? $key : "'".strtolower($key)."'")." => array(\n".$this->_arrayToStr(1, $value)."\n\t)";
+					$datas[] = (is_int($key) ? $key : "'".strtolower($key)."'")." => array(\n".$this->arrayToString(1, $value)."\n\t)";
 				} else {
 					$datas[] = (is_int($key) ? $key : "'".strtolower($key)."'").' => '.(is_int($value) ? $value : "'".addslashes($value)."'");
 				}
@@ -272,12 +263,12 @@ class ListItem
 	 * @param array $array
 	 * @return string
 	 */
-	private function _arrayToStr($indent, $array)
+	private function arrayToString($indent, $array)
 	{
 		$t = str_repeat("\t", $indent + 1);
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
-				$datas[] = (is_int($key) ? $key : "'$key'")." => array(\n".$this->_arrayToStr($indent + 1, $value)."\n$t)";
+				$datas[] = (is_int($key) ? $key : "'$key'")." => array(\n".$this->arrayToString($indent + 1, $value)."\n$t)";
 			} else {
 				$datas[] = (is_int($key) ? $key : "'$key'").' => '.(is_int($value) ? $value : "'".addslashes($value)."'");
 			}

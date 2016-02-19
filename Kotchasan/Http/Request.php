@@ -50,7 +50,7 @@ class Request extends AbstractRequest implements RequestInterface
 	private $attributes = array();
 
 	/**
-	 * คืนค่าจากตัวแปร $_SERVER
+	 * คืนค่าจากตัวแปร SERVER
 	 *
 	 * @return array
 	 */
@@ -63,7 +63,7 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
-	 * คืนค่าจากตัวแปร $_COOKIE
+	 * คืนค่าจากตัวแปร COOKIE
 	 *
 	 * @return array
 	 */
@@ -83,7 +83,7 @@ class Request extends AbstractRequest implements RequestInterface
 	public function withCookieParams(array $cookies)
 	{
 		$clone = clone $this;
-		$clone->cookieParams[$name] = $value;
+		$clone->cookieParams = $cookies;
 		return $clone;
 	}
 
@@ -295,7 +295,7 @@ class Request extends AbstractRequest implements RequestInterface
 	/**
 	 * ฟังก์ชั่น อ่าน ip ของ client
 	 *
-	 * @return string IP ที่อ่านได้
+	 * @return string|null IP ที่อ่านได้
 	 */
 	public function getClientIp()
 	{
@@ -305,10 +305,12 @@ class Request extends AbstractRequest implements RequestInterface
 		} elseif (isset($server['HTTP_FORWARDED_FOR'])) {
 			return $server['HTTP_FORWARDED_FOR'];
 		} elseif (isset($server['HTTP_X_FORWARDED_FOR'])) {
-			return $server['HTTP_X_FORWARDED_FOR'];
-		} else {
+			$IParray = array_filter(explode(',', $server['HTTP_X_FORWARDED_FOR']));
+			return $IParray[0];
+		} elseif (isset($server['REMOTE_ADDR'])) {
 			return $server['REMOTE_ADDR'];
 		}
+		return null;
 	}
 
 	/**

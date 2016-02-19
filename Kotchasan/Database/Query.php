@@ -36,6 +36,8 @@ abstract class Query extends \Kotchasan\KBase
 
 	/**
 	 * Class constructor
+	 *
+	 * @param string $conn ชื่อของการเชื่อมต่อ ถ้าไม่ระบุจะไม่มีการเชื่อมต่อ database
 	 */
 	public function __construct($conn)
 	{
@@ -69,7 +71,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นสำหรับจัดกลุ่มคำสั่ง และ เชื่อมแต่ละกลุ่มด้วย AND
 	 *
 	 * @param array $params คำสั่ง รูปแบบ array('field1', 'condition', 'field2')
-	 * @assert (array('id', 1), array('id', '=' , 1), array('id', array(1,2,'3'))) [==] "(`id` = 1 AND `id` = 1 AND `id` IN (1, 2, '3'))"
 	 * @return string query ภายใต้ ()
 	 */
 	protected function groupAnd($params)
@@ -88,7 +89,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นสำหรับจัดกลุ่มคำสั่ง และ เชื่อมแต่ละกลุ่มด้วย OR
 	 *
 	 * @param array $params คำสั่ง รูปแบบ array('field1', 'condition', 'field2')
-	 * @assert (array('id', 1), array('id', '=' , 1), array('id', array(1,2,'3'))) [==] "(`id` = 1 OR `id` = 1 OR `id` IN (1, 2, '3'))"
 	 * @return string
 	 */
 	protected function groupOr($params)
@@ -121,11 +121,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นอ่านชื่อตารางและชื่อรอง และใส่ ` ครอบชื่อตารางด้วย
 	 *
 	 * @param string $table ชื่อตารางตามที่กำหนดใน settings/datasbase.php
-	 * @assert ('user U') [==] "`user` AS U"
-	 * @assert ('user as U1') [==] "`user` AS U1"
-	 * @assert ('user username') [==] "`user` AS `username`"
-	 * @assert ('user AS username') [==] "`user` AS `username`"
-	 * @assert ('user') [==] "`user`"
 	 * @return string
 	 */
 	protected function quoteTableName($table)
@@ -144,7 +139,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นอ่านชื่อตารางจากการตั้งค่าฐานข้อมุล
 	 *
 	 * @param string $table ชื่อตารางตามที่กำหนดใน settings/datasbase.php
-	 * @assert ('user') [==] "user"
 	 * @return string ชื่อตารางรวม prefix ถ้าไม่มีชื่อกำหนดไว้ จะคืนค่า prefix ตามด้วย $table
 	 */
 	public function tableWithPrefix($table)
@@ -157,14 +151,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นสร้าง query string สำหรับคำสั่ง SELECT
 	 *
 	 * @param string $fields
-	 * @assert ('0 as id') [==] "0 AS `id`"
-	 * @assert ("'document' as module") [==] "'document' AS `module`"
-	 * @assert ('user.id user_id') [==] "`user`.`id` AS `user_id`"
-	 * @assert ('user.id as user_id') [==] "`user`.`id` AS `user_id`"
-	 * @assert ('U.id') [==] "U.`id`"
-	 * @assert ('V.email invite') [==] "V.`email` AS `invite`"
-	 * @assert ("(SELECT `name` FROM `user`) name") [==] "(SELECT `name` FROM `user`) AS `name`"
-	 * @assert (array('0 id', 'user', 'user.id user_id', "'document' module", '(...) name')) [==] "0 AS `id`, `user`, `user`.`id` AS `user_id`, 'document' AS `module`, (...) AS `name`"
 	 * @return string
 	 */
 	protected function buildSelect($fields)
@@ -206,11 +192,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * @param string $table ชื่อตารางต้องมี alias ด้วย
 	 * @param string $type เข่น INNER OUTER LEFT RIGHT
 	 * @param mixed $on query string หรือ array
-	 * @assert ('user U', 'INNER', 1) [==] " INNER JOIN `user` AS U ON `id`=1"
-	 * @assert ('user U', 'INNER', array('U.id', 'A.id')) [==] " INNER JOIN `user` AS U ON U.`id`=A.`id`"
-	 * @assert ('user U', 'INNER', array('U.id', '=', 'A.id')) [==] " INNER JOIN `user` AS U ON U.`id`=A.`id`"
-	 * @assert ('user U', 'INNER', array('id', '=', 1)) [==] " INNER JOIN `user` AS U ON `id`=1"
-	 * @assert ('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id'))) [==] " INNER JOIN `user` AS U ON U.`id`=A.`id` AND U.`id`=A.`id`"
 	 * @return string ถ้าไม่มี alias คืนค่าว่าง
 	 */
 	protected function buildJoin($table, $type, $on)
@@ -235,11 +216,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * สร้าง query เรียงลำดับ
 	 *
 	 * @param mixed $fields array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....
-	 * @assert (array('id', 'id ASC')) [==] "`id`, `id` ASC"
-	 * @assert ('id ASC') [==] "`id` ASC"
-	 * @assert ('user.id DESC') [==] "`user`.`id` DESC"
-	 * @assert ('U.id DESC') [==] "U.`id` DESC"
-	 * @assert ('id ASCD') [==] ""
 	 * @return string
 	 */
 	protected function buildOrder($fields)
@@ -261,19 +237,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * แปลงข้อความสำหรับชื่อฟิลด์หรือชื่อตาราง
 	 *
 	 * @param string $name
-	 * @assert (1) [===] 1
-	 * @assert ("*") [==] "*"
-	 * @assert ("field") [==] "`field`"
-	 * @assert ("table.field") [==] "`table`.`field`"
-	 * @assert ("table.field alias") [==] "`table`.`field` AS `alias`"
-	 * @assert ("U.id  user_id") [==] "U.`id` AS `user_id`"
-	 * @assert ("U.id as user_id") [==] "U.`id` AS `user_id`"
-	 * @assert ("user user_id") [==] "`user` AS `user_id`"
-	 * @assert ("(...) pos") [==] "(...) AS `pos`"
-	 * @assert ("(...) `pos`") [==] "(...) AS `pos`"
-	 * @assert ("CONCAT_WS(...) AS `name`") [==] "CONCAT_WS(...) AS `name`"
-	 * @assert ("CONCAT_WS(...) name") [==] "CONCAT_WS(...) AS `name`"
-	 * @assert (array("table.field", "table.field alias")) [==] "`table`.`field`, `table`.`field` AS `alias`"
 	 * @return string
 	 */
 	protected function fieldName($name)
@@ -311,12 +274,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * แปลงข้อความสำหรับ value
 	 *
 	 * @param string $value
-	 * @assert (1) [===] 1
-	 * @assert ("string") [==] "'string'"
-	 * @assert ("table.field") [==] "`table`.`field`"
-	 * @assert ("table.field alias") [==] "`table`.`field` AS `alias`"
-	 * @assert ("table.field as alias") [==] "`table`.`field` AS `alias`"
-	 * @assert (array("table.field", "table.field alias")) [==] "(`table`.`field`, `table`.`field` AS `alias`)"
 	 * @return string
 	 */
 	protected function fieldValue($value)
@@ -343,17 +300,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * @param array $params
 	 * รูปแบบ array('field1', 'condition', 'field2')
 	 * ไม่ระบุ condition หมายถึง = หรือ IN
-	 * @assert (1) [==] 1
-	 * @assert ('string') [==] "string"
-	 * @assert (array('table.id', 'table.id')) [==] "`table`.`id` = `table`.`id`"
-	 * @assert (array('table.id', '=', 'table.id')) [==] "`table`.`id` = `table`.`id`"
-	 * @assert (array('id', array(1, 2, '3'))) [==] "`id` IN (1, 2, '3')"
-	 * @assert (array('id', 'IN', array(1, 2, '3'))) [==] "`id` IN (1, 2, '3')"
-	 * @assert (array('table.id', '=', 'one')) [==] "`table`.`id` = 'one'"
-	 * @assert (array('id', '=', 1)) [==] "`id` = 1"
-	 * @assert (array('U.id', '=', 1)) [==] "U.`id` = 1"
-	 * @assert (array('id', 'IN', array(1, 2, '3'))) [==] "`id` IN (1, 2, '3')"
-	 * @assert (array('id', '!=', '(...) alias')) [==] "`id` != (...) AS `alias`"
 	 * @return string
 	 */
 	protected function buildValue($params)
@@ -406,11 +352,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * @param mixed $condition
 	 * @param string $oprator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
-	 * @assert (1) [==] "`id`=1"
-	 * @assert ('string') [==] "string"
-	 * @assert (array('user_id', 1)) [==] "`user_id`=1"
-	 * @assert (array(array('id', 1), array('id', array(1, 2, '3')))) [==] array("`id`=1 AND `id` IN (:id0, :id1, :id2)", array(':id0' => 1, ':id1' => 2, ':id2' => '3'))
-	 * @assert (array('(...)')) [==] "(...)"
 	 * @return string|array คืนค่า string สำหรับคำสั่ง WHERE หรือคืนค่า array(where, values) สำหรับใช้กับการ bind
 	 */
 	protected function buildWhere($condition, $oprator = 'AND', $id = 'id')
@@ -450,11 +391,6 @@ abstract class Query extends \Kotchasan\KBase
 	 * @param mixed $condition
 	 * @param string $oprator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
-	 * @assert (1) [==] array("`id` = :id", array(':id' => 1))
-	 * @assert ('string') [==] array("string", array())
-	 * @assert (array('user_id', 1)) [==] array("`user_id` = :user_id", array(':user_id' => 1))
-	 * @assert (array(array('id', 1), array('id', array(1, 2, '3')))) [==] array("`id` = :id AND `id` IN (:id0,:id1,:id2)", array(':id0' => 1, ':id1' => 2, ':id2' => '3', ':id' => 1))
-	 * @assert (array('(...)')) [==] array('(...)', array())
 	 * @return array ($condition, $values)
 	 */
 	protected function buildWhereValues($condition, $oprator = 'AND', $id = 'id')

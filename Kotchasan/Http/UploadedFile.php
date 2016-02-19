@@ -241,10 +241,16 @@ class UploadedFile implements UploadedFileInterface
 	 * @param string $targetPath ที่อยู่ปลายทางที่ต้องการย้าย
 	 * @return bool true ถ้าอัปโหลดเรียบร้อย
 	 * @throws \RuntimeException ข้อผิดพลาดการอัปโหลด
+	 * @throws \InvalidArgumentException ไดเรคทอรี่ไม่สามารถเขียนได้
 	 */
 	public function copyTo($targetPath)
 	{
-		$this->check($exts, dirname($targetPath));
+		if ($this->isMoved) {
+			throw new \RuntimeException(sprintf(Language::get('Uploaded file %1s has already been moved'), $this->name));
+		}
+		if (!is_writable(dirname($targetPath))) {
+			throw new \InvalidArgumentException(Language::get('Target directory is not writable'));
+		}
 		if (!copy($this->tmp_name, $targetPath)) {
 			throw new \RuntimeException(sprintf(Language::get('Error copying file %1s to %2s'), $this->name, $targetPath));
 		}

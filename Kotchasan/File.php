@@ -66,7 +66,7 @@ class File
 			if ($text !== '.' && $text !== '..') {
 				if (is_dir($dir.$text)) {
 					self::copyDirectory($dir.$text.'/', $todir.$text.'/');
-				} else {
+				} elseif (is_dir($todir)) {
 					copy($dir.$text, $todir.$text);
 				}
 			}

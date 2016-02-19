@@ -144,39 +144,39 @@ class ArrayTool
 	}
 
 	/**
-	 * ฟังก์ชั่นรวมแอเรย์ แทนที่คีย์ก่อนหน้า
+	 * ฟังก์ชั่นรวมแอเรย์ รักษาแอเรย์ต้นฉบับไว้ และแทนที่ข้อมูลด้วยข้อมูลใหม่
 	 *
-	 * @param array $a
-	 * @param array|object $b
+	 * @param array $source แอเร์ยต้นฉบับ
+	 * @param array|object $replace ข้อมูลที่จะนำมาแทนที่ลงในแอเร์ยต้นฉบับ
 	 * @assert (array(1 => 1, 2 => 2, 3 => 'three'), array(1 => 'one', 2 => 'two')) [==] array(1 => 'one', 2 => 'two', 3 => 'three')
 	 * @return array
 	 */
-	public static function replace($a, $b)
+	public static function replace($source, $replace)
 	{
-		foreach ($b as $key => $value) {
-			$a[$key] = $value;
+		foreach ($replace as $key => $value) {
+			$source[$key] = $value;
 		}
-		return $a;
+		return $source;
 	}
 
 	/**
-	 * ฟังก์ชั่นรวมแอเรย์ แทนที่แอเร์ยย่อยด้วย
+	 * ฟังก์ชั่นรวมแอเรย์ รักษาแอเรย์ต้นฉบับไว้ แทนที่แอเร์ยย่อยด้วย
 	 *
-	 * @param array $a
-	 * @param array|object $b
+	 * @param array $source แอเร์ยต้นฉบับ
+	 * @param array|object $with ข้อมูลที่จะนำมารวม
 	 * @assert (array(1 => 1, 2 => 2, 3 => 'three'), array(1 => 'one', 2 => 'two')) [==] array(1 => 'one', 2 => 'two', 3 => 'three')
 	 * @return array
 	 */
-	public static function merge($a, $b)
+	public static function merge($source, $with)
 	{
-		foreach ($b as $key => $value) {
-			if (is_array($a[$key])) {
-				$a[$key] = self::merge($a[$key], $value);
+		foreach ($with as $key => $value) {
+			if (is_array($source[$key])) {
+				$source[$key] = self::merge($source[$key], $value);
 			} else {
-				$a[$key] = $value;
+				$source[$key] = $value;
 			}
 		}
-		return $a;
+		return $source;
 	}
 
 	/**

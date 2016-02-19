@@ -140,9 +140,9 @@ class View extends \Kotchasan\KBase
 	 * @param array|string $f รับค่าจากตัวแปร $f มาสร้าง query string
 	 * array ส่งมาจาก preg_replace
 	 * string กำหนดเอง
-	 * @assert (array(2 => 'module=retmodule')) [==] "?module=retmodule&amp;page=1&amp;sort=id"  [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
-	 * @assert ('module=retmodule') [==] "?module=retmodule&amp;page=1&amp;sort=id" [[$_GET = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
 	 * @return string คืนค่า query string ใหม่ ลบ id=0
+	 * @assert (array(2 => 'module=retmodule')) [==] "http://localhost/?module=retmodule&amp;page=1&amp;sort=id"  [[$_SERVER['QUERY_STRING'] = '_module=test&_page=1&_sort=id']]
+	 * @assert ('module=retmodule') [==] "http://localhost/?module=retmodule&amp;page=1&amp;sort=id" [[$_SERVER['QUERY_STRING'] = '_module=test&_page=1&_sort=id']]
 	 */
 	public static function back($f)
 	{
@@ -173,12 +173,11 @@ class View extends \Kotchasan\KBase
 			$temp = $query_url;
 			$query_url = array();
 			foreach ($temp as $key => $value) {
-				if (!(($key == 'id' && $value == 0) ||
-				($key == 'action' && ($value == 'login' || $value == 'logout')))) {
+				if (!(($key == 'id' && $value == 0) || ($key == 'action' && ($value == 'login' || $value == 'logout')))) {
 					$query_url[$key] = $value;
 				}
 			}
 		}
-		return $uri->withQuery($uri->paramsToQuery($query_url, true));
+		return (string)$uri->withQuery($uri->paramsToQuery($query_url, true));
 	}
 }

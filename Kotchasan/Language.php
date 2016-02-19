@@ -47,7 +47,7 @@ final class Language extends \Kotchasan\KBase
 		// โฟลเดอร์ ภาษา
 		$language_folder = self::languageFolder();
 		// ภาษาที่เลือก
-		$lang = isset($_GET['lang']) ? $_GET['lang'] : (isset($_COOKIE['my_lang']) ? $_COOKIE['my_lang'] : '');
+		$lang = self::$request->get('lang', self::$request->cookie('my_lang', '')->toString())->toString();
 		// ตรวจสอบภาษา ใช้ภาษาแรกที่เจอ
 		foreach (ArrayTool::replace(array($lang => $lang), self::$cfg->languages) as $item) {
 			if (!empty($item)) {
@@ -202,6 +202,9 @@ final class Language extends \Kotchasan\KBase
 	 * @param array $languages ข้อมูลภาษาที่ต้องการตรวจสอบ
 	 * @param string $key รายการที่ต้องการตรวจสอบ
 	 * @return int คืนค่าลำดับที่พบ (รายการแรกคือ 0), คืนค่า -1 ถ้าไม่พบ
+	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'One') [==] 0
+	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'two') [==] 100
+	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'O') [==] -1
 	 */
 	public static function keyExists($languages, $key)
 	{
@@ -284,6 +287,7 @@ final class Language extends \Kotchasan\KBase
 	 * อ่านชื่อภาษาที่กำลังใช้งานอยู่
 	 *
 	 * @return string
+	 * @assert () [==] 'th'
 	 */
 	public static function name()
 	{
@@ -298,6 +302,8 @@ final class Language extends \Kotchasan\KBase
 	 *
 	 * @param string $key
 	 * @return mixed
+	 * @assert ('YEAR_OFFSET') [==] 543
+	 * @assert (array(1 => 'not found')) [==] 'not found'
 	 */
 	public static function get($key)
 	{
@@ -334,6 +340,8 @@ final class Language extends \Kotchasan\KBase
 	 *
 	 * @param string $key
 	 * @param mixed $default
+	 * @assert ('YEAR_OFFSET') [==] 543
+	 * @assert ('not found', 'default') [==] 'default'
 	 */
 	public static function find($key, $default = '')
 	{

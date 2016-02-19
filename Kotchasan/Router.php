@@ -85,8 +85,8 @@ class Router extends \Kotchasan\KBase
 	 * @return array
 	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
 	 * @assert ('/index.php/css/view', array()) [==] array( 'type' => 'view', 'module' => 'css')
-	 * @assert ('/index.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
-	 * @assert ('/index.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint')
+	 * @assert ('/print.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
+	 * @assert ('/xhr.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint')
 	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'type' => 'model', 'page' => 'updateprofile', 'module' => 'index')
 	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'type' => 'view', 'page' => 'index')
 	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)

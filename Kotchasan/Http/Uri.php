@@ -140,8 +140,8 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 		} else {
 			$port = isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 80;
 		}
-		$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-		$query = $_SERVER['QUERY_STRING'];
+		$path = empty($_SERVER['REQUEST_URI']) ? '/' : parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$query = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
 		$user = isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '';
 		$pass = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
 		return new static($scheme, $host, $path, $query, $port, $user, $pass);
@@ -326,7 +326,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	public function withFragment($fragment)
 	{
 		if (!is_string($fragment) && !method_exists($fragment, '__toString')) {
-			throw new InvalidArgumentException('Uri fragment must be a string');
+			throw new \InvalidArgumentException('Uri fragment must be a string');
 		}
 		$fragment = ltrim((string)$fragment, '#');
 		$clone = clone $this;
@@ -460,6 +460,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	/**
 	 * ฟังก์ชั่นสร้าง URL สำหรับส่งต่อ Query string จากหน้าหนึ่งไปยังอีกหน้าหนึ่ง
 	 * เพื่อให้สามารถสร้าง URL ที่สามารถส่งกลับไปยังหน้าเดิมได้โดย ฟังก์ชั่น back()
+	 * ลบรายการที่ เป็น null ออก
 	 *
 	 * @param array $query_string
 	 * @return string
@@ -468,13 +469,21 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	{
 		$qs = array();
 		foreach ($this->parseQueryParams($this->query) AS $key => $value) {
-			$qs['_'.ltrim($key, '_')] = rawurlencode($value);
+			$key = ltrim($key, '_');
+			if (key_exists($key, $query_string)) {
+				$value = $query_string[$key];
+			}
+			if ($value !== null) {
+				$qs['_'.$key] = rawurlencode($value);
+			}
 		}
 		foreach ($query_string AS $key => $value) {
-			if (is_int($key)) {
-				$qs[] = $value;
-			} else {
-				$qs[$key] = $value;
+			if ($value !== null) {
+				if (is_int($key)) {
+					$qs[] = $value;
+				} else {
+					$qs[$key] = $value;
+				}
 			}
 		}
 		return $this->withQuery($this->paramsToQuery($qs, true));
@@ -485,7 +494,6 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 *
 	 * @param string $query
 	 * @return array
-	 * @assert ('module=home&id=1&visited') [==] array('module' => 'home', 'id'=>1, 0 => 'visited')
 	 */
 	public function parseQueryParams($query)
 	{
@@ -508,7 +516,6 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 * @param array $params
 	 * @param bool $encode false เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
 	 * @return string
-	 * @assert (array('module' => 'home', 'id'=>1, 0 => 'visited')) [==] ('module=home&id=1&visited'
 	 */
 	public function paramsToQuery($params, $encode)
 	{
@@ -576,28 +583,27 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 * แปลง POST เป็น query string สำหรับการส่งกลับไปหน้าเดิม ที่มาจากการโพสต์ด้วยฟอร์ม
 	 *
 	 * @param string $url URL ที่ต้องการส่งกลับ
-	 * @param array $querys query string ที่ต้องการส่งกลับไปด้วย
-	 * @assert ('index.php', array('id'=>1)) [==] "index.php?id=1&module=test&page=1&sort=id"  [[$_POST = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
-	 * @assert ('index.php', array('page'=>2, 'module'=>'mymodule')) [==] "index.php?page=2&module=mymodule&sort=id"  [[$_POST = array('_module' => 'test', '_page' => 1, '_sort' => 'id')]]
+	 * @param array $query_string query string ที่ต้องการส่งกลับไปด้วย
 	 * @return string URL+query string
 	 */
-	public function postBack($url, $querys)
+	public function postBack($url, $query_string)
 	{
 		foreach (self::$request->getParsedBody() as $key => $value) {
 			if (preg_match('/^_{1,}(.*)$/', $key, $match)) {
-				$key = $match[1];
-				if (!isset($querys[$key])) {
-					$querys[$key] = $value;
+				if (!key_exists($match[1], $query_string)) {
+					$query_string[$match[1]] = $value;
 				}
 			}
 		}
+		if (!key_exists('time', $query_string)) {
+			$query_string['time'] = time();
+		}
 		$qs = array();
-		foreach ($querys as $key => $value) {
-			if (!($key == 'id' && $value == 0)) {
+		foreach ($query_string as $key => $value) {
+			if ($value !== null) {
 				$qs[$key] = $key.'='.rawurlencode($value);
 			}
 		}
-		$qs['time'] = time();
 		return $url.(strpos($url, '?') === false ? '?' : '&').implode('&', $qs);
 	}
 }

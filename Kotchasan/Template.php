@@ -127,6 +127,8 @@ class Template
 	 * @param array $replace ข้อความที่จะถูกแทนที่ลงในคีย์
 	 * @param string $skin template
 	 * @return string คืนค่า HTML template
+	 * @assert ('/{TITLE}/', 'Title', '<b>{TITLE}</b>') [==] '<b>Title</b>'
+	 * @assert ('/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e', '\Kotchasan\Language::get(array(1=>"$1"))', '<b>{LNG_Language test}</b>') [==] '<b>Language test</b>'
 	 */
 	public static function pregReplace($patt, $replace, $skin)
 	{
