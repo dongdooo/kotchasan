@@ -26,7 +26,7 @@ abstract class Query extends \Kotchasan\KBase
 	 *
 	 * @var Driver
 	 */
-	private $db;
+	protected $db;
 	/**
 	 * ตัวแปรเก็บคำสั่ง SQL
 	 *
