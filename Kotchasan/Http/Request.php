@@ -283,12 +283,12 @@ class Request extends AbstractRequest implements RequestInterface
 	 * กำหนดค่าตัวแปร SESSION
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $value ค่าของตัวแปร
-	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
+	 * @return self
 	 */
 	public function setSession($name, $value)
 	{
 		$_SESSION[$name] = $value;
-		return $this->createInputItem($_SESSION, $name, null);
+		return $this;
 	}
 
 	/**

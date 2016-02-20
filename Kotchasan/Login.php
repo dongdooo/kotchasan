@@ -63,9 +63,9 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		// การเข้ารหัส
 		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
-		self::$text_email = $login->get('text_email', $pw);
-		self::$text_password = $login->get('text_password', $pw);
-		$login_remember = $login->get('bool_remember', $pw) == 1 ? 1 : 0;
+		self::$text_email = $login->get('login_email', $pw);
+		self::$text_password = $login->get('login_password', $pw);
+		$login_remember = $login->get('login_remember', $pw) == 1 ? 1 : 0;
 		$action = self::$request->request('action')->toString();
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
@@ -87,16 +87,16 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 				// ตรวจสอบการกรอก
 				if (self::$text_email == '') {
 					self::$login_message = Language::get('Please fill out this form');
-					self::$login_input = 'text_email';
+					self::$login_input = 'login_email';
 				} elseif (self::$text_password == '') {
 					self::$login_message = Language::get('Please fill out this form');
-					self::$login_input = 'text_password';
+					self::$login_input = 'login_password';
 				} else {
 					// ตรวจสอบการ login กับฐานข้อมูล
 					$login_result = $login->checkLogin(self::$text_email, self::$text_password);
 					if (is_string($login_result)) {
 						// ข้อความผิดพลาด
-						self::$login_input = $login_result == 'Incorrect password' ? 'text_password' : 'text_email';
+						self::$login_input = $login_result == 'Incorrect password' ? 'login_password' : 'login_email';
 						self::$login_message = Language::get($login_result);
 					} else {
 						// save login session
@@ -114,7 +114,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 				}
 			} elseif (self::$text_email !== null) {
 				self::$login_message = Language::get('Please fill out this form');
-				self::$login_input = 'text_email';
+				self::$login_input = 'login_email';
 			}
 			return $login;
 		}

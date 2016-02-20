@@ -156,8 +156,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 	{
 		$request = $this->requestFactory();
 		$this->assertEquals('ทด"สอบ', $request->session('test')->toString());
-		$session = $request->setSession('test', 'testSetSession');
-		$this->assertEquals('testSetSession', $session->toString());
+		$request->setSession('test', 'testSetSession');
+		$this->assertEquals('testSetSession', $request->session('test')->toString());
 	}
 
 	public function testCookie()
