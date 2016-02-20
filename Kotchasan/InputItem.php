@@ -144,7 +144,8 @@ class InputItem
 	}
 
 	/**
-	 * แปลง tag และลบช่องว่างหัวท้าย ไม่แปลง &amp;
+	 * แปลง tag ไม่แปลง &amp;
+	 * และลบช่องว่างหัวท้าย
 	 * สำหรับ URL หรือ email
 	 *
 	 * @return string
@@ -156,7 +157,8 @@ class InputItem
 	}
 
 	/**
-	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities และลบช่องว่างหัวท้าย
+	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities
+	 * และลบช่องว่างหัวท้าย
 	 * ใช้แปลงค่าที่รับจาก input ที่ไม่ยอมรับ tag
 	 *
 	 * @return string
@@ -169,6 +171,7 @@ class InputItem
 
 	/**
 	 * แปลง < > \ เป็น HTML entities และแปลง \n เป็น <br>
+	 * และลบช่องว่างหัวท้าย
 	 * ใช้รับข้อมูลที่มาจาก textarea
 	 *
 	 * @return string
@@ -182,6 +185,7 @@ class InputItem
 	/**
 	 * ลบ tag, BBCode ออก ให้เหลือแต่ข้อความล้วน
 	 * ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
+	 * และลบช่องว่างหัวท้าย
 	 * ใช้เป็น description
 	 *
 	 *
@@ -231,6 +235,7 @@ class InputItem
 
 	/**
 	 * ลบ tags และ ลบช่องว่างไม่เกิน 1 ช่อง ไม่ขึ้นบรรทัดใหม่
+	 * และลบช่องว่างหัวท้าย
 	 * ใช้เป็น tags หรือ keywords
 	 *
 	 * @param int $len ความยาวของ keywords 0 หมายถึงคืนค่าทั้งหมด
@@ -244,14 +249,16 @@ class InputItem
 	}
 
 	/**
-	 * ฟังก์ชั่นแปลง ' เป็น &#39;
+	 * ฟังก์ชั่นรับข้อความ ยอมรับอักขระทั้งหมด
+	 * และแปลง ' เป็น &#39;
+	 * และลบช่องว่างหัวท้าย
 	 *
 	 * @return string
 	 * @assert create("ทด'สอบ")->quote() [==] "ทด&#39;สอบ"
 	 */
 	public function quote()
 	{
-		return str_replace("'", '&#39;', $this->value);
+		return str_replace("'", '&#39;', trim($this->value));
 	}
 
 	/**
