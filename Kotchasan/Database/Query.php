@@ -380,7 +380,7 @@ abstract class Query extends \Kotchasan\KBase
 			}
 		} elseif (preg_match('/^[0-9]+$/', $condition)) {
 			// primaryKey
-			$condition = $this->fieldName($id).'='.$condition;
+			$condition = $this->fieldName($id).' = '.$condition;
 		}
 		return $condition;
 	}

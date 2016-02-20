@@ -217,6 +217,9 @@ class PdoMysqlDriver extends Driver
 			if (isset($sqls['order'])) {
 				$sql .= ' ORDER BY '.$sqls['order'];
 			}
+			if (isset($sqls['group'])) {
+				$sql .= ' GROUP BY '.$sqls['group'];
+			}
 			if (isset($sqls['limit'])) {
 				$sql .= ' LIMIT '.(empty($sqls['start']) ? '' : $sqls['start'].',').$sqls['limit'];
 			}

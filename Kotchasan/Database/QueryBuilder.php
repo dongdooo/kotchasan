@@ -10,6 +10,7 @@ namespace Kotchasan\Database;
 
 use \Kotchasan\Database\Query;
 use \Kotchasan\Database\Driver;
+use \Kotchasan\ArrayTool;
 
 /**
  * SQL Query builder
@@ -17,8 +18,8 @@ use \Kotchasan\Database\Driver;
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
- *
- * @setupParam new Query
+ * @setup $driver = new PdoMysqlDriver;
+ * @setup $this = $driver->createQuery();
  */
 class QueryBuilder extends Query
 {
@@ -122,9 +123,10 @@ class QueryBuilder extends Query
 	 * ฟังก์ชั่นสร้างคำสั่ง FROM
 	 *
 	 * @param string $tables ชื่อตาราง table1, table2, table3, ....
+	 * @return \static
+	 *
 	 * @assert select()->from('user')->text() [==] "SELECT * FROM `user`"
 	 * @assert select()->from('user a', 'user b')->text() [==] "SELECT * FROM `user` AS `a`, `user` AS `b`"
-	 * @return \static
 	 */
 	public function from($tables)
 	{
@@ -139,9 +141,13 @@ class QueryBuilder extends Query
 	}
 
 	/**
+	 * GROUP BY
 	 *
 	 * @param array $fields
 	 * @return \static
+	 *
+	 * @assert select()->from('user')->groupBy('U.id')->text() [==] 'SELECT * FROM `user` GROUP BY U.`id`'
+	 * @assert select()->from('user')->groupBy(array('id', 'username'))->text() [==] 'SELECT * FROM `user` GROUP BY `id`, `username`'
 	 */
 	public function groupBy($fields)
 	{
@@ -168,8 +174,9 @@ class QueryBuilder extends Query
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
-	 * @assert insert('user', array('id' => 1, 'name' => 'test'))->text() [==] "INSERT INTO `user` (`id`, `name`) VALUES (:id, :name)"
 	 * @return \static
+	 *
+	 * @assert insert('user', array('id' => 1, 'name' => 'test'))->text() [==] "INSERT INTO `user` (`id`, `name`) VALUES (:id, :name)"
 	 */
 	public function insert($table, $datas)
 	{
@@ -188,12 +195,13 @@ class QueryBuilder extends Query
 	 * @param string $table ชื่อตารางที่ต้องการ join เช่น table alias
 	 * @param string $type เข่น INNER OUTER LEFT RIGHT
 	 * @param mixed $on query string หรือ array
-	 * @assert join('user U', 'INNER', 1)->text() [==] " INNER JOIN `user` AS U ON `id`=1"
-	 * @assert join('user U', 'INNER', array('U.id', 'A.id'))->text() [==] " INNER JOIN `user` AS U ON U.`id`=A.`id`"
-	 * @assert join('user U', 'INNER', array('U.id', '=', 'A.id'))->text() [==] " INNER JOIN `user` AS U ON U.`id`=A.`id`"
-	 * @assert join('user U', 'INNER', array('id', '=', 1))->text() [==] " INNER JOIN `user` AS U ON `id`=1"
-	 * @assert join('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id')))->text() [==] " INNER JOIN `user` AS U ON U.`id`=A.`id` AND U.`id`=A.`id`"
 	 * @return \static
+	 *
+	 * @assert join('user U', 'INNER', 1)->text() [==] " INNER JOIN `user` AS U ON `id` = 1"
+	 * @assert join('user U', 'INNER', array('U.id', 'A.id'))->text() [==] " INNER JOIN `user` AS U ON U.`id` = A.`id`"
+	 * @assert join('user U', 'INNER', array('U.id', '=', 'A.id'))->text() [==] " INNER JOIN `user` AS U ON U.`id` = A.`id`"
+	 * @assert join('user U', 'INNER', array('id', '=', 1))->text() [==] " INNER JOIN `user` AS U ON `id` = 1"
+	 * @assert join('user U', 'INNER', array(array('U.id', 'A.id'), array('U.id', 'A.id')))->text() [==] " INNER JOIN `user` AS U ON U.`id` = A.`id` AND U.`id` = A.`id`"
 	 */
 	public function join($table, $type, $on)
 	{
@@ -212,9 +220,10 @@ class QueryBuilder extends Query
 	 *
 	 * @param int $count จำนวนผลลัท์ที่ต้องการ
 	 * @param int $start รายการเริ่มต้น
+	 * @return \static
+	 *
 	 * @assert limit(10)->text() [==] " LIMIT 10"
 	 * @assert limit(10, 1)->text() [==] " LIMIT 1,10"
-	 * @return \static
 	 */
 	public function limit($count, $start = 0)
 	{
@@ -229,11 +238,12 @@ class QueryBuilder extends Query
 	 * สร้าง query เรียงลำดับ
 	 *
 	 * @param mixed $sort array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....
+	 * @return \static
+	 *
 	 * @assert order('id', 'id ASC')->text() [==] " ORDER BY `id`, `id` ASC"
 	 * @assert order('id ASC')->text() [==] " ORDER BY `id` ASC"
 	 * @assert order('user.id DESC')->text() [==] " ORDER BY `user`.`id` DESC"
 	 * @assert order('id ASCD')->text() [==] ""
-	 * @return \static
 	 */
 	public function order($sorts)
 	{
@@ -249,9 +259,10 @@ class QueryBuilder extends Query
 	 * SELECT `field1`, `field2`, `field3`, ....
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
+	 * @return \static
+	 *
 	 * @assert select('id', 'email name')->from('user')->where('`id`=1')->text() [==] "SELECT `id`,`email` AS `name` FROM `user` WHERE `id`=1"
 	 * @assert select()->text()  [==] "SELECT *"
-	 * @return \static
 	 */
 	public function select($fields = '*')
 	{
@@ -274,10 +285,11 @@ class QueryBuilder extends Query
 	 * สร้าง query สำหรับการนับจำนวน record
 	 *
 	 * @param mixed $fileds (option) 'field alias'
+	 * @return \static
+	 *
 	 * @assert selectCount()->from('user')->text() [==] "SELECT COUNT(*) AS `count` FROM `user`"
 	 * @assert selectCount('id ids')->from('user')->text() [==] "SELECT COUNT(`id`) AS `ids` FROM `user`"
 	 * @assert selectCount('id ids', 'field alias')->from('user')->text() [==] "SELECT COUNT(`id`) AS `ids`, COUNT(`field`) AS `alias` FROM `user`"
-	 * @return \static
 	 */
 	public function selectCount($fileds = '* count')
 	{
@@ -299,8 +311,9 @@ class QueryBuilder extends Query
 	 * SELECT DISTINCT `field1`, `field2`, `field3`, ....
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
-	 * @assert selectDistinct('id')->from('user')->text() [==] "SELECT DISTINCT `id` FROM `user`"
 	 * @return \static
+	 *
+	 * @assert selectDistinct('id')->from('user')->text() [==] "SELECT DISTINCT `id` FROM `user`"
 	 */
 	public function selectDistinct($fields = '*')
 	{
@@ -313,8 +326,9 @@ class QueryBuilder extends Query
 	 * UPDATE ..... SET
 	 *
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
-	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id`=1"
 	 * @return \static
+	 *
+	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id` = 1"
 	 */
 	public function set($datas)
 	{
@@ -347,8 +361,9 @@ class QueryBuilder extends Query
 	 * UPDATE
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id`=1 AND `id`=1"
 	 * @return \static
+	 *
+	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id` = 1 AND `id` = 1"
 	 */
 	public function update($table)
 	{
@@ -361,15 +376,18 @@ class QueryBuilder extends Query
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE
 	 *
 	 * @param mixed $condition query string หรือ array
-	 * @assert where(1)->text() [==] " WHERE `id`=1"
-	 * @assert where(array('id', 1))->text() [==] " WHERE `id`=1"
-	 * @assert where(array('id', '1'))->text() [==] " WHERE `id`='1'"
-	 * @assert where(array('date', '2016-1-1 30:30'))->text() [==] " WHERE `date`='2016-1-1 30:30'"
-	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id`=1"
-	 * @assert where('`id`=1 OR (SELECT ....)')->text() [==] " WHERE `id`=1 OR (SELECT ....)"
-	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id`=1"
-	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (:id0, :id1, :id2)"
+	 * @param string $oprator defaul AND
+	 * @param string $id Primary Key เช่น id (default)
 	 * @return \static
+	 *
+	 * @assert where(1)->text() [==] " WHERE `id` = 1"
+	 * @assert where(array('id', 1))->text() [==] " WHERE `id` = 1"
+	 * @assert where(array('id', '1'))->text() [==] " WHERE `id` = '1'"
+	 * @assert where(array('date', '2016-1-1 30:30'))->text() [==] " WHERE `date` = '2016-1-1 30:30'"
+	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id` = 1"
+	 * @assert where('`id`=1 OR (SELECT ....)')->text() [==] " WHERE `id`=1 OR (SELECT ....)"
+	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id` = 1"
+	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (:id0, :id1, :id2)"
 	 */
 	public function where($condition, $oprator = 'AND', $id = 'id')
 	{
