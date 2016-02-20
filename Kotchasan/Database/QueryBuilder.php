@@ -18,6 +18,7 @@ use \Kotchasan\ArrayTool;
  * @author Goragod Wiriya <admin@goragod.com>
  *
  * @since 1.0
+ *
  * @setup $driver = new PdoMysqlDriver;
  * @setup $this = $driver->createQuery();
  */

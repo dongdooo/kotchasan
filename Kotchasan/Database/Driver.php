@@ -75,7 +75,7 @@ abstract class Driver extends Query
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
 	 *
 	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
-	 * @return self
+	 * @return \static
 	 */
 	public function cacheOn($auto_save = true)
 	{
@@ -114,7 +114,7 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นสร้าง query builder
 	 *
-	 * @return self
+	 * @return QueryBuilder
 	 */
 	public function createQuery()
 	{
