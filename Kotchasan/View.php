@@ -173,7 +173,7 @@ class View extends \Kotchasan\KBase
 			$temp = $query_url;
 			$query_url = array();
 			foreach ($temp as $key => $value) {
-				if (!(($key == 'id' && $value == 0) || ($key == 'action' && ($value == 'login' || $value == 'logout')))) {
+				if (!(empty($value) || ($key == 'action' && ($value == 'login' || $value == 'logout')))) {
 					$query_url[$key] = $value;
 				}
 			}

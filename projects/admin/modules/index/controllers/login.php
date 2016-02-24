@@ -62,7 +62,7 @@ class Controller extends \Kotchasan\Controller
 		$fieldset = $form->add('fieldset');
 		// text (email or phone)
 		$fieldset->add('text', array(
-			'id' => 'text_email',
+			'id' => 'email',
 			'labelClass' => 'g-input icon-email',
 			'placeholder' => Language::get('Email'),
 			'accesskey' => 'e',
@@ -71,7 +71,7 @@ class Controller extends \Kotchasan\Controller
 		));
 		// password
 		$fieldset->add('password', array(
-			'id' => 'text_password',
+			'id' => 'password',
 			'labelClass' => 'g-input icon-password',
 			'placeholder' => Language::get('Password'),
 			'value' => isset(Login::$text_password) ? Login::$text_password : ''
@@ -87,7 +87,7 @@ class Controller extends \Kotchasan\Controller
 		));
 		// checkbox
 		$group->add('checkbox', array(
-			'id' => 'bool_remember',
+			'id' => 'remember',
 			'checked' => self::$request->cookie('login_remember')->toBoolean(),
 			'value' => 1,
 			'label' => Language::get('Remember me'),

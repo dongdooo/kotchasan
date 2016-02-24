@@ -188,7 +188,7 @@ function checkAlias() {
 	} else if (value.length < 3) {
 		this.invalid(ALIAS_SHORT);
 	} else {
-		return 'action=alias&val=' + encodeURIComponent(value) + '&id=' + $E('write_id').value;
+		return 'action=alias&val=' + encodeURIComponent(value) + '&id=' + $E('id').value;
 	}
 }
 function reload() {

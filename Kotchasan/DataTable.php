@@ -583,8 +583,10 @@ class DataTable extends \Kotchasan\KBase
 						$keys = array_keys($src_items);
 						rsort($keys);
 						foreach ($keys as $k) {
-							$patt[] = ":$k";
-							$replace[] = $src_items[$k];
+							if (!is_array($src_items[$k])) {
+								$patt[] = ":$k";
+								$replace[] = $src_items[$k];
+							}
 						}
 						$row[] = str_replace($patt, $replace, $this->td($id, $i, array('class' => 'buttons'), implode('', $buttons), ''));
 					}

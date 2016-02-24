@@ -55,6 +55,21 @@ abstract class Query extends \Kotchasan\KBase
 	}
 
 	/**
+	 * ฟังก์ชั่นสร้าง SQL สำหรับหาค่าสูงสุด + 1
+	 * ใช้ในการหาค่า id ถัดไป
+	 *
+	 * @param string $field ชื่อฟิลด์ที่ต้องการหาค่าสูงสุด
+	 * @param string $table ชื่อตาราง
+	 * @param mixed $condition query WHERE
+	 * @param string $alias ชื่อของผลลัพท์ ถ้าไม่ระบุจะเป็นชื่อเดียวกับชื่อฟิลด์
+	 * @return string SQL Command
+	 */
+	public function buildNext($field, $table, $condition = null, $alias = null)
+	{
+		return $this->db->buildNext($field, $table, $condition, $alias);
+	}
+
+	/**
 	 * อ่านค่ากำหนดของฐานข้อมูล
 	 *
 	 * @param string $key

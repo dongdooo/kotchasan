@@ -179,10 +179,11 @@ class PdoMysqlDriver extends Driver
 	 * ฟังก์ชั่นสร้างคำสั่ง sql query
 	 *
 	 * @param array $sqls คำสั่ง sql จาก query builder
+	 * @return string sql command
+	 *
 	 * @assert (array('update' => '`user`', 'where' => '`id` = 1', 'set' => array('`id` = 1', "`email` = 'admin@localhost'"))) [==] "UPDATE `user` SET `id` = 1, `email` = 'admin@localhost' WHERE `id` = 1"
 	 * @assert (array('insert' => 'user', 'values' => array('id' => 1, 'email' => 'admin@localhost'))) [==] "INSERT INTO `user` (`id`, `email`) VALUES (:id, :email)"
 	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'join' => array(" INNER JOIN ..."))) [==] "SELECT * FROM `user` INNER JOIN ... WHERE `id` = 1 ORDER BY `id` LIMIT 1,10"
-	 * @return string sql command
 	 */
 	public function makeQuery($sqls)
 	{
@@ -225,6 +226,28 @@ class PdoMysqlDriver extends Driver
 			}
 		}
 		return $sql;
+	}
+
+	/**
+	 * ฟังก์ชั่นสร้าง SQL สำหรับหาค่าสูงสุด + 1
+	 * ใช้ในการหาค่า id ถัดไป
+	 *
+	 * @param string $field ชื่อฟิลด์ที่ต้องการหาค่าสูงสุด
+	 * @param string $table ชื่อตาราง
+	 * @param mixed $condition query WHERE
+	 * @param string $alias ชื่อของผลลัพท์ ถ้าไม่ระบุจะเป็นชื่อเดียวกับชื่อฟิลด์
+	 * @return string SQL Command
+	 *
+	 * @assert ('id', 'world', array(array('module_id', 'D.id'))) [==] '(1 + IFNULL((SELECT MAX(`id`) FROM `world` WHERE `module_id` = D.`id`), 0)) AS `id`'
+	 */
+	public function buildNext($field, $table, $condition = null, $alias = null)
+	{
+		if (empty($condition)) {
+			$condition = '';
+		} else {
+			$condition = ' WHERE '.$this->buildWhere($condition);
+		}
+		return '(1 + IFNULL((SELECT MAX(`'.$field.'`) FROM `'.$table.'`'.$condition.'), 0)) AS `'.($alias ? $alias : $field).'`';
 	}
 
 	/**

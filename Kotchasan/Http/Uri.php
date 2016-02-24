@@ -470,8 +470,8 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 		$qs = array();
 		foreach ($this->parseQueryParams($this->query) AS $key => $value) {
 			$key = ltrim($key, '_');
-			if (key_exists($key, $query_string)) {
-				$value = $query_string[$key];
+			if (key_exists($key, $query_string) && $query_string[$key] === null) {
+				continue;
 			}
 			if ($value !== null) {
 				$qs['_'.$key] = rawurlencode($value);

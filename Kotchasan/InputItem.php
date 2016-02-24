@@ -46,16 +46,6 @@ class InputItem
 	}
 
 	/**
-	 * คืนค่าเป็น array
-	 *
-	 * @return array
-	 */
-	public function toArray()
-	{
-		return is_array($this->value) ? $this->value : array($this->value);
-	}
-
-	/**
 	 * คืนค่าเป็น boolean
 	 *
 	 * @return bool

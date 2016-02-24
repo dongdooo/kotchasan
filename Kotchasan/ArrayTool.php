@@ -24,8 +24,9 @@ class ArrayTool
 	 * @param array $array แอเรย์ที่ต้องการเรียงลำดับ
 	 * @param string $sort_key (optional) คืย์ของ $array ที่ต้องการในการเรียง (default id)
 	 * @param bool $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
-	 * @assert (array(array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'), array('id' => 1, 'value' => 'one'))) [==] array(array('id' => 1, 'value' => 'one'), array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'))
 	 * @return array
+	 *
+	 * @assert (array(array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'), array('id' => 1, 'value' => 'one'))) [==] array(array('id' => 1, 'value' => 'one'), array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'))
 	 */
 	public static function sort($array, $sort_key = 'id', $sort_desc = false)
 	{
@@ -61,8 +62,9 @@ class ArrayTool
 	 *
 	 * @param array $array
 	 * @param string $where ข้อมูลที่ต้องการ
-	 * @assert (array('one', 'One', 'two'), 'one') [==] array('one', 'One')
 	 * @return array
+	 *
+	 * @assert (array('one', 'One', 'two'), 'one') [==] array('one', 'One')
 	 */
 	public static function filter($array, $where)
 	{
@@ -84,8 +86,9 @@ class ArrayTool
 	 *
 	 * @param string $glue ตัวคั่นข้อมูล
 	 * @param array $array แอเรย์ที่ต้องการนำมาเชื่อม
-	 * @assert ('|', array('a' => 'A', 'b' => array('b', 'B'), 'c' => array('c' => array('c', 'C')))) [==] "A|b|B|c|C"
 	 * @return string
+	 *
+	 * @assert ('|', array('a' => 'A', 'b' => array('b', 'B'), 'c' => array('c' => array('c', 'C')))) [==] "A|b|B|c|C"
 	 */
 	public static function toString($glue, $array)
 	{
@@ -109,8 +112,9 @@ class ArrayTool
 	 *
 	 * @param array $array
 	 * @param string|int $ids รายการที่ต้องการลบ 1 หรือ 1,2,3
-	 * @assert (array(0, 1, 2, 3, 4, 5), '0,2') [==] array(1, 3, 4, 5)
 	 * @return array คืนค่า array ใหม่หลังจากลบแล้ว
+	 *
+	 * @assert (array(0, 1, 2, 3, 4, 5), '0,2') [==] array(1, 3, 4, 5)
 	 */
 	public static function delete($array, $ids)
 	{
@@ -148,8 +152,9 @@ class ArrayTool
 	 *
 	 * @param array $source แอเร์ยต้นฉบับ
 	 * @param array|object $replace ข้อมูลที่จะนำมาแทนที่ลงในแอเร์ยต้นฉบับ
-	 * @assert (array(1 => 1, 2 => 2, 3 => 'three'), array(1 => 'one', 2 => 'two')) [==] array(1 => 'one', 2 => 'two', 3 => 'three')
 	 * @return array
+	 *
+	 * @assert (array(1 => 1, 2 => 2, 3 => 'three'), array(1 => 'one', 2 => 'two')) [==] array(1 => 'one', 2 => 'two', 3 => 'three')
 	 */
 	public static function replace($source, $replace)
 	{
@@ -180,17 +185,31 @@ class ArrayTool
 	}
 
 	/**
-	 * แปลงข้อความ serialize เป็นแอเรย์
+	 * ฟังก์ชั่นแปลงข้อความ serialize เป็นแอเรย์
+	 * และรวมข้อมูลเข้ากับ $source
 	 *
-	 * @param string $str serialize
-	 * @assert (serialize(array(1, 2, 3))) [==] array(1, 2, 3)
+	 * @param string $str ข้อมูล serialize
+	 * @param array $source ข้อมูลตั้งต้น ถ้าใช้ฟังก์ชั่นนี้ในการแปลงข้อมูล ค่านี้จะเป็นแอเรย์ว่าง (ค่าเริ่มต้น)
+	 * @param bool $replace true (default) แทนที่ข้อมูลเดิม, false เก็บข้อมูลเดิมไว้
 	 * @return array
+	 *
+	 * @assert ('') [==] array()
+	 * @assert (serialize(array(1, 2, 3))) [==] array(1, 2, 3)
+	 * @assert (serialize(array(1 => 'One', 2 => 'Two', 3 => 'Three')), array(3 => 3, 4 => 'Four'), true) [==] array(1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four')
+	 * @assert (serialize(array(1 => 'One', 2 => 'Two', 3 => 'Three')), array(3 => 3, 4 => 'Four'), false) [==] array(1 => 'One', 2 => 'Two', 3 => 3, 4 => 'Four')
 	 */
-	public static function unserialize($str)
+	public static function unserialize($str, $source = array(), $replace = true)
 	{
 		if ($str != '') {
 			$datas = @unserialize($str);
+			if (is_array($datas)) {
+				foreach ($datas as $key => $value) {
+					if ($replace || !isset($source[$key])) {
+						$source[$key] = $value;
+					}
+				}
+			}
 		}
-		return isset($datas) && is_array($datas) ? $datas : array();
+		return $source;
 	}
 }

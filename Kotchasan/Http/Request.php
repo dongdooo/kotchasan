@@ -408,7 +408,7 @@ class Request extends AbstractRequest implements RequestInterface
 		if (isset($source[$name])) {
 			return is_array($source[$name]) ? new Inputs($source[$name]) : new InputItem($source[$name]);
 		} else {
-			return new InputItem($default);
+			return is_array($default) ? new Inputs($default) : new InputItem($default);
 		}
 	}
 }

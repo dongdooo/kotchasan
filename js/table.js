@@ -58,7 +58,7 @@ GTable.prototype = {
 					if (Object.isFunction(fn)) {
 						action = fn(f, $E(f).value, cs);
 					} else {
-						if (confirm(trans('You want to delete the selected items ?').replace(/delete/, $G(f).getText()))) {
+						if (confirm(trans('You want to XXX the selected items ?').replace(/XXX/, $G(f).getText()))) {
 							action = 'module=' + f + '&action=' + $E(f).value + '&id=' + cs;
 						}
 					}

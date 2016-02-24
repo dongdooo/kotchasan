@@ -316,6 +316,14 @@ class UriTest extends \PHPUnit_Framework_TestCase
 	public function testCreateBackUri()
 	{
 		$uri = $this->uriFactory()->createBackUri(array(
+			'module' => 'test'
+		));
+		$this->assertEquals('https://admin:1234@example.com/foo/bar?_abc=123&amp;module=test#fragment', (string)$uri);
+	}
+
+	public function testCreateBackUri2()
+	{
+		$uri = $this->uriFactory()->createBackUri(array(
 			'module' => 'test',
 			'abc' => null
 		));

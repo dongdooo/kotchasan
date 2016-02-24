@@ -50,7 +50,7 @@ class Controller extends \Kotchasan\Controller
 		$fieldset = $form->add('fieldset');
 		// email
 		$fieldset->add('email', array(
-			'id' => 'email_email',
+			'id' => 'email',
 			'labelClass' => 'g-input icon-email',
 			'placeholder' => Language::get('Email'),
 			'value' => isset(Login::$text_email) ? Login::$text_email : '',
