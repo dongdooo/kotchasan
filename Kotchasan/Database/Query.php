@@ -487,10 +487,11 @@ abstract class Query extends \Kotchasan\KBase
 			}
 			$key = $this->fieldName($params[0]);
 			if ($value instanceof QueryBuilder) {
-				if (empty($value->getValues())) {
+				$values = $value->getValues();
+				if (empty($values)) {
 					$result = $key.' '.$operator.' ('.$value->text().')';
 				} else {
-					$result = array($key.' '.$operator.' ('.$value->text().')', $value->getValues());
+					$result = array($key.' '.$operator.' ('.$value->text().')', $values);
 				}
 			} elseif (is_array($value)) {
 				if ($operator == '=') {
