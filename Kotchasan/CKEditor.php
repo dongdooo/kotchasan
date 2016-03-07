@@ -10,6 +10,7 @@ namespace Kotchasan;
 
 use \Kotchasan\Html;
 use \Kotchasan\Text;
+use \Kotchasan\Login;
 
 /**
  * CKEditor
@@ -56,7 +57,10 @@ class CKEditor extends Html
 			$content['label'] = '<label'.$for.'>'.$this->attributes['label'].'</label>';
 		}
 		$content['tag'] = '<div><'.$this->tag.implode('', $prop).'>'.$innerHTML.'</'.$this->tag.'></div>';
-		$_SESSION['CKEDITOR'] = $_SESSION['login']->id;
+		$login = Login::isMember();
+		if ($login) {
+			self::$request->setSession('CKEDITOR', $login->id);
+		}
 		if (isset($this->attributes['id'])) {
 			$script = array();
 			foreach ($attributes as $key => $value) {
@@ -83,5 +87,16 @@ class CKEditor extends Html
 			self::$form->javascript[] = "CKEDITOR.replace(\"".$this->attributes['id']."\", {\n".implode(",\n", $script)."\n});";
 		}
 		return implode('', $content);
+	}
+
+	/**
+	 * ฟังก์ชั่นตรวจสอบความสามารถในการอัปโหลดของ CKEDITOR
+	 * 
+	 * @return bool
+	 */
+	public static function enabledUpload()
+	{
+		$login = Login::isAdmin();
+		return $login || ($login && self::$request->session('CKEDITOR')->toInt() == $login->id);
 	}
 }

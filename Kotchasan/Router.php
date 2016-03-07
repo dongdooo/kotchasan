@@ -72,7 +72,7 @@ class Router extends \Kotchasan\KBase
 				$obj->$method(self::$request->withQueryParams($modules));
 			}
 		} else {
-			throw new \InvalidArgumentException('Method not found.');
+			throw new \InvalidArgumentException('Method '.$method.' not found in '.$className.'.');
 		}
 		return $this;
 	}

@@ -211,6 +211,12 @@ class DataTable extends \Kotchasan\KBase
 	 * @var string
 	 */
 	private $primaryKey = 'id';
+	/**
+	 * Javascript
+	 *
+	 * @var array
+	 */
+	private $javascript = array();
 
 	/**
 	 * inint Class
@@ -264,6 +270,16 @@ class DataTable extends \Kotchasan\KBase
 			}
 			$this->headers = $headers;
 		}
+	}
+
+	/**
+	 * กำหนด Javascript
+	 *
+	 * @param string $script
+	 */
+	public function script($script)
+	{
+		$this->javascript[] = $script;
 	}
 
 	/**
@@ -506,8 +522,6 @@ class DataTable extends \Kotchasan\KBase
 			}
 		}
 		$content[] = '</div>';
-		// javascript ของ ตาราง
-		$javascript = array();
 		$script = array(
 			'page' => $page,
 			'search' => $search,
@@ -519,8 +533,8 @@ class DataTable extends \Kotchasan\KBase
 			'pmButton' => $this->pmButton,
 			'dragColumn' => $this->dragColumn
 		);
-		$javascript[] = 'var table = new GTable("'.$this->id.'", '.json_encode($script).');';
-		$content[] = "<script>\n".implode("\n", $javascript)."\n</script>";
+		$this->javascript[] = 'var table = new GTable("'.$this->id.'", '.json_encode($script).');';
+		$content[] = "<script>\n".implode("\n", $this->javascript)."\n</script>";
 		return implode("\n", $content);
 	}
 

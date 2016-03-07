@@ -15,7 +15,7 @@ namespace Kotchasan;
  *
  * @since 1.0
  */
-class Html
+class Html extends \Kotchasan\KBase
 {
 	/**
 	 * ชื่อ tag
@@ -267,6 +267,7 @@ class Html
 		$result .= '</'.$this->tag.'>';
 		if ($this->tag == 'form' && !empty(self::$form->javascript)) {
 			$result .= "\n".preg_replace('/^[\s\t]+/m', '', "<script>\n".implode("\n", self::$form->javascript)."\n</script>");
+			self::$form = null;
 		} elseif (!empty($this->javascript)) {
 			$result .= "\n".preg_replace('/^[\s\t]+/m', '', "<script>\n".implode("\n", $this->javascript)."\n</script>");
 		}

@@ -30,6 +30,12 @@ class QueryBuilder extends Query
 	 * @var bool
 	 */
 	private $toArray = false;
+	/**
+	 * ตัวแปรเก็บ value สำหรับการ execute
+	 *
+	 * @var array
+	 */
+	private $values;
 
 	/**
 	 * Class constructor
@@ -69,12 +75,20 @@ class QueryBuilder extends Query
 	}
 
 	/**
+	 * ฟังก์ชั่นสร้างคำสั่ง DELETE
 	 *
-	 * @param type $table
+	 * @param string $table
+	 * @param mixed $condition query string หรือ array
+	 * @return \static
+	 *
+	 * @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name`=:name"
 	 */
-	public function delete($table)
+	public function delete($table, $condition)
 	{
-
+		$this->sqls['function'] = 'query';
+		$this->sqls['delete'] = $this->tableWithPrefix($table);
+		$this->where($condition);
+		return $this;
 	}
 
 	/**
@@ -96,6 +110,16 @@ class QueryBuilder extends Query
 	}
 
 	/**
+	 * คืนค่า value สำหรับการ execute
+	 *
+	 * @return array
+	 */
+	public function getValues()
+	{
+		return $this->values;
+	}
+
+	/**
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL ข้อมูลต้องการผลลัพท์เพียงรานการเดียว
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
@@ -107,17 +131,7 @@ class QueryBuilder extends Query
 		call_user_func(array($this, 'select'), $fields);
 		$this->sqls['limit'] = 1;
 		$result = $this->execute();
-		if (sizeof($result) == 1) {
-			if ($this->toArray) {
-				$this->toArray = false;
-				$result = $result[0];
-			} else {
-				$result = (object)$result[0];
-			}
-		} else {
-			$result = false;
-		}
-		return $result;
+		return empty($result) ? false : $result[0];
 	}
 
 	/**
@@ -171,7 +185,7 @@ class QueryBuilder extends Query
 	}
 
 	/**
-	 * ฟังก์ชั่นสร้างคำสั่ง insert into
+	 * ฟังก์ชั่นสร้างคำสั่ง INSERT INTO
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
@@ -329,14 +343,21 @@ class QueryBuilder extends Query
 	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
 	 * @return \static
 	 *
-	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id` = 1"
+	 * @assert update('user')->set(array('key1' => 'value1', 'key2' => 2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:Skey1, `key2`=:Skey2 WHERE `id` = 1"
+	 * @assert update('user U')->set(array('U.key1' => 'value1', 'U.key2' => 2))->where(array('U.id', 1))->text() [==] "UPDATE `user` AS U SET U.`key1`=:SUkey1, U.`key2`=:SUkey2 WHERE U.`id` = 1"
 	 */
 	public function set($datas)
 	{
 		$keys = array();
 		foreach ($datas as $key => $value) {
-			$this->sqls['set'][$key] = "`$key`=:$key";
-			$this->sqls['values'][":$key"] = $value;
+			$field = $this->fieldName($key);
+			$key = $this->aliasName($key, 'S');
+			if ($value instanceof QueryBuilder) {
+				$this->sqls['set'][$key] = $field.'=('.$value->text().')';
+			} else {
+				$this->sqls['set'][$key] = $field.'='.$key;
+				$this->sqls['values'][$key] = $value;
+			}
 		}
 		return $this;
 	}
@@ -353,7 +374,7 @@ class QueryBuilder extends Query
 		return $this;
 	}
 
-	public function union()
+	public function union(QueryBuilder $query1, QueryBuilder $query2)
 	{
 
 	}
@@ -364,7 +385,7 @@ class QueryBuilder extends Query
 	 * @param string $table ชื่อตาราง
 	 * @return \static
 	 *
-	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE `user` SET `key1`=:key1, `key2`=:key2 WHERE `id` = 1 AND `id` = 1"
+	 * @assert update('user')->set(array('key1'=>'value1', 'key2'=>2))->where(array(array('id', 1), array('id', 1)))->text() [==] "UPDATE `user` SET `key1`=:Skey1, `key2`=:Skey2 WHERE `id` = 1 AND `id` = 1"
 	 */
 	public function update($table)
 	{

@@ -242,6 +242,27 @@ function replaceURL(keys, values, url) {
 	u += '?' + us.join('&');
 	return u;
 }
+function _doCheckKey(input, e, patt) {
+	var val = input.value;
+	var key = GEvent.keyCode(e);
+	if (!((key > 36 && key < 41) || key == 8 || key == 9 || key == 13 || GEvent.isCtrlKey(e))) {
+		val = String.fromCharCode(key);
+		if (val !== '' && !patt.test(val)) {
+			GEvent.stop(e);
+			return false;
+		}
+	}
+	return true;
+}
+var numberOnly = function (e) {
+	return _doCheckKey(this, e, /[0-9]/);
+};
+var integerOnly = function (e) {
+	return _doCheckKey(this, e, /[0-9\-]/);
+};
+var currencyOnly = function (e) {
+	return _doCheckKey(this, e, /[0-9\.]/);
+};
 function setSelect(id, value) {
 	forEach($E(id).getElementsByTagName('input'), function () {
 		if (this.type.toLowerCase() == 'checkbox') {

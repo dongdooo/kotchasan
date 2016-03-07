@@ -171,12 +171,17 @@ abstract class Query extends \Kotchasan\KBase
 	protected function buildSelect($fields)
 	{
 		if (is_array($fields)) {
-			// multiples
-			$rets = array();
-			foreach ($fields AS $item) {
-				$rets[] = $this->buildSelect($item);
+			if ($fields[0] instanceof QueryBuilder) {
+				// QueryBuilder
+				$ret = '('.$fields[0]->text().') AS `'.$fields[1].'`';
+			} else {
+				// multiples
+				$rets = array();
+				foreach ($fields AS $item) {
+					$rets[] = $this->buildSelect($item);
+				}
+				$ret = implode(', ', $rets);
 			}
-			$ret = implode(', ', $rets);
 		} else {
 			if (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $fields, $match)) {
 				// (...) alias
@@ -246,6 +251,18 @@ abstract class Query extends \Kotchasan\KBase
 			}
 		}
 		return implode(', ', $sqls);
+	}
+
+	/**
+	 * ฟังก์ชั่นสร้างคีย์ สำหรับการ execute
+	 *
+	 * @param string $name ชื่อฟิลด์
+	 * @param string $prefix คำนำหน้าชื่อฟิลด์ ใช้เพื่อป้องกันการใช้ตัวแปรซ้ำ
+	 * @return string
+	 */
+	protected function aliasName($name, $prefix = '')
+	{
+		return ':'.$prefix.trim(preg_replace('/[`\._\-]/', '', $name));
 	}
 
 	/**
@@ -469,7 +486,13 @@ abstract class Query extends \Kotchasan\KBase
 				$value = $params[2];
 			}
 			$key = $this->fieldName($params[0]);
-			if (is_array($value)) {
+			if ($value instanceof QueryBuilder) {
+				if (empty($value->getValues())) {
+					$result = $key.' '.$operator.' ('.$value->text().')';
+				} else {
+					$result = array($key.' '.$operator.' ('.$value->text().')', $value->getValues());
+				}
+			} elseif (is_array($value)) {
 				if ($operator == '=') {
 					$operator = 'IN';
 				}
@@ -481,6 +504,9 @@ abstract class Query extends \Kotchasan\KBase
 					$vs[$q.$i] = $item;
 				}
 				$result = array($key.' '.$operator.' ('.implode(', ', $qs).')', $vs);
+			} elseif (empty($value)) {
+				// value เป็น string ว่าง, 0, null
+				$result = $key.' '.$operator.' '.($value === 0 ? 0 : "'$value'" );
 			} elseif (preg_match('/^(\-?[0-9\s\.]+|true|false)$/i', $value)) {
 				// value เป็น ตัวเลข จุดทศนิยม เครื่องหมาย - / , และ true, false
 				// เช่น ตัวเลข, จำนวนเงิน, boolean

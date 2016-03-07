@@ -175,7 +175,7 @@ class ArrayTool
 	public static function merge($source, $with)
 	{
 		foreach ($with as $key => $value) {
-			if (is_array($source[$key])) {
+			if (isset($source[$key]) && is_array($source[$key])) {
 				$source[$key] = self::merge($source[$key], $value);
 			} else {
 				$source[$key] = $value;

@@ -160,7 +160,7 @@ abstract class Driver extends Query
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
-	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ
+	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ 1 (default) รายการแรกที่เจอ, 0 หมายถึงลบทุกรายการ
 	 * @return int|bool สำเร็จคืนค่าจำนวนแถวที่มีผล ไม่สำเร็จคืนค่า false
 	 */
 	public function delete($table, $condition, $limit = 1)
@@ -193,7 +193,7 @@ abstract class Driver extends Query
 			$values = ArrayTool::replace($sqls['values'], $values);
 		}
 		if ($sqls['function'] == 'customQuery') {
-			$result = $this->customQuery($sql, false, $values);
+			$result = $this->customQuery($sql, true, $values);
 		} else {
 			$result = $this->query($sql, $values);
 		}
@@ -221,7 +221,24 @@ abstract class Driver extends Query
 	}
 
 	/**
-	 * ฟังก์ชั่น query ข้อมูล
+	 * ฟังก์ชั่น query ข้อมูล คืนค่าข้อมูลทุกรายการที่ตรงตามเงื่อนไข
+	 *
+	 * @param string $table ชื่อตาราง
+	 * @param mixed $condition query WHERE
+	 * @param array $sort เรียงลำดับ
+	 * @return array คืนค่า แอเรย์ของ object ไม่พบคืนค่าแอรย์ว่าง
+	 */
+	public function find($table, $condition, $sort = array())
+	{
+		$result = array();
+		foreach ($this->select($table, $condition, $sort) as $item) {
+			$result[] = (object)$item;
+		}
+		return $result;
+	}
+
+	/**
+	 * ฟังก์ชั่น query ข้อมูล คืนค่าข้อมูลรายการเดียว
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE

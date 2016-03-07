@@ -70,10 +70,10 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
 			// error มี email อยู่แล้ว (facebook login)
-			self::$login_message = Language::get('This email is already registered');
-		} elseif ($action === 'logout' && self::$text_email === null) {
+			self::$login_message = str_replace(':name', Language::get('Email'), Language::get('This :name is already registered'));
+		} elseif ($action === 'logout' && self::$request->post('login_email')->toString() == '') {
 			// logout ลบ session และ cookie
-			unset($_SESSION['login']);
+			self::$request->setSession('klogin', null);
 			$time = time();
 			setCookie('login_email', '', $time, '/');
 			setCookie('login_password', '', $time, '/');
@@ -100,8 +100,8 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 						self::$login_message = Language::get($login_result);
 					} else {
 						// save login session
-						$_SESSION['login'] = $login_result;
-						$_SESSION['login']->password = self::$text_password;
+						$login_result->password = self::$text_password;
+						self::$request->setSession('klogin', $login_result);
 						// save login cookie
 						$time = time() + 2592000;
 						if ($login_remember == 1) {
@@ -121,7 +121,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	}
 
 	/**
-	 * อ่านข้อมูลจาก $_POST, $_SESSION, $_COOKIE ตามลำดับ
+	 * อ่านข้อมูลจาก POST, SESSION และ COOKIE ตามลำดับ
 	 * เจออันไหนก่อนใช้อันนั้น
 	 *
 	 * @param string $name
@@ -133,8 +133,8 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		$datas = self::$request->getParsedBody();
 		if (isset($datas[$name])) {
 			return (string)$datas[$name];
-		} elseif (isset($_SESSION[$name])) {
-			return (string)$_SESSION[$name];
+		} elseif ($datas = self::$request->session($name)->toString()) {
+			return (string)$datas;
 		}
 		$datas = self::$request->getCookieParams();
 		return isset($datas[$name]) ? $pwd->decode($datas[$name]) : null;
@@ -151,11 +151,11 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	{
 		if ($username == self::$cfg->get('username') && $password == self::$cfg->get('password')) {
 			return (object)array(
-				'id' => 1,
-				'email' => $username,
-				'password' => $password,
-				'displayname' => $username,
-				'status' => 1
+					'id' => 1,
+					'email' => $username,
+					'password' => $password,
+					'displayname' => $username,
+					'status' => 1
 			);
 		}
 		return 'not a registered user';
@@ -172,20 +172,21 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	/**
 	 * ฟังก์ชั่นตรวจสอบการเข้าระบบ
 	 *
-	 * @return object|bool คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นสมาชิกและเข้าระบบแล้ว ไม่ใช่คืนค่า false
+	 * @return object|null คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นสมาชิกและเข้าระบบแล้ว ไม่ใช่คืนค่า null
 	 */
 	public static function isMember()
 	{
-		return isset($_SESSION['login']) ? $_SESSION['login'] : false;
+		return self::$request->session('klogin', null)->toObject();
 	}
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบสถานะแอดมิน
 	 *
-	 * @return object|bool คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นผู้ดูแลระบบและเข้าระบบแล้ว ไม่ใช่คืนค่า false
+	 * @return object|null คืนค่าข้อมูลสมาชิก (object) ถ้าเป็นผู้ดูแลระบบและเข้าระบบแล้ว ไม่ใช่คืนค่า null
 	 */
 	public static function isAdmin()
 	{
-		return isset($_SESSION['login']) && !empty($_SESSION['login']->id) && $_SESSION['login']->status == 1 ? $_SESSION['login'] : false;
+		$login = self::isMember();
+		return isset($login->status) && $login->status == 1 ? $login : null;
 	}
 }

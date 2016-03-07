@@ -66,10 +66,13 @@ class Template
 	 * @param string $owner ชื่อโมดูลที่ติดตั้ง
 	 * @param string $module ชื่อโมดูล
 	 * @param string $name ชื่อ template ไม่ต้องระบุนามสกุลของไฟล์
-	 * @param int $cols 0 (default) แสดงผลแบบปกติ มากกว่า 0 แสดงผลด้วยกริด
+	 * @param int $cols กำหนดรูปแบบการแสดงผล template
+	 * -1 (default) คืนค่า template ที่โหลดทั้งไฟล์ (เช่นหน้าเว็บไซต์)
+	 * 0 แสดงผลแบบ ลิสต์รายการ มีคอลัมน์เดียว (เช่นรายการของบทความ)
+	 * มากกว่า 0 แสดงผลลิสต์รายการ โดยใช้กริด
 	 * @return \static
 	 */
-	public static function create($owner, $module, $name, $cols = 0)
+	public static function create($owner, $module, $name, $cols = -1)
 	{
 		$obj = new static;
 		$obj->skin = $obj->load($owner, $module, $name);
@@ -153,9 +156,9 @@ class Template
 	 */
 	public function render()
 	{
-		if (empty($this->items)) {
-			return $this->skin;
-		} elseif (empty($this->cols)) {
+		if ($this->cols === -1) {
+			return empty($this->items) ? $this->skin : implode("\n", $this->items);
+		} elseif ($this->cols === 0) {
 			return implode("\n", $this->items);
 		}
 		return "<div class=row>\n".implode("\n", $this->items)."\n</div>";

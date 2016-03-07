@@ -151,14 +151,14 @@ class PdoMysqlDriver extends Driver
 	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
 	 *
 	 * @param string $table ชื่อตาราง
-	 * @param array $save ข้อมูลที่ต้องการบันทึก
+	 * @param array|object $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
 	public function insert($table, $save)
 	{
 		$keys = array();
 		$values = array();
-		foreach ($save AS $key => $value) {
+		foreach ($save as $key => $value) {
 			$keys[] = $key;
 			$values[':'.$key] = $value;
 		}
@@ -202,7 +202,7 @@ class PdoMysqlDriver extends Driver
 			if (isset($sqls['update'])) {
 				$sql = 'UPDATE '.$sqls['update'];
 			} elseif (isset($sqls['delete'])) {
-				$sql = 'DELETE FROM '.$sqls['delete'];
+				$sql = 'DELETE FROM `'.$sqls['delete'].'`';
 			}
 			if (isset($sqls['set'])) {
 				$sql .= ' SET '.implode(', ', $sqls['set']);
@@ -276,7 +276,7 @@ class PdoMysqlDriver extends Driver
 				}
 			}
 			if (sizeof($qs) > 0) {
-				$sql .= ' SORT '.implode(', ', $qs);
+				$sql .= ' ORDER BY '.implode(', ', $qs);
 			}
 		}
 		if (is_int($limit) && $limit > 0) {
@@ -309,16 +309,16 @@ class PdoMysqlDriver extends Driver
 	 *
 	 * @param string $table ชื่อตาราง
 	 * @param mixed $condition query WHERE
-	 * @param array $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
+	 * @param array|object $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function update($table, $condition, $save)
 	{
 		$sets = array();
 		$values = array();
-		foreach ($save AS $key => $value) {
-			$sets[] = '`'.$key.'` = :'.$key;
-			$values[':'.$key] = $value;
+		foreach ($save as $key => $value) {
+			$sets[] = '`'.$key.'` = :_'.$key;
+			$values[':_'.$key] = $value;
 		}
 		$condition = $this->buildWhere($condition);
 		if (is_array($condition)) {

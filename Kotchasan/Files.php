@@ -20,9 +20,9 @@ use \Kotchasan\Http\UploadedFile;
 class Files implements \Iterator
 {
 	/**
-	 * ตัวแปรเก็บ properties ของคลาส
+	 * แอเรย์เก็บรายการ UploadedFile
 	 *
-	 * @var Object
+	 * @var array
 	 */
 	private $datas = array();
 

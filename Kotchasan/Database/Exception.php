@@ -9,7 +9,7 @@
 namespace Kotchasan\Database;
 
 /**
- * คลาสสำหรับจัดการข้อผิดพลาดของแคช
+ * คลาสสำหรับจัดการข้อผิดพลาดของ Database
  *
  * @author Goragod Wiriya <admin@goragod.com>
  *

@@ -145,11 +145,7 @@ class Form extends \Kotchasan\KBase
 			} elseif (isset($type) && $type === 'checkbox') {
 				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.$element.'&nbsp;'.$label.'</label>';
 			} else {
-				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>';
-				if (!empty($label)) {
-					$input .= $label.(isset($type) && ($type === 'checkbox' || $type === 'radio') ? '&nbsp;' : '&nbsp;:&nbsp;');
-				}
-				$input .= $element.'</label>';
+				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.( empty($label) ? '' : $label.'&nbsp;').$element.'</label>';
 			}
 			if (!empty($comment)) {
 				$input .= '<div class="comment"'.(empty($id) ? '' : ' id="result_'.$id.'"').'>'.$comment.'</div></div>';

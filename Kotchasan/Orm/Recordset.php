@@ -206,7 +206,7 @@ class Recordset extends Query implements \Iterator
 	{
 		$ret = $this->buildWhereValues($condition, $oprator, $this->field->getPrimarykey());
 		$sqls = array(
-			'delete' => '`'.$this->table_name.'`',
+			'delete' => $this->table_name,
 			'where' => $ret[0]
 		);
 		if (!$all) {
@@ -563,11 +563,15 @@ class Recordset extends Query implements \Iterator
 		$datas = array();
 		if ($save instanceof Field) {
 			foreach ($schema->fields($this->table_name) as $field) {
-				$datas[$field] = $save->$field;
+				if (isset($save->$field)) {
+					$datas[$field] = $save->$field;
+				}
 			}
 		} else {
 			foreach ($schema->fields($this->table_name) as $field) {
-				$datas[$field] = $save[$field];
+				if (isset($save[$field])) {
+					$datas[$field] = $save[$field];
+				}
 			}
 		}
 		if (empty($datas)) {
