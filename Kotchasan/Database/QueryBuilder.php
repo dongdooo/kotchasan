@@ -276,7 +276,10 @@ class QueryBuilder extends Query
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
 	 * @return \static
 	 *
-	 * @assert select('id', 'email name')->from('user')->where('`id`=1')->text() [==] "SELECT `id`,`email` AS `name` FROM `user` WHERE `id`=1"
+	 * @assert select('U.id', 'email name', 'module')->text() [==] "SELECT U.`id`,`email` AS `name`,`module`"
+	 * @assert select('"email" name', '0 id')->text() [==] "SELECT 'email' AS `name`,0 AS `id`"
+	 * @assert select("'email' name", '0 AS id')->text() [==] "SELECT 'email' AS `name`,0 AS `id`"
+	 * @assert select("(SELECT FROM) q")->text() [==] "SELECT (SELECT FROM) AS `q`"
 	 * @assert select()->text()  [==] "SELECT *"
 	 */
 	public function select($fields = '*')

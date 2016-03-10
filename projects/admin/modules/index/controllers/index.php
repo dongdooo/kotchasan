@@ -31,8 +31,10 @@ class Controller extends \Kotchasan\Controller
 		// session cookie
 		$request->inintSession();
 		// ตรวจสอบการ login
-		$login = Login::create();
-		if (!$login->isMember()) {
+		Login::create();
+		if (Login::isMember()) {
+			var_dump($_SESSION);
+		} else {
 			// forgot or login
 			if ($request->get('action')->toString() == 'forgot') {
 				$main = new \Index\Forgot\Controller();
@@ -40,8 +42,6 @@ class Controller extends \Kotchasan\Controller
 				$main = new \Index\Login\Controller();
 			}
 			echo $main->render();
-		} else {
-			var_dump($_SESSION);
 		}
 	}
 }

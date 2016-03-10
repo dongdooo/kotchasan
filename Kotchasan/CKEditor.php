@@ -48,7 +48,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = Text::toEditor($value);
+				$innerHTML = $this->toDiv($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}
@@ -59,7 +59,7 @@ class CKEditor extends Html
 		$content['tag'] = '<div><'.$this->tag.implode('', $prop).'>'.$innerHTML.'</'.$this->tag.'></div>';
 		$login = Login::isMember();
 		if ($login) {
-			self::$request->setSession('CKEDITOR', $login->id);
+			$_SESSION['CKEDITOR'] = $login['id'];
 		}
 		if (isset($this->attributes['id'])) {
 			$script = array();
@@ -90,13 +90,28 @@ class CKEditor extends Html
 	}
 
 	/**
+	 * แปลง {} สำหรับ div
+	 *
+	 * @param string $str ข้อความ
+	 * @return string
+	 */
+	public function toDiv($str)
+	{
+		return preg_replace(array('/{/', '/}/'), array('&#x007B;', '&#x007D;'), $str);
+	}
+
+	/**
 	 * ฟังก์ชั่นตรวจสอบความสามารถในการอัปโหลดของ CKEDITOR
 	 * 
 	 * @return bool
 	 */
 	public static function enabledUpload()
 	{
-		$login = Login::isAdmin();
-		return $login || ($login && self::$request->session('CKEDITOR')->toInt() == $login->id);
+		if (Login::isAdmin()) {
+			return true;
+		} elseif ($login = Login::isMember()) {
+			return !empty($_SESSION['CKEDITOR']) && $_SESSION['CKEDITOR'] == $login['id'];
+		}
+		return false;
 	}
 }

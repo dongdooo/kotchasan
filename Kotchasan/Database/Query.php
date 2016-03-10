@@ -189,6 +189,9 @@ abstract class Query extends \Kotchasan\KBase
 			} elseif (preg_match('/^([0-9]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
 				// 0 as alias
 				$ret = $match[1].' AS `'.$match[3].'`';
+			} elseif (preg_match('/^([\'"])(.*)\\1([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
+				// 'string' as alias
+				$ret = "'$match[2]' AS `$match[4]`";
 			} elseif (preg_match('/^([A-Z0-9]{1,2})\.([\*a-z0-9_]+)(([\s]+as)?[\s]+([a-z0-9_]+))?$/i', $fields, $match)) {
 				// U.id alias
 				$ret = $match[1].'.'.($match[2] == '*' ? '*' : '`'.$match[2].'`').(isset($match[5]) ? ' AS `'.$match[5].'`' : '');
@@ -497,17 +500,21 @@ abstract class Query extends \Kotchasan\KBase
 				if ($operator == '=') {
 					$operator = 'IN';
 				}
-				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));
+				$q = $this->aliasName($key);
 				$qs = array();
 				$vs = array();
 				foreach ($value as $i => $item) {
-					$qs[] = $q.$i;
-					$vs[$q.$i] = $item;
+					if (empty($item)) {
+						$qs[] = is_string($item) ? "'$item'" : $item;
+					} else {
+						$qs[] = $q.$i;
+						$vs[$q.$i] = $item;
+					}
 				}
 				$result = array($key.' '.$operator.' ('.implode(', ', $qs).')', $vs);
 			} elseif (empty($value)) {
 				// value เป็น string ว่าง, 0, null
-				$result = $key.' '.$operator.' '.($value === 0 ? 0 : "'$value'" );
+				$result = $key.' '.$operator.' '.(is_string($value) ? "'$value'" : $value);
 			} elseif (preg_match('/^(\-?[0-9\s\.]+|true|false)$/i', $value)) {
 				// value เป็น ตัวเลข จุดทศนิยม เครื่องหมาย - / , และ true, false
 				// เช่น ตัวเลข, จำนวนเงิน, boolean

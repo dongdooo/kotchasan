@@ -48,6 +48,11 @@ final class Language extends \Kotchasan\KBase
 		$language_folder = self::languageFolder();
 		// ภาษาที่เลือก
 		$lang = self::$request->get('lang', self::$request->cookie('my_lang', '')->toString())->toString();
+		if (empty($lang)) {
+			// ภาษาจาก Browser
+			$datas = explode(',', preg_replace('/(;\s?q=[0-9\.]+)|\s/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE']))));
+			$lang = substr(reset($datas), 0, 2);
+		}
 		// ตรวจสอบภาษา ใช้ภาษาแรกที่เจอ
 		foreach (ArrayTool::replace(array($lang => $lang), self::$cfg->languages) as $item) {
 			if (!empty($item)) {
@@ -67,54 +72,54 @@ final class Language extends \Kotchasan\KBase
 			// default language
 			self::$language_name = 'th';
 			self::$languages = (object)array(
-				'DATE_FORMAT' => 'd M Y เวลา H:i น.',
-				'DATE_LONG' => array(
-					0 => 'อาทิตย์',
-					1 => 'จันทร์',
-					2 => 'อังคาร',
-					3 => 'พุธ',
-					4 => 'พฤหัสบดี',
-					5 => 'ศุกร์',
-					6 => 'เสาร์'
-				),
-				'DATE_SHORT' => array(
-					0 => 'อา.',
-					1 => 'จ.',
-					2 => 'อ.',
-					3 => 'พ.',
-					4 => 'พฤ.',
-					5 => 'ศ.',
-					6 => 'ส.'
-				),
-				'YEAR_OFFSET' => 543,
-				'MONTH_LONG' => array(
-					1 => 'มกราคม',
-					2 => 'กุมภาพันธ์',
-					3 => 'มีนาคม',
-					4 => 'เมษายน',
-					5 => 'พฤษภาคม',
-					6 => 'มิถุนายน',
-					7 => 'กรกฎาคม',
-					8 => 'สิงหาคม',
-					9 => 'กันยายน',
-					10 => 'ตุลาคม',
-					11 => 'พฤศจิกายน',
-					12 => 'ธันวาคม'
-				),
-				'MONTH_SHORT' => array(
-					1 => 'ม.ค.',
-					2 => 'ก.พ.',
-					3 => 'มี.ค.',
-					4 => 'เม.ย.',
-					5 => 'พ.ค.',
-					6 => 'มิ.ย.',
-					7 => 'ก.ค.',
-					8 => 'ส.ค.',
-					9 => 'ก.ย.',
-					10 => 'ต.ค.',
-					11 => 'พ.ย.',
-					12 => 'ธ.ค.'
-				)
+					'DATE_FORMAT' => 'd M Y เวลา H:i น.',
+					'DATE_LONG' => array(
+						0 => 'อาทิตย์',
+						1 => 'จันทร์',
+						2 => 'อังคาร',
+						3 => 'พุธ',
+						4 => 'พฤหัสบดี',
+						5 => 'ศุกร์',
+						6 => 'เสาร์'
+					),
+					'DATE_SHORT' => array(
+						0 => 'อา.',
+						1 => 'จ.',
+						2 => 'อ.',
+						3 => 'พ.',
+						4 => 'พฤ.',
+						5 => 'ศ.',
+						6 => 'ส.'
+					),
+					'YEAR_OFFSET' => 543,
+					'MONTH_LONG' => array(
+						1 => 'มกราคม',
+						2 => 'กุมภาพันธ์',
+						3 => 'มีนาคม',
+						4 => 'เมษายน',
+						5 => 'พฤษภาคม',
+						6 => 'มิถุนายน',
+						7 => 'กรกฎาคม',
+						8 => 'สิงหาคม',
+						9 => 'กันยายน',
+						10 => 'ตุลาคม',
+						11 => 'พฤศจิกายน',
+						12 => 'ธันวาคม'
+					),
+					'MONTH_SHORT' => array(
+						1 => 'ม.ค.',
+						2 => 'ก.พ.',
+						3 => 'มี.ค.',
+						4 => 'เม.ย.',
+						5 => 'พ.ค.',
+						6 => 'มิ.ย.',
+						7 => 'ก.ค.',
+						8 => 'ส.ค.',
+						9 => 'ก.ย.',
+						10 => 'ต.ค.',
+						11 => 'พ.ย.',
+						12 => 'ธ.ค.'
+					)
 			);
 		}
 	}

@@ -125,7 +125,6 @@ function createClass($className, $param = null)
 {
 	return new $className($param);
 }
-
 /**
  * custom error handler
  * ถ้าอยู่ใน mode debug จะแสดง error ถ้าไม่จะเขียนลง log อย่างเดียว
@@ -193,11 +192,18 @@ function getClassPath($className)
 		} elseif (is_file(ROOT_PATH.$className.'.php')) {
 			return ROOT_PATH.$className.'.php';
 		} else {
-			list($vendor, $class, $method) = explode('/', strtolower($className));
-			if (is_file(APP_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
-				return APP_PATH."modules/{$vendor}/{$method}s/{$class}.php";
-			} elseif (is_file(ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php")) {
-				return ROOT_PATH."modules/{$vendor}/{$method}s/{$class}.php";
+			$match = explode('/', strtolower($className));
+			if (isset($match[2])) {
+				if (isset($match[3])) {
+					$module = "modules/{$match[0]}/{$match[3]}s/{$match[1]}/{$match[2]}.php";
+				} else {
+					$module = "modules/{$match[0]}/{$match[2]}s/{$match[1]}.php";
+				}
+				if (is_file(APP_PATH.$module)) {
+					return APP_PATH.$module;
+				} elseif (is_file(ROOT_PATH.$module)) {
+					return ROOT_PATH.$module;
+				}
 			}
 		}
 	}

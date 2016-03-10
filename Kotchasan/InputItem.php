@@ -46,6 +46,16 @@ class InputItem
 	}
 
 	/**
+	 * คืนค่าตามข้อมูลที่ส่งมา
+	 *
+	 * @return mixed
+	 */
+	public function all()
+	{
+		return $this->value;
+	}
+
+	/**
 	 * คืนค่าเป็น boolean
 	 *
 	 * @return bool

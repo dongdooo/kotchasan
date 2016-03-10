@@ -22,56 +22,26 @@ class Config
 	 */
 	private static $instance = null;
 	/**
-	 * ตั้งค่าเขตเวลาของ Server ให้ตรงกันกับเวลาท้องถิ่น เช่น Asia/Bankok
+	 * ตั้งค่าเขตเวลาของ Server ให้ตรงกันกับเวลาท้องถิ่น
+	 * สำหรับ Server ที่อยู่ในประเทศไทยใช้ Asia/Bankok
 	 *
 	 * @var string
 	 */
 	public $timezone = 'Asia/Bangkok';
 	/**
-	 * ภาษาที่รองรับ
+	 * รายชื่อภาษาที่รองรับ
+	 * ตามที่มีในโฟลเดอร์ language/
+	 * เริ่มต้นคือ en (ภาษาอังกฤษ)
 	 *
 	 * @var array
 	 */
-	public $languages = array('th');
+	public $languages = array('en');
 	/**
 	 * template ที่กำลังใช้งานอยู่ (ชื่อโฟลเดอร์)
 	 *
 	 * @var string
 	 */
 	public $skin = 'default';
-	/**
-	 * รายชื่อฟิลด์จากตารางสมาชิก สำหรับตรวจสอบการ login
-	 *
-	 * @var array
-	 */
-	public $login_fields = array('email', 'phone1');
-	/**
-	 * ตั้งค่า การ login ต่อ 1 IP
-	 * true ไม่สามารถ login พร้อมกันหลายบัญชีต่อ 1 เครื่องได้
-	 *
-	 * @var bool default false
-	 */
-	public $member_only_ip = false;
-	/**
-	 * สถานะสมาชิก
-	 * 0 สมาชิกทั่วไป
-	 * 1 ผู้ดูแลระบบ
-	 *
-	 * @var array
-	 */
-	public $member_status = array('Member', 'Administrator');
-	/**
-	 * สีของสมาชิกตามสถานะ
-	 *
-	 * @var array
-	 */
-	public $color_status = array('#336600', '#FF0000');
-	/**
-	 * ถ้ากำหนดเป็น true บัญชี demo จะสามารถเข้าระบบแอดมินได้
-	 *
-	 * @var bool default false
-	 */
-	public $demo_mode = false;
 	/**
 	 * ชื่อเว็บไซต์
 	 *
@@ -85,35 +55,12 @@ class Config
 	 */
 	public $web_description = 'PHP Framework พัฒนาโดยคนไทย';
 	/**
-	 * กำหนดอายุของแคช
+	 * กำหนดอายุของแคช (วินาที)
+	 * 0 หมายถึงไม่มีการใช้งานแคช
 	 *
 	 * @var int
 	 */
 	public $cache_expire = 0;
-	/**
-	 * ความกว้างสูงสุดของรูปประจำตัวสมาชิก
-	 *
-	 * @var int
-	 */
-	public $user_icon_w = 50;
-	/**
-	 * ความสูงสูงสุดของรูปประจำตัวสมาชิก
-	 *
-	 * @var int
-	 */
-	public $user_icon_h = 50;
-	/**
-	 * ชนิดของรูปถาพที่สามารถอัปโหลดเป็นรูปประจำตัวสมาชิก ได้
-	 *
-	 * @var array
-	 */
-	public $user_icon_typies = array('jpg', 'gif', 'png');
-	/**
-	 * สมาชิกใหม่ต้องยืนยันอีเมล์
-	 *
-	 * @var bool
-	 */
-	public $user_activate = true;
 	/**
 	 * ทีอยู่อีเมล์ใช้เป็นผู้ส่งจดหมาย สำหรับจดหมายที่ไม่ต้องการตอบกลับ เช่น no-reply@domain.tld
 	 *
@@ -175,13 +122,6 @@ class Config
 	 * @var string
 	 */
 	public $password_key = '1234567890';
-	/**
-	 * กำหนดรูปแบบของ URL ที่สร้างจากระบบ
-	 * ตามที่กำหนดโดย \Settings->urls
-	 *
-	 * @var int
-	 */
-	public $module_url = 1;
 	/**
 	 * default charset
 	 *
