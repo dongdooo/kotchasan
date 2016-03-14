@@ -3,7 +3,7 @@
 ผมเลยเลือกที่จะใช้ชื่อนี้เป็นชื่อของ Framework ที่ออกแบบโดยคนไทย 100%
 
 ##คุณสมบัติ
-* สถาปัตยกรรม HMVC ทำให้การเพิ่มหรือลดโมดูลเป็นไปโดยง่าย ไม่ขึ้นแก่กัน
+* สถาปัตยกรรม MMVC (Modules Model View Controller) ทำให้การเพิ่มหรือลดโมดูลเป็นไปโดยง่าย ไม่ขึ้นแก่กัน
 * สนับสนุนการทำงานแบบหลายโปรเจ็ค
 * ปฏิบัติตามมาตรฐาน PSR-1, PSR-2, PSR-3, PSR-4, PSR-6, PSR-7
 * เป็น PHP Framework ที่ได้รับการ Optimize ทั้งทางด้านความเร็วและประสิทธิภาพในการทำงาน
@@ -23,7 +23,7 @@
 ## การติดตั้งและนำไปใช้งาน
 ผมออกแบบคชสารเพื่อหลีกเลี่ยงการติดตั้งที่ยุ่งยากตามแบบของ PHP Framework ทั่วไป
 โดยสามารถดาวน์โหลด source code ทั้งหมดจาก github ไปใช้งานได้ทันทีโดยไม่ต้องติดตั้งหรือตั้งค่าใดๆ
-หรือสามารถติดตั้งผ่าน Composer ได้ `composer require goragod/kotchasan` https://packagist.org/packages/goragod/kotchasan
+หรือสามารถติดตั้งผ่าน Composer ได้ ```composer require goragod/kotchasan``` https://packagist.org/packages/goragod/kotchasan
 
 ##เงื่อนไขการใช้งาน
 * เป็น Open Source สามารถนำไปใช้งานได้ฟรี ไม่มีเงื่อนไข
@@ -36,5 +36,5 @@
 
 * http://www.kotchasan.com/projects/welcome/ หน้าต้อนรับของคชสาร
 * http://www.kotchasan.com/projects/site/ สร้างเว็บไซต์ด้วย template และมีเมนู แบบง่ายๆ
-* http://www.kotchasan.com/projects/orm/ ตัวอย่างการใช้งานฐานข้อมูล (ORM)
+* http://www.kotchasan.com/projects/orm/ ตัวอย่างการใช้งานฐานข้อมูล (Recordset)
 * http://www.kotchasan.com/projects/admin/ ตัวอย่างการใช้งานฟอร์ม Login
