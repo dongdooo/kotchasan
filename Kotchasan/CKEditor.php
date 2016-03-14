@@ -48,7 +48,7 @@ class CKEditor extends Html
 			} elseif ($key === 'name') {
 				$prop[] = ' name="'.$value.'"';
 			} elseif ($key === 'value') {
-				$innerHTML = $this->toDiv($value);
+				$innerHTML = $this->tag == 'textarea' ? $this->toTextarea($value) : $this->toDiv($value);
 			} elseif ($key !== 'label' && $key !== 'upload') {
 				$attributes[$key] = $value;
 			}
@@ -90,7 +90,20 @@ class CKEditor extends Html
 	}
 
 	/**
-	 * แปลง {} สำหรับ div
+	 * แปลง อักขระพิเศษ และ {} เป็น HTML entities
+	 * ใช้ส่งให้กับ textarea
+	 *
+	 * @param string $str ข้อความ
+	 * @return string
+	 */
+	public function toTextarea($str)
+	{
+		return preg_replace(array('/{/', '/}/'), array('&#x007B;', '&#x007D;'), htmlspecialchars($str));
+	}
+
+	/**
+	 * แปลง {} เป็น HTML entities
+	 * ใช้ส่งให้กับ div
 	 *
 	 * @param string $str ข้อความ
 	 * @return string

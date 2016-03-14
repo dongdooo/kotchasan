@@ -23,12 +23,6 @@ use \Kotchasan\Http\Request;
 class View extends \Kotchasan\KBase
 {
 	/**
-	 * Controller ที่เรียก View นี้
-	 *
-	 * @var Controller
-	 */
-	protected $controller;
-	/**
 	 * ตัวแปรเก็บเนื่อหาของเว็บไซต์
 	 *
 	 * @var array
@@ -46,16 +40,6 @@ class View extends \Kotchasan\KBase
 	 * @var array
 	 */
 	protected $headers = array();
-
-	/**
-	 * Class constructor
-	 *
-	 * @param Controller $controller
-	 */
-	public function __construct(Controller $controller)
-	{
-		$this->controller = $controller;
-	}
 
 	/**
 	 * ใส่เนื้อหาลงใน $contens

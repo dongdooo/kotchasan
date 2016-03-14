@@ -18,14 +18,4 @@ namespace Kotchasan;
 class Controller extends \Kotchasan\KBase
 {
 
-	/**
-	 * สร้าง View สำหรับ Controller นี้
-	 *
-	 * @param string $view ชื่อของ View
-	 * @return \Kotchasan\View
-	 */
-	public function createView($view)
-	{
-		return new $view($this);
-	}
 }

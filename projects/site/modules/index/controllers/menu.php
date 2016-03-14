@@ -28,6 +28,6 @@ class Controller extends \Kotchasan\Controller
 	public function render($module)
 	{
 		// สร้างเมนู
-		return $this->createView('Index\Menu\View')->render($module);
+		return createClass('Index\Menu\View')->render($module);
 	}
 }

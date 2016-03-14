@@ -348,6 +348,7 @@ class QueryBuilder extends Query
 	 *
 	 * @assert update('user')->set(array('key1' => 'value1', 'key2' => 2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:Skey1, `key2`=:Skey2 WHERE `id` = 1"
 	 * @assert update('user U')->set(array('U.key1' => 'value1', 'U.key2' => 2))->where(array('U.id', 1))->text() [==] "UPDATE `user` AS U SET U.`key1`=:SUkey1, U.`key2`=:SUkey2 WHERE U.`id` = 1"
+	 * @assert update('user')->set(array('key1' => '(...)'))->text() [==] "UPDATE `user` SET `key1`=(...)"
 	 */
 	public function set($datas)
 	{
@@ -357,6 +358,8 @@ class QueryBuilder extends Query
 			$key = $this->aliasName($key, 'S');
 			if ($value instanceof QueryBuilder) {
 				$this->sqls['set'][$key] = $field.'=('.$value->text().')';
+			} elseif (strpos($value, '(') !== false) {
+				$this->sqls['set'][$key] = $field.'='.$value;
 			} else {
 				$this->sqls['set'][$key] = $field.'='.$key;
 				$this->sqls['values'][$key] = $value;

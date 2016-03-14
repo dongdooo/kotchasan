@@ -34,7 +34,7 @@ class Controller extends \Kotchasan\Controller
 		// ถ้าไม่มีโมดูลเลือกหน้า home
 		$module = $request->get('module', 'home')->toString();
 		// สร้าง View
-		$view = $this->createView('\Kotchasan\View');
+		$view = new \Kotchasan\View;
 		// template default
 		$view->setContents(array(
 			// menu

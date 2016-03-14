@@ -23,9 +23,9 @@ class Router extends \Kotchasan\KBase
 	 * @var array
 	 */
 	private $rules = array(
-		// index.php/Module/Method/Page/Function
-		'/^index\.php\/([a-zA-Z]+)\/(Model|Controller|View)(\/([a-zA-Z0-9_]+))?(\/([a-zA-Z0-9_]+))?/i' => array('module', 'type', '', 'page', '', 'method'),
-		// index/model/page/function
+		// index.php/module/type/folder/page/method
+		'/^[a-z0-9]+\.php\/([a-z]+)\/(model|controller|view)(\/([\/a-z0-9_]+)\/([a-z0-9_]+))?$/i' => array('module', 'type', '', 'page', 'method'),
+		// module/type/page/method
 		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'type', 'page', 'method'),
 		// index/model/page
 		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'type', 'page'),
@@ -58,7 +58,11 @@ class Router extends \Kotchasan\KBase
 		$modules = $this->parseRoutes(self::$request->getUri()->getPath(), self::$request->getQueryParams());
 		if (isset($modules['module']) && isset($modules['type']) && isset($modules['page'])) {
 			// คลาสจาก URL
-			$className = ucwords($modules['module']).'\\'.ucwords($modules['page']).'\\'.ucwords($modules['type']);
+			$className = ucwords(implode('\\', array(
+				$modules['module'],
+				str_replace('/', '\\', $modules['page']),
+				$modules['type']
+				)), '\\');
 			$method = empty($modules['method']) ? 'index' : $modules['method'];
 		} else {
 			// ไม่ระบุเมธอดมา เรียกเมธอด index
@@ -83,11 +87,13 @@ class Router extends \Kotchasan\KBase
 	 * @param string path เช่น /a/b/c.html
 	 * @param array $modules query string
 	 * @return array
+	 * 
 	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
 	 * @assert ('/index.php/css/view', array()) [==] array( 'type' => 'view', 'module' => 'css')
 	 * @assert ('/print.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
 	 * @assert ('/xhr.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint')
 	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'type' => 'model', 'page' => 'updateprofile', 'module' => 'index')
+	 * @assert ('/index.php/document/model/admin/settings/save') [==] array('module' => 'document', 'type' => 'model', 'page' => 'admin/settings', 'method' => 'save')
 	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'type' => 'view', 'page' => 'index')
 	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
 	 * @assert ('/module/action/1/2.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)

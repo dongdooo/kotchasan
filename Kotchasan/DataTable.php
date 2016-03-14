@@ -463,7 +463,8 @@ class DataTable extends \Kotchasan\KBase
 					if ($i == $this->checkCol) {
 						$row[] = '<th class="check-column"><a class="checkall icon-uncheck"></a></th>';
 						$colCount++;
-					} elseif ($i == $this->dragColumn) {
+					}
+					if ($i == $this->dragColumn) {
 						$row[] = '<th></th>';
 						$colCount++;
 					}
@@ -568,7 +569,8 @@ class DataTable extends \Kotchasan\KBase
 					if (!empty($field) && !in_array($field, $this->hideColumns)) {
 						if ($i == $this->checkCol) {
 							$row[] = '<td headers="r'.$id.'" class="check-column"><a id="check_'.$id.'" class="icon-uncheck"></a></td>';
-						} elseif ($i == $this->dragColumn) {
+						}
+						if ($i == $this->dragColumn) {
 							$row[] = '<td class=center><a id="move_'.$id.'" title="'.Language::get('Drag and drop to reorder').'" class="icon-move"></a></td>';
 						}
 						$properties = isset($this->cols[$field]) ? $this->cols[$field] : array();
