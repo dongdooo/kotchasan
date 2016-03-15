@@ -294,14 +294,6 @@ em,
 	font-style: normal;
 	color: #FF5722;
 }
-.valid.valid {
-	color: #060;
-	border-color: #060;
-}
-.invalid.invalid {
-	color: #B71C1C;
-	border-color: #B71C1C;
-}
 span.icon-sex-f:before {
 	color: #F480D1;
 }
@@ -796,6 +788,58 @@ input[type="checkbox"],
 input[type="radio"] {
 	background-image: url();
 	vertical-align: middle;
+}
+@-moz-keyframes hightlight_red {
+	0% {background-color: rgba(255, 0, 0, 0.5);}
+	100% {background-color: inherit;}
+}
+@-ms-keyframes hightlight_red {
+  0% {background-color: rgba(255, 0, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@-webkit-keyframes hightlight_red {
+  0% {background-color: rgba(255, 0, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@keyframes hightlight_red {
+  0% {background-color: rgba(255, 0, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@-moz-keyframes hightlight_green {
+  0% {background-color: rgba(0, 255, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@-ms-keyframes hightlight_green {
+  0% {background-color: rgba(0, 255, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@-webkit-keyframes hightlight_green {
+  0% {background-color: rgba(0, 255, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+@keyframes hightlight_green {
+  0% {background-color: rgba(0, 255, 0, 0.5);}
+  100% {background-color: inherit;}
+}
+.highlight.highlight, select.invalid, textarea.invalid, input.invalid {
+  -moz-animation: hightlight_red 1s ease-in-out;
+  -ms-animation: hightlight_red 1s ease-in-out;
+  -webkit-animation: hightlight_red 1s ease-in-out;
+  animation: hightlight_red 1s ease-in-out;
+}
+select.valid, textarea.valid, input.valid {
+  -moz-animation: hightlight_green 1s ease-in-out;
+  -ms-animation: hightlight_green 1s ease-in-out;
+  -webkit-animation: hightlight_green 1s ease-in-out;
+  animation: hightlight_green 1s ease-in-out;
+}
+.valid.valid {
+  color: #060;
+  border-color: #060;
+}
+.invalid.invalid {
+  color: #B71C1C;
+  border-color: #B71C1C;
 }
 /* ckeditor */
 .content-box, .cke_panel {
