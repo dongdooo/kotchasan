@@ -16,7 +16,6 @@
 				action: null,
 				actionCallback: null,
 				actionConfirm: null,
-				customAction: null,
 				pmButton: false,
 				dragColumn: -1
 			};
@@ -113,15 +112,9 @@
 								}
 							});
 							if (trs.length > 1) {
-								var q = new Array();
-								for (var p in temp.options.customAction) {
-									q.push(p + '=' + temp.options.customAction[p]);
+								temp.callAction(this, 'action=move&data=' + trs.join(','));
 								}
-								q.push('action=move');
-								q.push('data=' + trs.join(','));
-								temp.callAction(this, q.join('&'));
 							}
-						}
 					});
 				}
 			}

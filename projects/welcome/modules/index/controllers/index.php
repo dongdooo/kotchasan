@@ -27,6 +27,6 @@ class Controller extends \Kotchasan\Controller
 	 */
 	public function index(Request $request)
 	{
-		$this->createView('Index\Index\View')->render();
+		createClass('Index\Index\View')->render();
 	}
 }

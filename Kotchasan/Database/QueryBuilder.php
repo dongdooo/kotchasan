@@ -56,7 +56,7 @@ class QueryBuilder extends Query
 	 */
 	public function cacheOn($auto_save = true)
 	{
-		$this->cache->cacheOn($auto_save);
+		$this->db()->cacheOn($auto_save);
 		return $this;
 	}
 

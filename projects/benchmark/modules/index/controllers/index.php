@@ -43,8 +43,8 @@ class Controller extends \Kotchasan\Controller
 	}
 
 	/**
-	 * ORM Performance (select only)
-	 * ทดสอบการเรียกข้อมูลด้วย ORM
+	 * Recordset Performance (select only)
+	 * ทดสอบการเรียกข้อมูลด้วย Recordset
 	 */
 	public function select()
 	{
@@ -59,10 +59,10 @@ class Controller extends \Kotchasan\Controller
 	}
 
 	/**
-	 * ORM Performance (select and update)
-	 * ทดสอบการเรียกข้อมูลและอัปเดทข้อมูลด้วย ORM
+	 * Recordset Performance (select and update)
+	 * ทดสอบการเรียกข้อมูลและอัปเดทข้อมูลด้วย Recordset
 	 */
-	public function orm()
+	public function recordset()
 	{
 		$rs = Recordset::create('Index\World\Model');
 		$rs->updateAll(array('name' => ''));
