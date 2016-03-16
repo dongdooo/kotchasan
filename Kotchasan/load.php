@@ -47,7 +47,11 @@ if (!defined('DB_LOG')) {
 /**
  * ไดเรคทอรี่ของ Framework
  */
-define('VENDOR_DIR', str_replace('load.php', '', __FILE__));
+$vendorDir = str_replace('load.php', '', __FILE__);
+if (DIRECTORY_SEPARATOR != '/') {
+	$vendorDir = str_replace('\\', '/', $vendorDir);
+}
+define('VENDOR_DIR', $vendorDir);
 
 /**
  *  document root (Server)
