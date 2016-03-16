@@ -35,10 +35,8 @@ class Router extends \Kotchasan\KBase
 		'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
 		// module/cat/id
 		'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
-		// module/cat
-		'/^([a-z]+)\/([0-9]+)$/' => array('module', 'cat'),
-		// module/document
-		'/^([a-z]+)\/(.*)?$/' => array('module', 'document'),
+		// module/cat module/document, module/cat/document
+		'/^([a-z]+)(\/([0-9]+))?(\/(.*))?$/' => array('module', '', 'cat', '', 'document'),
 		// module, module.php
 		'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
 		// document
@@ -104,6 +102,8 @@ class Router extends \Kotchasan\KBase
 	 * @assert ('/module.html', array()) [==] array('module' => 'module')
 	 * @assert ('/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ')
 	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
+	 * @assert ('/docs/1/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
+	 * @assert ('/docs/1/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
 	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
 	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
 	 */

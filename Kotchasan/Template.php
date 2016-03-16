@@ -165,6 +165,16 @@ class Template
 	}
 
 	/**
+	 * ฟังก์ชั่นตรวจสอบว่ามีการ add ข้อมูลมาหรือเปล่า
+	 *
+	 * @return bool คืนค่า true ถ้ามีการเรียกใช้คำสั่ง add มาก่อนหน้า, หรือ false ถ้าไม่ใช่
+	 */
+	public function hasItem()
+	{
+		return empty($this->items) ? false : true;
+	}
+
+	/**
 	 * โหลด template
 	 * ครั้งแรกจะตรวจสอบไฟล์จาก $module ถ้าไม่พบ จะใช้ไฟล์จาก $owner
 	 *
