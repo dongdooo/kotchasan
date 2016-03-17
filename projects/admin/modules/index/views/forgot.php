@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource index/controllers/forgot.php
+ * @filesource index/views/forgot.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -19,7 +19,7 @@ use \Kotchasan\Language;
  *
  * @since 1.0
  */
-class Controller extends \Kotchasan\Controller
+class View extends \Kotchasan\View
 {
 
 	/**
@@ -29,10 +29,10 @@ class Controller extends \Kotchasan\Controller
 	{
 		// แสดงผล
 		$form = Html::create('form', array(
-			'id' => 'forgot_frm',
-			'class' => 'login',
-			'autocomplete' => 'off',
-			'ajax' => false
+				'id' => 'forgot_frm',
+				'class' => 'login',
+				'autocomplete' => 'off',
+				'gform' => false
 		));
 		// h1
 		$form->add('h1', array(

@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource index/controllers/login.php
+ * @filesource index/views/login.php
  * @link http://www.kotchasan.com/
  * @copyright 2016 Goragod.com
  * @license http://www.kotchasan.com/license/
@@ -19,7 +19,7 @@ use \Kotchasan\Language;
  *
  * @since 1.0
  */
-class Controller extends \Kotchasan\Controller
+class View extends \Kotchasan\View
 {
 
 	/**
@@ -27,17 +27,12 @@ class Controller extends \Kotchasan\Controller
 	 */
 	public function render()
 	{
-		// โหมดตัวอย่าง
-		if (empty(Login::$text_email) && empty(Login::$text_password) && !empty(self::$cfg->demo_mode)) {
-			Login::$text_email = 'demo';
-			Login::$text_password = 'demo';
-		}
 		// form login
 		$form = Html::create('form', array(
-			'id' => 'login_frm',
-			'class' => 'login',
-			'autocomplete' => 'off',
-			'ajax' => false
+				'id' => 'login_frm',
+				'class' => 'login',
+				'autocomplete' => 'off',
+				'gform' => false
 		));
 		// h1
 		$form->add('h1', array(
@@ -50,19 +45,12 @@ class Controller extends \Kotchasan\Controller
 				'class' => empty(Login::$login_input) ? 'message' : 'error',
 				'innerHTML' => Login::$login_message
 			));
-			if (isset(Login::$login_input)) {
-				$a = array();
-				$a[] = 'var input = $E("'.Login::$login_input.'");';
-				$a[] = 'input.focus();';
-				$a[] = 'input.select();';
-				$form->script(implode("\n", $a));
-			}
 		}
 		// fieldset
 		$fieldset = $form->add('fieldset');
 		// text (email or phone)
 		$fieldset->add('text', array(
-			'id' => 'email',
+			'id' => 'login_email',
 			'labelClass' => 'g-input icon-email',
 			'placeholder' => Language::get('Email'),
 			'accesskey' => 'e',
@@ -71,7 +59,7 @@ class Controller extends \Kotchasan\Controller
 		));
 		// password
 		$fieldset->add('password', array(
-			'id' => 'password',
+			'id' => 'login_password',
 			'labelClass' => 'g-input icon-password',
 			'placeholder' => Language::get('Password'),
 			'value' => isset(Login::$text_password) ? Login::$text_password : ''
@@ -87,7 +75,7 @@ class Controller extends \Kotchasan\Controller
 		));
 		// checkbox
 		$group->add('checkbox', array(
-			'id' => 'remember',
+			'id' => 'login_remember',
 			'checked' => self::$request->cookie('login_remember')->toBoolean(),
 			'value' => 1,
 			'label' => Language::get('Remember me'),

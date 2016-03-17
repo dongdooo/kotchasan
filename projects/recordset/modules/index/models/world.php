@@ -22,7 +22,7 @@ class Model extends \Kotchasan\Orm\Field
 	 *
 	 * @var string
 	 */
-	protected $table = 'world W';
+	protected $table = 'world';
 	/**
 	  CREATE TABLE IF NOT EXISTS `world` (
 	  `id` int(11) NOT NULL,

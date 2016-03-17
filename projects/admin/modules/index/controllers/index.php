@@ -33,13 +33,14 @@ class Controller extends \Kotchasan\Controller
 		// ตรวจสอบการ login
 		Login::create();
 		if (Login::isMember()) {
+			echo '<a href="?action=logout">Logout</a><br>';
 			var_dump($_SESSION);
 		} else {
 			// forgot or login
 			if ($request->get('action')->toString() == 'forgot') {
-				$main = new \Index\Forgot\Controller();
+				$main = new \Index\Forgot\View;
 			} else {
-				$main = new \Index\Login\Controller();
+				$main = new \Index\Login\View;
 			}
 			echo $main->render();
 		}
