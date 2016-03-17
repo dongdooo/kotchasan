@@ -85,8 +85,7 @@ class Router extends \Kotchasan\KBase
 	 * @param string path เช่น /a/b/c.html
 	 * @param array $modules query string
 	 * @return array
-	 * 
-	 * @param array $modules คืนค่า query string ที่ตัวแปรนี้
+	 *
 	 * @assert ('/index.php/css/view', array()) [==] array( 'type' => 'view', 'module' => 'css')
 	 * @assert ('/print.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
 	 * @assert ('/xhr.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint')

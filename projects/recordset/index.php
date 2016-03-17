@@ -1,6 +1,6 @@
 <?php
 /*
- * @filesource projects/site/index.php.
+ * @filesource projects/recordset/index.php.
  *
  * @author Goragod Wiriya <admin@goragod.com>
  * @link http://www.kotchasan.com/
