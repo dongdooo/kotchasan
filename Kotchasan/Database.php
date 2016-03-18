@@ -64,7 +64,7 @@ final class Database
 			include VENDOR_DIR.'Database/Driver.php';
 			// โหลด driver ตาม config ถ้าไม่พบ ใช้ PdoMysqlDriver
 			if (is_file(VENDOR_DIR.'Database/'.$param->settings->dbdriver.'Driver.php')) {
-				$class = ucwords($param->settings->dbdriver).'Driver';
+				$class = ucfirst($param->settings->dbdriver).'Driver';
 			} else {
 				// default driver
 				$class = 'PdoMysqlDriver';

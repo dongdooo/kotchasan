@@ -56,11 +56,7 @@ class Router extends \Kotchasan\KBase
 		$modules = $this->parseRoutes(self::$request->getUri()->getPath(), self::$request->getQueryParams());
 		if (isset($modules['module']) && isset($modules['type']) && isset($modules['page'])) {
 			// คลาสจาก URL
-			$className = ucwords(implode('\\', array(
-				$modules['module'],
-				str_replace('/', '\\', $modules['page']),
-				$modules['type']
-				)), '\\');
+			$className = str_replace(' ', '\\', ucwords($modules['module'].' '.str_replace(array('\\', '/'), ' ', $modules['page']).' '.$modules['type']));
 			$method = empty($modules['method']) ? 'index' : $modules['method'];
 		} else {
 			// ไม่ระบุเมธอดมา เรียกเมธอด index

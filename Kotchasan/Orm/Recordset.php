@@ -473,7 +473,7 @@ class Recordset extends Query implements \Iterator
 				$this->doJoin($item[1], $item[0], $item[2]);
 			}
 		} else {
-			$func = 'build'.ucwords($method);
+			$func = 'build'.ucfirst($method);
 			if (method_exists($this, $func)) {
 				$ret = $this->$func($param);
 				if (is_array($ret)) {

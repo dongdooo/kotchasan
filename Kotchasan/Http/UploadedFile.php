@@ -87,7 +87,7 @@ class UploadedFile implements UploadedFileInterface
 	 * @param int $error ข้อผิดพลาดการอัปโหลด UPLOAD_ERR_XXX
 	 * @param bool $sapi Indicates if the upload is in a SAPI environment.
 	 */
-	public function __construct($path, $originalName, $mimeType = null, $size = null, $error = null, $sapi = false)
+	public function __construct($path, $originalName, $mimeType = null, $size = null, $error = null, $sapi = true)
 	{
 		$this->tmp_name = $path;
 		$this->name = $originalName;

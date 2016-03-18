@@ -28,13 +28,21 @@
 			this.sort_type = o['sort_type'] || null;
 			this.page = o['page'] || 1;
 			var hs,
-				sort_patt = /sort_(none|asc|desc)\s([\w]+)(|\s.*)$/,
+				sort_patt = /sort_(none|asc|desc)\scol_([\w]+)(|\s.*)$/,
 				action_patt = /button[\s][a-z]+[\s]action/,
 				temp = this;
 			var _doSort = function () {
 				if (hs = sort_patt.exec(this.className)) {
-					temp.sort_type = hs[1] == 'asc' ? 'desc' : 'asc';
-					temp.sort = hs[2];
+					if (hs[1] == 'none') {
+						temp.sort_type = 'asc';
+						temp.sort = hs[2];
+					} else if (hs[1] == 'asc') {
+						temp.sort_type = 'desc';
+						temp.sort = hs[2];
+					} else {
+						temp.sort_type = null;
+						temp.sort = null;
+					}
 					window.location = temp.redirect();
 				}
 			};
@@ -113,8 +121,8 @@
 							});
 							if (trs.length > 1) {
 								temp.callAction(this, 'action=move&data=' + trs.join(','));
-								}
 							}
+						}
 					});
 				}
 			}

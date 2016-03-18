@@ -631,7 +631,7 @@ class DataTable extends \Kotchasan\KBase
 		$c['id'] = 'id="c'.$i.'"';
 		if (!empty($properties['sort'])) {
 			$sort = empty($this->sort) || $column != $this->sort ? 'none' : $this->sortType;
-			$properties['class'] = 'sort_'.$sort.' '.$column.(empty($properties['class']) ? '' : ' '.$properties['class']);
+			$properties['class'] = 'sort_'.$sort.' col_'.$column.(empty($properties['class']) ? '' : ' '.$properties['class']);
 		}
 		foreach ($properties as $key => $value) {
 			if ($key !== 'sort' && $key !== 'text') {
