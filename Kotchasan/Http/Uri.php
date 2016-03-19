@@ -88,7 +88,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	public function __toString()
 	{
 		return self::createUriString(
-		$this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment
+				$this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment
 		);
 	}
 
@@ -438,8 +438,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 */
 	private function filterQueryFragment($str)
 	{
-		return preg_replace_callback(
-		'/(?:[^a-zA-Z0-9_\-\.~!\$&\'\(\)\*\+,;=%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/', function ($match) {
+		return preg_replace_callback('/(?:[^a-zA-Z0-9_\-\.~!\$&\'\(\)\*\+,;=%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/', function ($match) {
 			return rawurlencode($match[0]);
 		}, $str);
 	}
@@ -601,7 +600,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 		$qs = array();
 		foreach ($query_string as $key => $value) {
 			if ($value !== null) {
-				$qs[$key] = $key.'='.rawurlencode($value);
+				$qs[$key] = $key.'='.$value;
 			}
 		}
 		return $url.(strpos($url, '?') === false ? '?' : '&').implode('&', $qs);

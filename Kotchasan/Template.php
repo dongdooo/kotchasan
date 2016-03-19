@@ -28,13 +28,13 @@ class Template
 	 *
 	 * @var array
 	 */
-	private $items;
+	protected $items;
 	/**
 	 * จำนวนคอลัมน์ สำหรับการแสดงผลด้วย Grid
 	 *
 	 * @var int
 	 */
-	private $cols;
+	protected $cols;
 	/**
 	 * ตัวแปรสำหรับการขึ้นแถวใหม่ (Grid)
 	 *
@@ -66,18 +66,14 @@ class Template
 	 * @param string $owner ชื่อโมดูลที่ติดตั้ง
 	 * @param string $module ชื่อโมดูล
 	 * @param string $name ชื่อ template ไม่ต้องระบุนามสกุลของไฟล์
-	 * @param int $cols กำหนดรูปแบบการแสดงผล template
-	 * -1 (default) คืนค่า template ที่โหลดทั้งไฟล์ (เช่นหน้าเว็บไซต์)
-	 * 0 แสดงผลแบบ ลิสต์รายการ มีคอลัมน์เดียว (เช่นรายการของบทความ)
-	 * มากกว่า 0 แสดงผลลิสต์รายการ โดยใช้กริด
 	 * @return \static
 	 */
-	public static function create($owner, $module, $name, $cols = -1)
+	public static function create($owner, $module, $name)
 	{
 		$obj = new static;
 		$obj->skin = $obj->load($owner, $module, $name);
 		$obj->items = array();
-		$obj->cols = (int)$cols;
+		$obj->cols = -1;
 		$obj->num = $obj->cols;
 		return $obj;
 	}
@@ -86,16 +82,15 @@ class Template
 	 * โหลด template จากไฟล์
 	 *
 	 * @param string $filename
-	 * @param int $cols 0 (default) แสดงผลแบบปกติ มากกว่า 0 แสดงผลด้วยกริด
 	 * @throws \InvalidArgumentException ถ้าไม่พบไฟล์
 	 */
-	public static function createFromFile($filename, $cols = 0)
+	public static function createFromFile($filename)
 	{
 		if (is_file($filename)) {
 			$obj = new static;
 			$obj->skin = file_get_contents($filename);
 			$obj->items = array();
-			$obj->cols = (int)$cols;
+			$obj->cols = -1;
 			$obj->num = $obj->cols;
 			return $obj;
 		} else {
@@ -162,16 +157,6 @@ class Template
 			return implode("\n", $this->items);
 		}
 		return "<div class=row>\n".implode("\n", $this->items)."\n</div>";
-	}
-
-	/**
-	 * ฟังก์ชั่นตรวจสอบว่ามีการ add ข้อมูลมาหรือเปล่า
-	 *
-	 * @return bool คืนค่า true ถ้ามีการเรียกใช้คำสั่ง add มาก่อนหน้า, หรือ false ถ้าไม่ใช่
-	 */
-	public function hasItem()
-	{
-		return empty($this->items) ? false : true;
 	}
 
 	/**

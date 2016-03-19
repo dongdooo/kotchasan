@@ -31,20 +31,23 @@ class PdoMysqlDriver extends Driver
 	 */
 	public function connect($param)
 	{
+		$this->options = array(
+			PDO::ATTR_STRINGIFY_FETCHES => 0,
+			PDO::ATTR_EMULATE_PREPARES => 0,
+			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		);
 		foreach ($param as $key => $value) {
 			$this->$key = $value;
 		}
-		$options = array();
-		$options[PDO::ATTR_PERSISTENT] = true;
-		$options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
 		if ($this->settings->dbdriver == 'mysql') {
-			$options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES '.$this->settings->char_set;
+			$this->options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES '.$this->settings->char_set;
 		}
 		try {
 			$sql = $this->settings->dbdriver.':host='.$this->settings->hostname;
 			$sql .= empty($this->settings->port) ? '' : ';port='.$this->settings->port;
 			$sql .= empty($this->settings->dbname) ? '' : ';dbname='.$this->settings->dbname;
-			$this->connection = new PDO($sql, $this->settings->username, $this->settings->password, $options);
+			$this->connection = new PDO($sql, $this->settings->username, $this->settings->password, $this->options);
 			return $this;
 		} catch (PDOException $e) {
 			$this->logError(__FUNCTION__, $e->getMessage());
