@@ -23,24 +23,20 @@ class Router extends \Kotchasan\KBase
 	 * @var array
 	 */
 	private $rules = array(
-		// index.php/module/type/folder/page/method
-		'/^[a-z0-9]+\.php\/([a-z]+)\/(model|controller|view)(\/([\/a-z0-9_]+)\/([a-z0-9_]+))?$/i' => array('module', 'type', '', 'page', 'method'),
-		// module/type/page/method
-		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', 'type', 'page', 'method'),
-		// index/model/page
-		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', 'type', 'page'),
-		// module/action/cat/id
-		'/^([a-z]+)\/([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'action', 'cat', 'id'),
-		// module/action/cat
-		'/^([a-z]+)\/([a-z]+)\/([0-9]+)$/' => array('module', 'action', 'cat'),
+		// index.php/module/_mvc/folder/_dir/_method
+		'/^[a-z0-9]+\.php\/([a-z]+)\/(model|controller|view)(\/([\/a-z0-9_]+)\/([a-z0-9_]+))?$/i' => array('module', '_mvc', '', '_dir', '_method'),
+		// module/_mvc/_dir/_method
+		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', '_mvc', '_dir', '_method'),
+		// index/model/_dir
+		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', '_mvc', '_dir'),
 		// module/cat/id
 		'/^([a-z]+)\/([0-9]+)\/([0-9]+)$/' => array('module', 'cat', 'id'),
-		// module/cat module/document, module/cat/document
-		'/^([a-z]+)(\/([0-9]+))?(\/(.*))?$/' => array('module', '', 'cat', '', 'document'),
+		// module/cat module/alias, module/cat/alias
+		'/^([a-z]+)(\/([0-9]+))?(\/(.*))?$/' => array('module', '', 'cat', '', 'alias'),
 		// module, module.php
 		'/^([a-z0-9_]+)(\.php)?$/' => array('module'),
-		// document
-		'/^(.*)$/' => array('document')
+		// alias
+		'/^(.*)$/' => array('alias')
 	);
 
 	/**
@@ -54,13 +50,13 @@ class Router extends \Kotchasan\KBase
 	{
 		// ตรวจสอบโมดูล
 		$modules = $this->parseRoutes(self::$request->getUri()->getPath(), self::$request->getQueryParams());
-		if (isset($modules['module']) && isset($modules['type']) && isset($modules['page'])) {
+		if (isset($modules['module']) && isset($modules['_mvc']) && isset($modules['_dir'])) {
 			// คลาสจาก URL
-			$className = str_replace(' ', '\\', ucwords($modules['module'].' '.str_replace(array('\\', '/'), ' ', $modules['page']).' '.$modules['type']));
-			$method = empty($modules['method']) ? 'index' : $modules['method'];
+			$className = str_replace(' ', '\\', ucwords($modules['module'].' '.str_replace(array('\\', '/'), ' ', $modules['_dir']).' '.$modules['_mvc']));
+			$method = empty($modules['_method']) ? 'index' : $modules['_method'];
 		} else {
 			// ไม่ระบุเมธอดมา เรียกเมธอด index
-			$method = empty($modules['method']) ? 'index' : $modules['method'];
+			$method = empty($modules['_method']) ? 'index' : $modules['_method'];
 		}
 		if (method_exists($className, $method)) {
 			// สร้างคลาส
@@ -82,25 +78,22 @@ class Router extends \Kotchasan\KBase
 	 * @param array $modules query string
 	 * @return array
 	 *
-	 * @assert ('/index.php/css/view', array()) [==] array( 'type' => 'view', 'module' => 'css')
-	 * @assert ('/print.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
-	 * @assert ('/xhr.php/css/view/index/init', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'init')
-	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'type' => 'model', 'page' => 'updateprofile', 'module' => 'index')
-	 * @assert ('/index.php/document/model/admin/settings/save') [==] array('module' => 'document', 'type' => 'model', 'page' => 'admin/settings', 'method' => 'save')
-	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'type' => 'view', 'page' => 'index')
-	 * @assert ('/module/action/1/2', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
-	 * @assert ('/module/action/1/2.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1, 'id' => 2)
-	 * @assert ('/module/action/1.html', array()) [==] array('module' => 'module', 'action' => 'action', 'cat' => 1)
+	 * @assert ('/index.php/css/view', array()) [==] array( '_mvc' => 'view', 'module' => 'css')
+	 * @assert ('/print.php/css/view/index', array()) [==] array( '_mvc' => 'view', '_dir' => 'index', 'module' => 'css')
+	 * @assert ('/xhr.php/css/view/index/init', array()) [==] array( '_mvc' => 'view', '_dir' => 'index', 'module' => 'css', '_method' => 'init')
+	 * @assert ('/index/model/updateprofile.php', array()) [==] array( '_mvc' => 'model', '_dir' => 'updateprofile', 'module' => 'index')
+	 * @assert ('/index.php/alias/model/admin/settings/save') [==] array('module' => 'alias', '_mvc' => 'model', '_dir' => 'admin/settings', '_method' => 'save')
+	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', '_mvc' => 'view', '_dir' => 'index')
 	 * @assert ('/module/1/2.html', array()) [==] array('module' => 'module', 'cat' => 1, 'id' => 2)
 	 * @assert ('/module/1.html', array()) [==] array('module' => 'module', 'cat' => 1)
-	 * @assert ('/module/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ', 'module' => 'module')
+	 * @assert ('/module/ทดสอบ.html', array()) [==] array('alias' => 'ทดสอบ', 'module' => 'module')
 	 * @assert ('/module.html', array()) [==] array('module' => 'module')
-	 * @assert ('/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ')
-	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'test')
-	 * @assert ('/docs/1/ทดสอบ.html', array('module' => 'test')) [==] array('document' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
-	 * @assert ('/docs/1/ทดสอบ.html', array()) [==] array('document' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
-	 * @assert ('/index.php', array('action' => 'one')) [==] array('action' => 'one')
-	 * @assert ('/admin_index.php', array('action' => 'one')) [==] array('action' => 'one', 'module' => 'admin_index')
+	 * @assert ('/ทดสอบ.html', array()) [==] array('alias' => 'ทดสอบ')
+	 * @assert ('/ทดสอบ.html', array('module' => 'test')) [==] array('alias' => 'ทดสอบ', 'module' => 'test')
+	 * @assert ('/docs/1/ทดสอบ.html', array('module' => 'test')) [==] array('alias' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
+	 * @assert ('/docs/1/ทดสอบ.html', array()) [==] array('alias' => 'ทดสอบ', 'module' => 'docs', 'cat' => 1)
+	 * @assert ('/index.php', array('_action' => 'one')) [==] array('_action' => 'one')
+	 * @assert ('/admin_index.php', array('_action' => 'one')) [==] array('_action' => 'one', 'module' => 'admin_index')
 	 */
 	public function parseRoutes($path, $modules)
 	{

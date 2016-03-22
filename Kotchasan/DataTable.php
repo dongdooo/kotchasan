@@ -180,11 +180,13 @@ class DataTable extends \Kotchasan\KBase
 	public $sort;
 	/**
 	 * ประเภทของการเรียงลำดับ
-	 * asc หรือ desc
+	 * asc เรียงลำดับ a-z
+	 * desc เรียงลำดับ z-a
+	 * none ไม่มีการเรียงลำดับ (default)
 	 *
 	 * @var string
 	 */
-	public $sortType = 'desc';
+	public $sortType = 'none';
 	/**
 	 * ปุ่มที่จะใส่ไว้ด้านหลังของแต่ละแถว
 	 *
@@ -270,6 +272,8 @@ class DataTable extends \Kotchasan\KBase
 			}
 			$this->headers = $headers;
 		}
+		$this->sort = self::$request->request('sort', $this->sort)->toString();
+		$this->sortType = self::$request->request('sort_type', $this->sortType)->toString();
 	}
 
 	/**
@@ -404,17 +408,12 @@ class DataTable extends \Kotchasan\KBase
 		}
 		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
-		$this->sort = self::$request->request('sort', $this->sort)->toString();
-		if (!empty($this->sort)) {
-			if (in_array($this->sort, array_keys($this->columns))) {
-				$this->sortType = self::$request->request('sort_type', $this->sortType)->toString();
-				$this->sortType = $this->sortType == 'desc' ? 'desc' : 'asc';
-				if (isset($this->model)) {
-					$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
-					$query->order($sort.' '.$this->sortType);
-				} elseif (isset($this->datas)) {
-					ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
-				}
+		if (!empty($this->sort) && ($this->sortType == 'asc' || $this->sortType == 'desc') && in_array($this->sort, array_keys($this->columns))) {
+			if (isset($this->model)) {
+				$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
+				$query->order($sort.' '.$this->sortType);
+			} elseif (isset($this->datas)) {
+				ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
 			}
 		}
 		if (isset($this->model)) {

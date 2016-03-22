@@ -28,21 +28,13 @@
 			this.sort_type = o['sort_type'] || null;
 			this.page = o['page'] || 1;
 			var hs,
-				sort_patt = /sort_(none|asc|desc)\scol_([\w]+)(|\s.*)$/,
+				sort_patt = /sort_(none|asc|desc)\s(col_([\w]+))(|\s.*)$/,
 				action_patt = /button[\s][a-z]+[\s]action/,
 				temp = this;
 			var _doSort = function () {
 				if (hs = sort_patt.exec(this.className)) {
-					if (hs[1] == 'none') {
-						temp.sort_type = 'asc';
-						temp.sort = hs[2];
-					} else if (hs[1] == 'asc') {
-						temp.sort_type = 'desc';
-						temp.sort = hs[2];
-					} else {
-						temp.sort_type = null;
-						temp.sort = null;
-					}
+					temp.sort_type = hs[1] == 'none' ? 'asc' : hs[1] == 'asc' ? 'desc' : 'none';
+					temp.sort = hs[3];
 					window.location = temp.redirect();
 				}
 			};
@@ -311,7 +303,7 @@
 			us.push('page=' + this.page);
 			if (this.sort) {
 				us.push('sort=' + this.sort);
-				us.push('sort_type=' + (this.sort_type == 'asc' ? 'asc' : 'desc'));
+				us.push('sort_type=' + this.sort_type);
 			}
 			if (this.search) {
 				us.push('search=' + encodeURIComponent(this.search));
