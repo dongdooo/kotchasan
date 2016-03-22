@@ -219,7 +219,7 @@ class DataTable extends \Kotchasan\KBase
 	private $javascript = array();
 
 	/**
-	 * inint Class
+	 * Initial Class
 	 *
 	 * @param array $param
 	 */

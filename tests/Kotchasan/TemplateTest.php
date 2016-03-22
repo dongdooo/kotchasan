@@ -57,7 +57,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers Kotchasan\Template::inint
+	 * @covers Kotchasan\Template::init
 	 * @todo   Implement testInint().
 	 */
 	public function testInint()

@@ -25,7 +25,7 @@ class Country
 	 *
 	 * @return array
 	 */
-	private static function inint()
+	private static function init()
 	{
 		return array(
 			'GR' => array('th' => 'กรีซ', 'en' => 'Greece', 'local' => 'Ελλάδα'),
@@ -296,7 +296,7 @@ class Country
 	 */
 	public static function get($iso)
 	{
-		$datas = self::inint();
+		$datas = self::init();
 		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		return isset($datas[$iso]) ? $datas[$iso][$language] : '';
@@ -310,7 +310,7 @@ class Country
 	 */
 	public static function all()
 	{
-		$datas = self::inint();
+		$datas = self::init();
 		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		$result = array();

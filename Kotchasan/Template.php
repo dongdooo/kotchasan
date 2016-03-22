@@ -54,7 +54,7 @@ class Template
 	 *
 	 * @param string $skin
 	 */
-	public static function inint($skin)
+	public static function init($skin)
 	{
 		self::$src = 'skin/'.($skin == '' ? '' : $skin.'/' );
 	}

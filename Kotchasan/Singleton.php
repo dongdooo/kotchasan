@@ -25,7 +25,7 @@ abstract class Singleton
 	final private function __construct()
 	{
 		// inintial class
-		static::inint();
+		static::init();
 	}
 
 	private function __clone()
@@ -54,5 +54,5 @@ abstract class Singleton
 	/**
 	 * method เรียกเมื่อมีการโหลด Class
 	 */
-	abstract protected function inint();
+	abstract protected function init();
 }

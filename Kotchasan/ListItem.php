@@ -35,7 +35,7 @@ class ListItem
 	 *
 	 * @param array $config
 	 */
-	public function inint($config)
+	public function init($config)
 	{
 		$this->datas = $config;
 	}

@@ -18,7 +18,7 @@ namespace Index\Menu;
 class Controller extends \Kotchasan\Controller
 {
 	/*
-	 * inint Controller.
+	 * Initial Controller.
 	 *
 	 * @param array $modules
 	 *

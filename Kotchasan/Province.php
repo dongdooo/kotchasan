@@ -25,7 +25,7 @@ class Province
 	 *
 	 * @return array
 	 */
-	private static function inint()
+	private static function init()
 	{
 		return array(
 			101 => array('th' => 'กระบี่', 'en' => 'Krabi'),
@@ -117,7 +117,7 @@ class Province
 	 */
 	public static function get($iso)
 	{
-		$datas = self::inint();
+		$datas = self::init();
 		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		return isset($datas[$iso]) ? $datas[$iso][$language] : '';
@@ -131,7 +131,7 @@ class Province
 	 */
 	public static function all()
 	{
-		$datas = self::inint();
+		$datas = self::init();
 		$language = Language::name();
 		$language = in_array($language, array_keys(reset($datas))) ? $language : 'en';
 		$result = array();

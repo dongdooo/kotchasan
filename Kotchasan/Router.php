@@ -44,13 +44,13 @@ class Router extends \Kotchasan\KBase
 	);
 
 	/**
-	 * inint Router
+	 * Initial Router
 	 *
 	 * @param string $className คลาสที่จะรับค่าจาก Router
 	 * @return self
 	 * @throws \InvalidArgumentException หากไม่พบคลาสเป้าหมาย
 	 */
-	public function inint($className)
+	public function init($className)
 	{
 		// ตรวจสอบโมดูล
 		$modules = $this->parseRoutes(self::$request->getUri()->getPath(), self::$request->getQueryParams());
@@ -84,7 +84,7 @@ class Router extends \Kotchasan\KBase
 	 *
 	 * @assert ('/index.php/css/view', array()) [==] array( 'type' => 'view', 'module' => 'css')
 	 * @assert ('/print.php/css/view/index', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css')
-	 * @assert ('/xhr.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint')
+	 * @assert ('/xhr.php/css/view/index/init', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'init')
 	 * @assert ('/index/model/updateprofile.php', array()) [==] array( 'type' => 'model', 'page' => 'updateprofile', 'module' => 'index')
 	 * @assert ('/index.php/document/model/admin/settings/save') [==] array('module' => 'document', 'type' => 'model', 'page' => 'admin/settings', 'method' => 'save')
 	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', 'type' => 'view', 'page' => 'index')

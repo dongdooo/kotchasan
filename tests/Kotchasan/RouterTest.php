@@ -57,7 +57,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Generated from @assert ('/xhr.php/css/view/index/inint', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint').
+	 * Generated from @assert ('/xhr.php/css/view/index/init', array()) [==] array( 'type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'init').
 	 *
 	 * @covers Kotchasan\Router::parseRoutes
 	 */
@@ -65,7 +65,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertEquals(
-			array('type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'inint'), $this->object->parseRoutes('/xhr.php/css/view/index/inint', array())
+			array('type' => 'view', 'page' => 'index', 'module' => 'css', 'method' => 'init'), $this->object->parseRoutes('/xhr.php/css/view/index/init', array())
 		);
 	}
 
@@ -252,7 +252,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @covers Kotchasan\Router::inint
+	 * @covers Kotchasan\Router::init
 	 * @todo   Implement testInint().
 	 */
 	public function testInint()

@@ -2563,6 +2563,7 @@ aside.tip {
 code,
 blockquote {
 	background-color: #F9F9F9;
+	background-color: rgba(0,0,0,0.04);
 	font-family: inherit;
 }
 code {
@@ -2589,11 +2590,13 @@ blockquote > b:first-child {
 blockquote:before {
 	content: "\201C";
 	font-size: 6em;
+	line-height: 1;
 	font-family: Georgia, serif;
 	position: absolute;
 	top: 0;
-	left: 5px;
+	left: 0;
 	display: block;
+	color: rgba(0,0,0,0.1)
 }
 code code,
 blockquote blockquote {

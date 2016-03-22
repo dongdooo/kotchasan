@@ -30,7 +30,7 @@ class Controller extends \Kotchasan\Controller
 	public function index(Request $request)
 	{
 		// เริ่มต้นการใช้งาน Template
-		Template::inint(self::$cfg->skin);
+		Template::init(self::$cfg->skin);
 		// ถ้าไม่มีโมดูลเลือกหน้า home
 		$module = $request->get('module', 'home')->toString();
 		// สร้าง View

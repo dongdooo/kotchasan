@@ -81,6 +81,6 @@ class Kotchasan extends Kotchasan\KBase
 	public function run()
 	{
 		$router = new $this->defaultRouter;
-		$router->inint($this->defaultController);
+		$router->init($this->defaultController);
 	}
 }

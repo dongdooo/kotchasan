@@ -52,7 +52,7 @@ class Schema
 	 *
 	 * @param string $table
 	 */
-	private function inint($table)
+	private function init($table)
 	{
 		if (empty($this->tables[$table])) {
 			$sql = "SHOW FULL COLUMNS FROM `$table`";
@@ -79,7 +79,7 @@ class Schema
 		if (empty($table)) {
 			throw new \InvalidArgumentException('table name empty in '.__METHOD__);
 		} else {
-			$this->inint($table);
+			$this->init($table);
 			return array_keys($this->tables[$table]);
 		}
 	}

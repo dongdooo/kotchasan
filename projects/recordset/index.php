@@ -20,5 +20,5 @@ define('DEBUG', 2);
 define('DB_LOG', false);
 // load Kotchasan
 include '../../Kotchasan/load.php';
-// inint Kotchasan Framework
+// Initial Kotchasan Framework
 Kotchasan::createWebApplication()->run();
