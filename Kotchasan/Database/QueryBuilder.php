@@ -127,7 +127,9 @@ class QueryBuilder extends Query
 	 */
 	public function first($fields = '*')
 	{
-		$fields = $fields == '*' || func_num_args() == 1 ? $fields : func_get_args();
+		if (func_num_args() > 1) {
+			$fields = func_get_args();
+		}
 		call_user_func(array($this, 'select'), $fields);
 		$this->sqls['limit'] = 1;
 		$result = $this->execute();

@@ -183,7 +183,9 @@ abstract class Query extends \Kotchasan\KBase
 				$ret = implode(', ', $rets);
 			}
 		} else {
-			if (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $fields, $match)) {
+			if ($fields == '*') {
+				$ret = '*';
+			} elseif (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $fields, $match)) {
 				// (...) alias
 				$ret = "$match[1]($match[2]) AS `$match[5]`";
 			} elseif (preg_match('/^([0-9]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {

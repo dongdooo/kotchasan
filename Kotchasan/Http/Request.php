@@ -306,6 +306,18 @@ class Request extends AbstractRequest implements RequestInterface
 	}
 
 	/**
+	 * อ่านค่าจากตัวแปร SERVER
+	 *
+	 * @param string $name ชื่อตัวแปร
+	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
+	 * @return self
+	 */
+	public function server($name, $default = null)
+	{
+		return isset($_SERVER[$name]) ? $_SERVER[$name] : $default;
+	}
+
+	/**
 	 * ฟังก์ชั่น อ่าน ip ของ client
 	 *
 	 * @return string|null IP ที่อ่านได้
