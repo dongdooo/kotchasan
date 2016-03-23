@@ -3615,6 +3615,7 @@ a.skip_content {
 	margin-left: auto;
 	margin-right: auto;
 	float: none;
+	display: table;
 }
 .block {
 	display: block;

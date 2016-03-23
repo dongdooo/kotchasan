@@ -78,7 +78,7 @@
 							temp.show(elem, data);
 							onload.call(temp, xhr);
 						} else {
-							this.delayin = window.setTimeout(function () {
+							temp.delayin = window.setTimeout(function () {
 								temp.show(elem, data);
 								onload.call(temp, xhr);
 							}, temp.options.delayin);
@@ -168,7 +168,7 @@
 			this.iframe.style.height = (12 + this.tooltip.getHeight()) + 'px';
 			this.cancleHideDelay();
 			var temp = this;
-			for (i = 0; i < GTooltips.length; i++) {
+			for (var i = 0; i < GTooltips.length; i++) {
 				if (i != this.id && GTooltips[i].options.autohide) {
 					GTooltips[i].hide();
 				}

@@ -34,7 +34,7 @@ class PdoMysqlDriver extends Driver
 		$this->options = array(
 			PDO::ATTR_STRINGIFY_FETCHES => 0,
 			PDO::ATTR_EMULATE_PREPARES => 0,
-			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_PERSISTENT => 1,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		foreach ($param as $key => $value) {

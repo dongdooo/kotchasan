@@ -3544,7 +3544,6 @@ window.$K = (function () {
 			return '#' + toHex(rgb[0]) + toHex(rgb[1]) + toHex(rgb[2]);
 		}
 	};
-	var G_Lightbox = null;
 	window.GLightbox = GClass.create();
 	GLightbox.prototype = {
 		initialize: function (options) {
