@@ -374,7 +374,7 @@ class DataTable extends \Kotchasan\KBase
 			}
 			// จำนวนข้อมูลทั้งหมด
 			$count = $this->rs->count();
-		} elseif (isset($this->datas)) {
+		} elseif (!empty($this->datas)) {
 			// จำนวนข้อมูลใน array
 			$count = sizeof($this->datas);
 		} else {
@@ -412,8 +412,8 @@ class DataTable extends \Kotchasan\KBase
 			if (isset($this->model)) {
 				$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
 				$query->order($sort.' '.$this->sortType);
-			} elseif (isset($this->datas)) {
-				ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
+			} elseif (!empty($this->datas)) {
+				$this->datas = ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
 			}
 		}
 		if (isset($this->model)) {

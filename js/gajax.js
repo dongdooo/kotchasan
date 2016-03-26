@@ -1375,7 +1375,7 @@ window.$K = (function () {
 						obj.pattern = /^((ftp|http(s)?):\/\/)?\w+([\.\-]\w+)*\.\w{2,4}(\:\d+)*([\/\.\-\?\&\%\#\=]\w+)*\/?$/i;
 					}
 				} else if (obj.type == 'color') {
-					var color = new GDDColor(text, function (c) {
+					new GDDColor(text, function (c) {
 						this.input.style.backgroundColor = c;
 						this.input.style.color = this.invertColor(c);
 						this.input.value = c;
@@ -1421,9 +1421,9 @@ window.$K = (function () {
 				var ret = true;
 				if (temp.onbeforesubmit.call(this)) {
 					forEach(elements, function () {
-						var val = this.element.value;
+						var title, val = this.element.value;
 						if (this.required !== null && val == '') {
-							var title = this.title !== '' ? this.title : trans('Please fill in');
+							title = this.title !== '' ? this.title : trans('Please fill in');
 							alert(title);
 							this.element.addClass('required').highlight().focus();
 							ret = false;
@@ -1432,7 +1432,7 @@ window.$K = (function () {
 							if (this.pattern.test(val)) {
 								this.element.valid();
 							} else {
-								var title = this.title !== '' ? this.title : trans('Invalid data');
+								title = this.title !== '' ? this.title : trans('Invalid data');
 								this.element.invalid(title);
 								alert(title);
 								this.element.highlight().focus();
@@ -1584,7 +1584,7 @@ window.$K = (function () {
 			return this;
 		}
 	};
-	var GModal = GClass.create();
+	window.GModal = GClass.create();
 	GModal.prototype = {
 		initialize: function (options) {
 			this.id = 'modaldiv';

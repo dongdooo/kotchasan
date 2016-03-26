@@ -11,7 +11,6 @@ namespace Kotchasan\Http;
 use \Psr\Http\Message\RequestInterface;
 use \Psr\Http\Message\UriInterface;
 use \Kotchasan\Http\AbstractMessage;
-use \Kotchasan\Http\Stream;
 use \Kotchasan\Http\Uri;
 
 /**

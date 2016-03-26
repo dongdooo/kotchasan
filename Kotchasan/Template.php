@@ -40,7 +40,7 @@ class Template
 	 *
 	 * @var int
 	 */
-	private $num;
+	protected $num;
 	/**
 	 * ชื่อ template ที่กำลังใช้งานอยู่ รวมโฟลเดอร์ที่เก็บ template ด้วย
 	 * เช่น skin/default/
@@ -67,6 +67,8 @@ class Template
 	 * @param string $module ชื่อโมดูล
 	 * @param string $name ชื่อ template ไม่ต้องระบุนามสกุลของไฟล์
 	 * @return \static
+	 *
+	 * @assert ('', '', 'FileNotFound')->isEmpty() [==] true
 	 */
 	public static function create($owner, $module, $name)
 	{
@@ -74,7 +76,7 @@ class Template
 		$obj->skin = $obj->load($owner, $module, $name);
 		$obj->items = array();
 		$obj->cols = -1;
-		$obj->num = $obj->cols;
+		$obj->num = -1;
 		return $obj;
 	}
 
@@ -83,6 +85,8 @@ class Template
 	 *
 	 * @param string $filename
 	 * @throws \InvalidArgumentException ถ้าไม่พบไฟล์
+	 *
+	 * @assert ('FileNotFound') [throws] InvalidArgumentException
 	 */
 	public static function createFromFile($filename)
 	{
@@ -91,10 +95,10 @@ class Template
 			$obj->skin = file_get_contents($filename);
 			$obj->items = array();
 			$obj->cols = -1;
-			$obj->num = $obj->cols;
+			$obj->num = -1;
 			return $obj;
 		} else {
-			throw new \InvalidArgumentException(Language::get('Template file not found'));
+			throw new \InvalidArgumentException('Template file not found');
 		}
 	}
 
@@ -125,6 +129,7 @@ class Template
 	 * @param array $replace ข้อความที่จะถูกแทนที่ลงในคีย์
 	 * @param string $skin template
 	 * @return string คืนค่า HTML template
+	 *
 	 * @assert ('/{TITLE}/', 'Title', '<b>{TITLE}</b>') [==] '<b>Title</b>'
 	 * @assert ('/{LNG_([\w\s\.\-\'\(\),%\/:&\#;]+)}/e', '\Kotchasan\Language::get(array(1=>"$1"))', '<b>{LNG_Language test}</b>') [==] '<b>Language test</b>'
 	 */
@@ -172,15 +177,23 @@ class Template
 	{
 		$src = self::getPath();
 		if ($module != '' && is_file($src.$module.'/'.$name.'.html')) {
-			$result = file_get_contents($src.$module.'/'.$name.'.html');
+			return file_get_contents($src.$module.'/'.$name.'.html');
 		} elseif ($owner != '' && is_file($src.$owner.'/'.$name.'.html')) {
-			$result = file_get_contents($src.$owner.'/'.$name.'.html');
+			return file_get_contents($src.$owner.'/'.$name.'.html');
 		} elseif (is_file($src.$name.'.html')) {
-			$result = file_get_contents($src.$name.'.html');
-		} else {
-			$result = '';
+			return file_get_contents($src.$name.'.html');
 		}
-		return $result;
+		return '';
+	}
+
+	/**
+	 * ตรวจสอบว่ามีไฟล์ Template ถูกเลือกหรือไม่
+	 *
+	 * @return bool true ถ้าไม่พบไฟล์ Template หรือ Template ว่างเปล่า, อื่นๆคืนค่า False
+	 */
+	public function isEmpty()
+	{
+		return $this->skin == '';
 	}
 
 	/**

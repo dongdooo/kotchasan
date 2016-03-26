@@ -9,7 +9,6 @@
 namespace Kotchasan\Http;
 
 use \Psr\Http\Message\UriInterface;
-use \Kotchasan\Http\Server;
 
 /**
  * Class สำหรับจัดการ Uri (PSR-7)
@@ -88,7 +87,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	public function __toString()
 	{
 		return self::createUriString(
-			$this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment
+				$this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment
 		);
 	}
 

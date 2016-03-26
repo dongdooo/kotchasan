@@ -11,7 +11,6 @@ namespace Kotchasan;
 use \Kotchasan\LoginInterface;
 use \Kotchasan\Password;
 use \Kotchasan\Language;
-use \Kotchasan\Http\Request;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -63,9 +62,9 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		// การเข้ารหัส
 		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
-		self::$text_email = $login->get('login_email', $pw);
-		self::$text_password = $login->get('login_password', $pw);
-		$login_remember = $login->get('login_remember', $pw) == 1 ? 1 : 0;
+		self::$text_email = $login->get('email', $pw);
+		self::$text_password = $login->get('password', $pw);
+		$login_remember = $login->get('remember', $pw) == 1 ? 1 : 0;
 		$action = self::$request->request('action')->toString();
 		// ตรวจสอบการ login
 		if ($action === 'EMAIL_EXISIS') {
@@ -73,7 +72,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			self::$login_message = str_replace(':name', Language::get('Email'), Language::get('This :name is already registered'));
 		} elseif ($action === 'logout' && self::$request->post('login_email')->toString() == '') {
 			// logout ลบ session และ cookie
-			unset($_SESSION['klogin']);
+			unset($_SESSION['login']);
 			$time = time();
 			setCookie('login_email', '', $time, '/');
 			setCookie('login_password', '', $time, '/');
@@ -83,38 +82,32 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			return $login->forgot();
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
-			if (self::$text_email != '' && self::$text_password != '') {
-				// ตรวจสอบการกรอก
-				if (self::$text_email == '') {
-					self::$login_message = Language::get('Please fill out this form');
-					self::$login_input = 'login_email';
-				} elseif (self::$text_password == '') {
-					self::$login_message = Language::get('Please fill out this form');
-					self::$login_input = 'login_password';
-				} else {
-					// ตรวจสอบการ login กับฐานข้อมูล
-					$login_result = $login->checkLogin(self::$text_email, self::$text_password);
-					if (is_string($login_result)) {
-						// ข้อความผิดพลาด
-						self::$login_input = $login_result == 'Incorrect password' ? 'login_password' : 'login_email';
-						self::$login_message = Language::get($login_result);
-					} else {
-						// save login session
-						$login_result['password'] = self::$text_password;
-						$_SESSION['klogin'] = $login_result;
-						// save login cookie
-						$time = time() + 2592000;
-						if ($login_remember == 1) {
-							setcookie('login_email', $pw->encode(self::$text_email), $time, '/');
-							setcookie('login_password', $pw->encode(self::$text_password), $time, '/');
-							setcookie('login_remember', $login_remember, $time, '/');
-						}
-						setcookie('login_id', $login_result['id'], $time, '/');
-					}
-				}
-			} elseif (self::$text_email !== null) {
+			if (self::$text_email == '') {
 				self::$login_message = Language::get('Please fill out this form');
 				self::$login_input = 'login_email';
+			} elseif (self::$text_password == '') {
+				self::$login_message = Language::get('Please fill out this form');
+				self::$login_input = 'login_password';
+			} else {
+				// ตรวจสอบการ login กับฐานข้อมูล
+				$login_result = $login->checkLogin(self::$text_email, self::$text_password);
+				if (is_string($login_result)) {
+					// ข้อความผิดพลาด
+					self::$login_input = $login_result == 'Incorrect password' ? 'login_password' : 'login_email';
+					self::$login_message = Language::get($login_result);
+				} else {
+					// save login session
+					$login_result['password'] = $pw->encode(self::$text_password);
+					$_SESSION['login'] = $login_result;
+					// save login cookie
+					$time = time() + 2592000;
+					if ($login_remember == 1) {
+						setcookie('login_email', $pw->encode(self::$text_email), $time, '/');
+						setcookie('login_password', $pw->encode(self::$text_password), $time, '/');
+						setcookie('login_remember', $login_remember, $time, '/');
+					}
+					setcookie('login_id', $login_result['id'], $time, '/');
+				}
 			}
 			return $login;
 		}
@@ -131,13 +124,13 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	protected function get($name, Password $pwd)
 	{
 		$datas = self::$request->getParsedBody();
-		if (isset($datas[$name])) {
-			return (string)$datas[$name];
-		} elseif ($datas = self::$request->session($name)->toString()) {
-			return (string)$datas;
+		if (isset($datas['login_'.$name])) {
+			return (string)$datas['login_'.$name];
+		} elseif (isset($_SESSION['login']) && isset($_SESSION['login'][$name])) {
+			return $name === 'password' ? $pwd->decode($_SESSION['login'][$name]) : $_SESSION['login'][$name];
 		}
 		$datas = self::$request->getCookieParams();
-		return isset($datas[$name]) ? $pwd->decode($datas[$name]) : null;
+		return isset($datas['login_'.$name]) ? $pwd->decode($datas['login_'.$name]) : null;
 	}
 
 	/**
@@ -176,7 +169,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	 */
 	public static function isMember()
 	{
-		return isset($_SESSION['klogin']) ? $_SESSION['klogin'] : null;
+		return isset($_SESSION['login']) ? $_SESSION['login'] : null;
 	}
 
 	/**

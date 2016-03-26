@@ -9,8 +9,6 @@
 namespace Kotchasan\Http;
 
 use \Psr\Http\Message\RequestInterface;
-use \Kotchasan\Http\Stream;
-use \Kotchasan\Http\UploadedFile;
 use \Kotchasan\InputItem;
 use \Kotchasan\Inputs;
 use \Kotchasan\Files;
