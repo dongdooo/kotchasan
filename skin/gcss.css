@@ -2910,6 +2910,10 @@ a.skip_content {
 	border-width: 2px;
 	border-bottom-style: dotted;
 }
+.document-list h6,
+.document-list .icon {
+	display: inline;
+}
 .listview [class*="col"] {
 	padding: 0;
 	margin: 0;
@@ -2927,7 +2931,7 @@ a.skip_content {
 	display: block;
 }
 .thumbview .description {
-	height: 5em;
+	height: 4.8em;
 	overflow: hidden;
 }
 .document-list .figure {

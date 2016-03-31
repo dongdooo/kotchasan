@@ -11,6 +11,7 @@ namespace Kotchasan;
 use \Kotchasan\LoginInterface;
 use \Kotchasan\Password;
 use \Kotchasan\Language;
+use \Kotchasan\Http\Request;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -67,10 +68,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		$login_remember = $login->get('remember', $pw) == 1 ? 1 : 0;
 		$action = self::$request->request('action')->toString();
 		// ตรวจสอบการ login
-		if ($action === 'EMAIL_EXISIS') {
-			// error มี email อยู่แล้ว (facebook login)
-			self::$login_message = str_replace(':name', Language::get('Email'), Language::get('This :name is already registered'));
-		} elseif ($action === 'logout' && self::$request->post('login_email')->toString() == '') {
+		if ($action === 'logout' && self::$request->post('login_email')->toString() == '') {
 			// logout ลบ session และ cookie
 			unset($_SESSION['login']);
 			$time = time();
@@ -79,7 +77,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			self::$login_message = Language::get('Logout successful');
 		} elseif ($action === 'forgot') {
 			// ลืมรหัสผ่าน
-			return $login->forgot();
+			return $login->forgot(self::$request);
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
 			if (self::$text_email == '') {
@@ -95,6 +93,11 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 					// ข้อความผิดพลาด
 					self::$login_input = $login_result == 'Incorrect password' ? 'login_password' : 'login_email';
 					self::$login_message = Language::get($login_result);
+					// logout ลบ session และ cookie
+					unset($_SESSION['login']);
+					$time = time();
+					setCookie('login_email', '', $time, '/');
+					setCookie('login_password', '', $time, '/');
 				} else {
 					// save login session
 					$login_result['password'] = $pw->encode(self::$text_password);
@@ -157,7 +160,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	/**
 	 * ฟังก์ชั่นส่งอีเมล์ลืมรหัสผ่าน
 	 */
-	public function forgot()
+	public function forgot(Request $request)
 	{
 		return $this;
 	}

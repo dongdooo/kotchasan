@@ -387,11 +387,11 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE
 	 *
 	 * @param mixed $condition
-	 * @param string $oprator (optional) เช่น AND หรือ OR
+	 * @param string $operator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
 	 * @return string|array คืนค่า string สำหรับคำสั่ง WHERE หรือคืนค่า array(where, values) สำหรับใช้กับการ bind
 	 */
-	protected function buildWhere($condition, $oprator = 'AND', $id = 'id')
+	protected function buildWhere($condition, $operator = 'AND', $id = 'id')
 	{
 		if (is_array($condition)) {
 			if (is_array($condition[0])) {
@@ -406,42 +406,59 @@ abstract class Query extends \Kotchasan\KBase
 						$qs[] = $ret;
 					}
 				}
-				$condition = implode(' '.$oprator.' ', $qs);
+				$ret = implode(' '.$operator.' ', $qs);
 				if (!empty($ps)) {
-					$condition = array($condition, $ps);
+					$ret = array($ret, $ps);
 				}
-			} elseif (strpos($condition[0], '(') !== false) {
-				$condition = $condition[0];
+			} elseif (is_string($condition[0]) && strpos($condition[0], '(') !== false) {
+				$qs = array($condition[0]);
+				$ps = array();
+				unset($condition[0]);
+				foreach ($condition as $item) {
+					$ret = $this->whereValue($item);
+					if (is_array($ret)) {
+						$qs[] = $ret[0];
+						$ps = ArrayTool::replace($ps, $ret[1]);
+					} else {
+						$qs[] = $ret;
+					}
+				}
+				$ret = implode(' '.$operator.' ', $qs);
+				if (!empty($ps)) {
+					$ret = array($ret, $ps);
+				}
 			} else {
-				$condition = $this->whereValue($condition);
+				$ret = $this->whereValue($condition);
 			}
 		} elseif (preg_match('/^[0-9]+$/', $condition)) {
 			// primaryKey
-			$condition = $this->fieldName($id).' = '.$condition;
+			$ret = $this->fieldName($id).' = '.$condition;
+		} else {
+			$ret = $condition;
 		}
-		return $condition;
+		return $ret;
 	}
 
 	/**
 	 * ฟังก์ชั่นสร้างคำสั่ง WHERE และ values ไม่ใส่ alias ให้กับชื่อฟิลด์
 	 *
 	 * @param mixed $condition
-	 * @param string $oprator (optional) เช่น AND หรือ OR
+	 * @param string $operator (optional) เช่น AND หรือ OR
 	 * @param string $id (optional )ชื่อฟิลด์ที่เป็น key
 	 * @return array ($condition, $values)
 	 */
-	protected function buildWhereValues($condition, $oprator = 'AND', $id = 'id')
+	protected function buildWhereValues($condition, $operator = 'AND', $id = 'id')
 	{
 		if (is_array($condition)) {
 			$values = array();
 			$qs = array();
 			if (is_array($condition[0])) {
 				foreach ($condition as $item) {
-					$ret = $this->buildWhereValues($item, $oprator, $id);
+					$ret = $this->buildWhereValues($item, $operator, $id);
 					$qs[] = $ret[0];
 					$values = ArrayTool::replace($values, $ret[1]);
 				}
-				$condition = implode(' '.$oprator.' ', $qs);
+				$condition = implode(' '.$operator.' ', $qs);
 			} elseif (strpos($condition[0], '(') !== false) {
 				$condition = $condition[0];
 			} else {

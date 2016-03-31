@@ -37,7 +37,7 @@ class View extends \Kotchasan\View
 		// h1
 		$form->add('h1', array(
 			'class' => 'icon-customer',
-			'innerHTML' => Language::get('Administrator area')
+			'innerHTML' => Language::get('Administrator Area')
 		));
 		// message
 		if (isset(Login::$login_message)) {
@@ -95,6 +95,6 @@ class View extends \Kotchasan\View
 	 */
 	public function title()
 	{
-		return Language::get('Administrator area');
+		return Language::get('Administrator Area');
 	}
 }

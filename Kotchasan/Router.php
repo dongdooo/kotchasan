@@ -22,11 +22,9 @@ class Router extends \Kotchasan\KBase
 	 *
 	 * @var array
 	 */
-	private $rules = array(
-		// index.php/module/_mvc/folder/_dir/_method
-		'/^[a-z0-9]+\.php\/([a-z]+)\/(model|controller|view)(\/([\/a-z0-9_]+)\/([a-z0-9_]+))?$/i' => array('module', '_mvc', '', '_dir', '_method'),
-		// module/_mvc/_dir/_method
-		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)\/([a-z0-9_]+)/i' => array('module', '_mvc', '_dir', '_method'),
+	protected $rules = array(
+		// index.php/module/model/folder/_dir/_method
+		'/^[a-z0-9]+\.php\/([a-z]+)\/(model)(\/([\/a-z0-9_]+)\/([a-z0-9_]+))?$/i' => array('module', '_mvc', '', '_dir', '_method'),
 		// index/model/_dir
 		'/([a-z]+)\/(model|controller|view)\/([a-z0-9_]+)/i' => array('module', '_mvc', '_dir'),
 		// module/cat/id
@@ -78,9 +76,7 @@ class Router extends \Kotchasan\KBase
 	 * @param array $modules query string
 	 * @return array
 	 *
-	 * @assert ('/index.php/css/view', array()) [==] array( '_mvc' => 'view', 'module' => 'css')
 	 * @assert ('/print.php/css/view/index', array()) [==] array( '_mvc' => 'view', '_dir' => 'index', 'module' => 'css')
-	 * @assert ('/xhr.php/css/view/index/init', array()) [==] array( '_mvc' => 'view', '_dir' => 'index', 'module' => 'css', '_method' => 'init')
 	 * @assert ('/index/model/updateprofile.php', array()) [==] array( '_mvc' => 'model', '_dir' => 'updateprofile', 'module' => 'index')
 	 * @assert ('/index.php/alias/model/admin/settings/save') [==] array('module' => 'alias', '_mvc' => 'model', '_dir' => 'admin/settings', '_method' => 'save')
 	 * @assert ('/css/view/index.php', array()) [==] array('module' => 'css', '_mvc' => 'view', '_dir' => 'index')

@@ -34,29 +34,28 @@ class Email extends \Kotchasan\Model
 	public static function send($id, $module, $datas, $to)
 	{
 		$model = new static;
-		$sql = "SELECT `from_email`,`copy_to`,`subject`,`detail` FROM `".$model->tableWithPrefix('emailtemplate')."`";
-		$sql .= " WHERE `module`=:module AND `email_id`=:email_id AND `language` IN (:language,'th')";
-		$sql .= " LIMIT 1";
-		$where = array(
-			':module' => $module,
-			':email_id' => (int)$id,
-			':language' => Language::name()
-		);
-		$email = $model->db()->cacheOn()->customQuery($sql, true, $where);
-		if (empty($email)) {
+		$email = $model->db()->createQuery()
+			->from('emailtemplate')
+			->where(array(
+				array('module', $module),
+				array('email_id', (int)$id),
+				array('language', array(Language::name(), ''))
+			))
+			->cacheOn()
+			->toArray()
+			->first('from_email', 'copy_to', 'subject', 'detail');
+		if ($email === false) {
 			return Language::get('email template not found');
 		} else {
-			$email = $email[0];
 			// ผู้ส่ง
 			$from = empty($email['from_email']) ? self::$cfg->noreply_email : $email['from_email'];
 			// ข้อความในอีเมล์
-			$replace = array(
-				'/%WEBTITLE%/' => strip_tags(self::$cfg->web_title),
-				'/%WEBURL%/' => WEB_URL,
-				'/%ADMINEMAIL%/' => $from,
-				'/%TIME%/' => Date::format()
-			);
-			$replace = ArrayTool::replace($replace, $datas);
+			$replace = ArrayTool::replace(array(
+					'/%WEBTITLE%/' => strip_tags(self::$cfg->web_title),
+					'/%WEBURL%/' => WEB_URL,
+					'/%ADMINEMAIL%/' => $from,
+					'/%TIME%/' => Date::format()
+					), $datas);
 			ArrayTool::extract($replace, $keys, $values);
 			$msg = preg_replace($keys, $values, $email['detail']);
 			$subject = preg_replace($keys, $values, $email['subject']);
@@ -148,8 +147,7 @@ class Email extends \Kotchasan\Model
 						$mail->AddAddress($email, $email);
 					}
 				}
-				$err = $mail->send();
-				if (!$err) {
+				if (false === $mail->send()) {
 					$messages[$mail->ErrorInfo] = $mail->ErrorInfo;
 				}
 				$mail->clearAddresses();

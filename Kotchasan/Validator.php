@@ -22,11 +22,12 @@ class Validator extends \Kotchasan\KBase
 	 * ตรวจสอบความถูกของอีเมล์
 	 *
 	 * @param string $email
+	 * @return bool คืนค่า true ถ้ารูปแบบอีเมล์ถูกต้อง
+	 *
 	 * @assert ('admin@localhost.com') [==] true
 	 * @assert ('admin@localhost') [==] true
 	 * @assert ('ทดสอบ@localhost') [==] false
 	 * @assert ('admin@ไทย') [==] true
-	 * @return boolean คืนค่า true ถ้ารูปแบบอีเมล์ถูกต้อง
 	 */
 	public static function email($email)
 	{
@@ -46,7 +47,7 @@ class Validator extends \Kotchasan\KBase
 	 *
 	 * @param array $excepts ชนิดของไฟล์ที่ยอมรับเช่น array('jpg', 'gif', 'png')
 	 * @param array $file_upload รับค่ามาจาก $_FILES
-	 * @return array|boolean คืนค่าแอเรย์ [width, height, mime] ของรูปภาพ หรือ  false ถ้าไม่ใช่รูปภาพ
+	 * @return array|bool คืนค่าแอเรย์ [width, height, mime] ของรูปภาพ หรือ  false ถ้าไม่ใช่รูปภาพ
 	 */
 	public static function isImage($excepts, $file_upload)
 	{
@@ -67,5 +68,27 @@ class Validator extends \Kotchasan\KBase
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * ฟังก์ชั่นสำหรับตรวจสอบความถูกต้องของรหัสบัตรประชาชน
+	 *
+	 * @param string $id ตัวเลข 13 หลัก
+	 * @return bool คืนค่า true=ถูกต้อง และ false=ไม่ถูกต้อง
+	 *
+	 * @assert ('0123456789016') [==] true
+	 * @assert ('0123456789015') [==] false
+	 */
+	public static function idCard($id)
+	{
+		if (preg_match('/^[0-9]{13,13}$/', $id)) {
+			for ($i = 0, $sum = 0; $i < 12; $i++) {
+				$sum += (int)($id{$i}) * (13 - $i);
+			}
+			if ((11 - ($sum % 11)) % 10 == (int)($id{12})) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
