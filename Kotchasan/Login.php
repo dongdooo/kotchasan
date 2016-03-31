@@ -47,6 +47,14 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	 * @var string
 	 */
 	public static $text_password;
+	/**
+	 * ตัวแปรบอกว่ามาจากการ submit
+	 * true มาจากการ submit
+	 * false default
+	 *
+	 * @var bool
+	 */
+	private $from_submit = false;
 
 	/**
 	 * ตรวจสอบการ login เมื่อมีการเรียกใช้ class new Login
@@ -66,26 +74,29 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		self::$text_email = $login->get('email', $pw);
 		self::$text_password = $login->get('password', $pw);
 		$login_remember = $login->get('remember', $pw) == 1 ? 1 : 0;
-		$action = self::$request->request('action')->toString();
 		// ตรวจสอบการ login
-		if ($action === 'logout' && self::$request->post('login_email')->toString() == '') {
+		if (self::$request->get('action')->toString() === 'logout' && self::$request->post('login_email')->toString() == '') {
 			// logout ลบ session และ cookie
 			unset($_SESSION['login']);
 			$time = time();
 			setCookie('login_email', '', $time, '/');
 			setCookie('login_password', '', $time, '/');
 			self::$login_message = Language::get('Logout successful');
-		} elseif ($action === 'forgot') {
-			// ลืมรหัสผ่าน
+		} elseif (self::$request->post('action')->toString() === 'forgot') {
+			// ตรวจสอบอีเมล์สำหรับการขอรหัสผ่านใหม่
 			return $login->forgot(self::$request);
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
 			if (self::$text_email == '') {
-				self::$login_message = Language::get('Please fill out this form');
-				self::$login_input = 'login_email';
+				if ($login->from_submit) {
+					self::$login_message = Language::get('Please fill out this form');
+					self::$login_input = 'login_email';
+				}
 			} elseif (self::$text_password == '') {
-				self::$login_message = Language::get('Please fill out this form');
-				self::$login_input = 'login_password';
+				if ($login->from_submit) {
+					self::$login_message = Language::get('Please fill out this form');
+					self::$login_input = 'login_password';
+				}
 			} else {
 				// ตรวจสอบการ login กับฐานข้อมูล
 				$login_result = $login->checkLogin(self::$text_email, self::$text_password);
@@ -128,6 +139,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	{
 		$datas = self::$request->getParsedBody();
 		if (isset($datas['login_'.$name])) {
+			$this->from_submit = true;
 			return (string)$datas['login_'.$name];
 		} elseif (isset($_SESSION['login']) && isset($_SESSION['login'][$name])) {
 			return $name === 'password' ? $pwd->decode($_SESSION['login'][$name]) : $_SESSION['login'][$name];
