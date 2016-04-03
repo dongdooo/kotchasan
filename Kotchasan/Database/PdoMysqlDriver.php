@@ -9,7 +9,6 @@
 namespace Kotchasan\Database;
 
 use \Kotchasan\Database\Driver;
-use \Kotchasan\Database\DbCache as Cache;
 use \Kotchasan\ArrayTool;
 use \PDO;
 

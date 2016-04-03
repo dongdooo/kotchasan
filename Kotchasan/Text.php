@@ -23,8 +23,9 @@ class Text
 	 *
 	 * @param string $source ข้อความต้นฉบับ
 	 * @param array $replace ข้อความที่จะนำมาแทนที่ รูปแบบ array($key1 => $value1, $key2 => $value2) ข้อความใน $source ที่ตรงกับ $key จะถูกแทนที่ด้วย $value
-	 * @assert ("SELECT * FROM table WHERE id=:id AND lang IN (:lang, '')", array(':id' => 1, array(':lang' => 'th'))) [==] "SELECT * FROM table WHERE id=1 AND lang IN (th, '')"
 	 * @return string
+	 *
+	 * @assert ("SELECT * FROM table WHERE id=:id AND lang IN (:lang, '')", array(':id' => 1, array(':lang' => 'th'))) [==] "SELECT * FROM table WHERE id=1 AND lang IN (th, '')"
 	 */
 	public static function replace($source, $replace)
 	{
@@ -42,8 +43,9 @@ class Text
 	 * & " ' < > { } ไม่แปลง รหัส HTML เช่น &amp; &#38;
 	 *
 	 * @param string $source ข้อความ
-	 * @assert ('&"'."'<>{}&amp;&#38;") [==] "&amp;&quot;&#039;&lt;&gt;&#x007B;&#x007D;&amp;&#38;"
 	 * @return string
+	 *
+	 * @assert ('&"'."'<>{}&amp;&#38;") [==] "&amp;&quot;&#039;&lt;&gt;&#x007B;&#x007D;&amp;&#38;"
 	 */
 	public static function toEditor($source)
 	{
@@ -151,5 +153,20 @@ class Text
 		$patt[] = '/\[youtube\]([a-z0-9-_]+)\[\/youtube\]/i';
 		$replace[] = '<div class="youtube"><iframe src="//www.youtube.com/embed/\\1?wmode=transparent"></iframe></div>';
 		return preg_replace($patt, $replace, $detail);
+	}
+
+	/**
+	 * ฟังก์ชั่นรับค่าสำหรับใช้เป็น username
+	 * รองรับอีเมล์ ตัวเลข (หมายเลขโทรศัพท์) @ ? - _ . เท่านั้น
+	 *
+	 * @param string $value
+	 * @return string
+	 *
+	 * @assert (' ad_min@demo.com') [==] 'ad_min@demo.com'
+	 * @assert ('012 3465') [==] '0123465'
+	 */
+	public static function username($value)
+	{
+		return preg_replace('/[^a-zA-Z0-9@\?\.\-_]+/', '', $value);
 	}
 }

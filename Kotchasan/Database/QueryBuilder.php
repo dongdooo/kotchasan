@@ -8,7 +8,6 @@
 
 namespace Kotchasan\Database;
 
-use \Kotchasan\Database\Query;
 use \Kotchasan\Database\Driver;
 use \Kotchasan\ArrayTool;
 
@@ -22,7 +21,7 @@ use \Kotchasan\ArrayTool;
  * @setup $driver = new PdoMysqlDriver;
  * @setup $this = $driver->createQuery();
  */
-class QueryBuilder extends Query
+class QueryBuilder extends \Kotchasan\Database\Query
 {
 	/**
 	 * ส่งออกผลลัพท์เป็น Array
@@ -81,7 +80,7 @@ class QueryBuilder extends Query
 	 * @param mixed $condition query string หรือ array
 	 * @return \static
 	 *
-	 * @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name`=:name"
+	 * @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name`='test'"
 	 */
 	public function delete($table, $condition)
 	{
@@ -123,7 +122,7 @@ class QueryBuilder extends Query
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL ข้อมูลต้องการผลลัพท์เพียงรานการเดียว
 	 *
 	 * @param string $fields (option) รายชื่อฟิลด์ field1, field2, field3, ....
-	 * @return object|bool คืนค่าผลลัพท์ที่พบเพียงรายการเดียว ไม่พบข้อมูลคืนค่า false
+	 * @return object|array|bool คืนค่าผลลัพท์ที่พบเพียงรายการเดียว ไม่พบข้อมูลคืนค่า false
 	 */
 	public function first($fields = '*')
 	{
@@ -417,7 +416,7 @@ class QueryBuilder extends Query
 	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id` = 1"
 	 * @assert where('`id`=1 OR (SELECT ....)')->text() [==] " WHERE `id`=1 OR (SELECT ....)"
 	 * @assert where(array('id', '=', 1))->text() [==] " WHERE `id` = 1"
-	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (:id0, :id1, :id2)"
+	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (1, 2, '3')"
 	 * @assert where(array('(...)', array('fb', '0')))->text() [==] " WHERE (...) AND `fb` = '0'"
 	 * @assert where(array(array('fb', '0'), '(...)'))->text() [==] " WHERE `fb` = '0' AND (...)"
 	 */

@@ -8,7 +8,6 @@
 
 namespace Kotchasan\Cache;
 
-use \Psr\Cache\CacheItemPoolInterface;
 use \Psr\Cache\CacheItemInterface;
 use \Kotchasan\Cache\CacheItem as Item;
 use \Kotchasan\Cache\Cache;
@@ -80,7 +79,7 @@ class FileCache extends Cache
 			$file = $this->fetchStreamUri($key);
 			if ($this->isExpired($file)) {
 				$item = new Item($key);
-				$resuts[$key] = $item->set(unserialize(preg_replace('/^<\?php\sexit\?>(.*)$/isu', '\\1', file_get_contents($file))));
+				$resuts[$key] = $item->set(unserialize(preg_replace('/^<\?php\sexit\?>/', '', file_get_contents($file), 1)));
 			}
 		}
 		return $resuts;

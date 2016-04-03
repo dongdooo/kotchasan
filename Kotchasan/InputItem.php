@@ -59,6 +59,7 @@ class InputItem
 	 * คืนค่าเป็น boolean
 	 *
 	 * @return bool
+	 *
 	 * @assert create(true)->toBoolean() [==] 1
 	 * @assert create(false)->toBoolean() [==] 0
 	 * @assert create(1)->toBoolean() [==] 1
@@ -74,6 +75,7 @@ class InputItem
 	 * คืนค่าเป็น double
 	 *
 	 * @return double
+	 *
 	 * @assert create(0.454)->toDouble() [==] 0.454
 	 * @assert create(0.545)->toDouble() [==] 0.545
 	 */
@@ -86,6 +88,7 @@ class InputItem
 	 * คืนค่าเป็น float
 	 *
 	 * @return float
+	 *
 	 * @assert create(0.454)->toFloat() [==] 0.454
 	 * @assert create(0.545)->toFloat() [==] 0.545
 	 */
@@ -98,6 +101,7 @@ class InputItem
 	 * คืนค่าเป็น integer
 	 *
 	 * @return int
+	 *
 	 * @assert create(0.454)->toInt() [==] 0
 	 * @assert create(2.945)->toInt() [==] 2
 	 */
@@ -110,6 +114,7 @@ class InputItem
 	 * คืนค่าเป็น Object
 	 *
 	 * @return object
+	 *
 	 * @assert create('test')->toObject() [==] (object)'test'
 	 */
 	public function toObject()
@@ -121,6 +126,7 @@ class InputItem
 	 * คืนค่าเป็น String
 	 *
 	 * @return string|null คืนค่าเป็น string หรือ null
+	 *
 	 * @assert create('ทดสอบ')->toString() [==] 'ทดสอบ'
 	 * @assert create('1')->toString() [==] '1'
 	 * @assert create(1)->toString() [==] '1'
@@ -136,6 +142,7 @@ class InputItem
 	 * เช่นหัวข้อของบทความ
 	 *
 	 * @return string
+	 *
 	 * @assert create(' ทด\/สอบ'."\r\n\t".'<?php echo \'555\'?> ')->topic() [==] 'ทด&#92;/สอบ &lt;?php echo &#039;555&#039;?&gt;'
 	 */
 	public function topic()
@@ -149,6 +156,7 @@ class InputItem
 	 * สำหรับ URL หรือ email
 	 *
 	 * @return string
+	 *
 	 * @assert create(" http://www.kotchasan.com?a=1&b=2&amp;c=3 ")->url() [==] 'http://www.kotchasan.com?a=1&amp;b=2&amp;c=3'
 	 */
 	public function url()
@@ -157,11 +165,25 @@ class InputItem
 	}
 
 	/**
+	 * รับค่าอีเมล์และหมายเลขโทรศัพท์เท่านั้น
+	 *
+	 * @return string
+	 *
+	 * @assert create(' admin@demo.com')->username() [==] 'admin@demo.com'
+	 * @assert create('012 3465')->username() [==] '0123465'
+	 */
+	public function username()
+	{
+		return Text::username($this->value);
+	}
+
+	/**
 	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities
 	 * และลบช่องว่างหัวท้าย
 	 * ใช้แปลงค่าที่รับจาก input ที่ไม่ยอมรับ tag
 	 *
 	 * @return string
+	 *
 	 * @assert create(" ทด\/สอบ<?php echo '555'?> ")->text() [==] 'ทด&#92;/สอบ&lt;?php echo &#039;555&#039;?&gt;'
 	 */
 	public function text()
@@ -175,6 +197,7 @@ class InputItem
 	 * ใช้รับข้อมูลที่มาจาก textarea
 	 *
 	 * @return string
+	 *
 	 * @assert create("ทด\/สอบ\n<?php echo '555'?>")->textarea() [==] "ทด&#92;/สอบ&lt;br /&gt;\n&lt;?php echo '555'?&gt;"
 	 */
 	public function textarea()
@@ -191,6 +214,7 @@ class InputItem
 	 *
 	 * @param int $len ความยาวของ description 0 หมายถึงคืนค่าทั้งหมด
 	 * @return string
+	 *
 	 * @assert create('ทด\/สอบ<?php echo "555"?>')->description() [==] 'ทด สอบ'
 	 * @assert create('ทด\/สอบ<style>body {color: red}</style>')->description() [==] 'ทด สอบ'
 	 * @assert create('ทด\/สอบ<b>ตัวหนา</b>')->description() [==] 'ทด สอบตัวหนา'
@@ -226,6 +250,7 @@ class InputItem
 	 * เช่นเนื้อหาของบทความ
 	 *
 	 * @return string
+	 *
 	 * @assert create('ทด\/สอบ<?php echo "555"?>')->detail() [==] 'ทด&#92;/สอบ'
 	 */
 	public function detail()
@@ -240,6 +265,7 @@ class InputItem
 	 *
 	 * @param int $len ความยาวของ keywords 0 หมายถึงคืนค่าทั้งหมด
 	 * @return string
+	 *
 	 * @assert create("<b>ทด</b>   \r\nสอบ")->keywords() [==] 'ทด สอบ'
 	 */
 	public function keywords($len = 0)
@@ -254,6 +280,7 @@ class InputItem
 	 * และลบช่องว่างหัวท้าย
 	 *
 	 * @return string
+	 *
 	 * @assert create("ทด'สอบ")->quote() [==] "ทด&#39;สอบ"
 	 */
 	public function quote()
@@ -276,6 +303,7 @@ class InputItem
 	 * วันที่และเวลา
 	 *
 	 * @return string
+	 *
 	 * @assert create('2016-01-01 20:20:20')->date() [==] '2016-01-01 20:20:20'
 	 */
 	public function date()
@@ -287,6 +315,7 @@ class InputItem
 	 * ค่าสี
 	 *
 	 * @return string
+	 *
 	 * @assert create('#000')->color() [==] '#000'
 	 * @assert create('red')->color() [==] 'red'
 	 */
@@ -299,6 +328,7 @@ class InputItem
 	 * ตัวเลข
 	 *
 	 * @return string
+	 *
 	 * @assert create(12345)->number() [==] '12345'
 	 * @assert create(0.12345)->number() [==] '012345'
 	 */

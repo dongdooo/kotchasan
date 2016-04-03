@@ -2564,7 +2564,7 @@ code,
 blockquote {
 	background-color: #F9F9F9;
 	background-color: rgba(0,0,0,0.04);
-	font-family: inherit;
+	font-family: Tahoma, Loma, Arial, Helvetica, sans-serif;
 }
 code {
 	border-width: 1px;

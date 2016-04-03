@@ -128,7 +128,14 @@ abstract class Query extends \Kotchasan\KBase
 		if (empty($this->sqls)) {
 			return '';
 		} else {
-			return $this->db->makeQuery($this->sqls);
+			$sql = $this->db->makeQuery($this->sqls);
+			$values = $this->getValues();
+			if (!empty($values)) {
+				foreach ($values as $key => $value) {
+					$sql = str_replace($key, is_string($value) ? "'$value'" : $value, $sql);
+				}
+			}
+			return $sql;
 		}
 	}
 
@@ -140,7 +147,13 @@ abstract class Query extends \Kotchasan\KBase
 	 */
 	protected function quoteTableName($table)
 	{
-		if (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
+		if (is_array($table)) {
+			if ($table[0] instanceof QueryBuilder) {
+				$table = '('.$table[0]->text().') AS '.$table[1];
+			} else {
+				$table = '('.$table[0].') AS '.$table[1];
+			}
+		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
 			$table = '`'.$this->tableWithPrefix($match[1]).'` AS '.$match[4];
 		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([a-zA-Z0-9]+)$/', $table, $match)) {
 			$table = '`'.$this->tableWithPrefix($match[1]).'` AS `'.$match[4].'`';
@@ -284,7 +297,7 @@ abstract class Query extends \Kotchasan\KBase
 				$rets[] = $this->fieldName($item);
 			}
 			$ret = implode(', ', $rets);
-		} elseif (is_int($name)) {
+		} elseif (is_numeric($name)) {
 			$ret = $name;
 		} else {
 			$name = trim($name);
@@ -321,7 +334,7 @@ abstract class Query extends \Kotchasan\KBase
 				$rets[] = $this->fieldValue($item);
 			}
 			$ret = '('.implode(', ', $rets).')';
-		} elseif (is_int($value)) {
+		} elseif (is_numeric($value)) {
 			$ret = $value;
 		} elseif (preg_match('/^([a-z0-9_]+)\.([a-z0-9_]+)(([\s]+as)?[\s]+([a-z0-9]+))?$/i', $value, $match)) {
 			$ret = "`$match[1]`.`$match[2]`".(isset($match[5]) ? ' AS `'.$match[5].'`' : '');
@@ -348,7 +361,7 @@ abstract class Query extends \Kotchasan\KBase
 				$params = array($params[0], trim($params[1]), $params[2]);
 			}
 			$key = $this->fieldName($params[0]);
-			if (is_int($params[2]) || is_bool($params[2])) {
+			if (is_numeric($params[2]) || is_bool($params[2])) {
 				// value เป็นตัวเลข หรือ boolean
 				$value = $params[2];
 			} elseif (is_array($params[2])) {
@@ -358,7 +371,7 @@ abstract class Query extends \Kotchasan\KBase
 				}
 				$qs = array();
 				foreach ($params[2] as $item) {
-					if (is_int($item) || is_bool($item)) {
+					if (is_numeric($item) || is_bool($item)) {
 						$qs[] = $item;
 					} else {
 						$qs[] = "'$item'";
@@ -480,7 +493,7 @@ abstract class Query extends \Kotchasan\KBase
 					$condition = $this->fieldName($condition[0]).' '.$condition[1].' :'.$condition[0];
 				}
 			}
-		} elseif (is_int($condition)) {
+		} elseif (is_numeric($condition)) {
 			// primaryKey
 			$values = array(":$id" => $condition);
 			$condition = "`$id` = :$id";
