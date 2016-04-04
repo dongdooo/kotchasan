@@ -112,7 +112,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 					setCookie('login_password', '', $time, '/');
 				} else {
 					// save login session
-					$login_result['password'] = $pw->encode(self::$text_password);
+					$login_result['password'] = self::$text_password;
 					$_SESSION['login'] = $login_result;
 					// save login cookie
 					$time = time() + 2592000;
@@ -143,7 +143,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			$this->from_submit = true;
 			return (string)$datas['login_'.$name];
 		} elseif (isset($_SESSION['login']) && isset($_SESSION['login'][$name])) {
-			return $name === 'password' ? $pwd->decode($_SESSION['login'][$name]) : $_SESSION['login'][$name];
+			return (string)$_SESSION['login'][$name];
 		}
 		$datas = self::$request->getCookieParams();
 		return isset($datas['login_'.$name]) ? $pwd->decode($datas['login_'.$name]) : null;
