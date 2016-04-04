@@ -66,7 +66,7 @@ abstract class Query extends \Kotchasan\KBase
 	 */
 	public function buildNext($field, $table, $condition = null, $alias = null)
 	{
-		return $this->db->buildNext($field, $table, $condition, $alias);
+		return $this->db->buildNext($field, $this->tableWithPrefix($table), $condition, $alias);
 	}
 
 	/**

@@ -344,27 +344,37 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	/**
 	 * UPDATE ..... SET
 	 *
-	 * @param array $datas รูปแบบ array(key1=>value1, key2=>value2)
+	 * @param array|string $datas รูปแบบ array(key1 => value1, query_string) หรือ query_string
 	 * @return \static
 	 *
 	 * @assert update('user')->set(array('key1' => 'value1', 'key2' => 2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:Skey1, `key2`=:Skey2 WHERE `id` = 1"
 	 * @assert update('user U')->set(array('U.key1' => 'value1', 'U.key2' => 2))->where(array('U.id', 1))->text() [==] "UPDATE `user` AS U SET U.`key1`=:SUkey1, U.`key2`=:SUkey2 WHERE U.`id` = 1"
 	 * @assert update('user')->set(array('key1' => '(...)'))->text() [==] "UPDATE `user` SET `key1`=(...)"
+	 * @assert update('user')->set('`reply`=`reply`+1')->text() [==] "UPDATE `user` SET `reply`=`reply`+1"
+	 * @assert update('user')->set(array('id' => 1, '`reply`=`reply`+1'))->text() [==] "UPDATE `user` SET `id`=:Sid, `reply`=`reply`+1"
 	 */
 	public function set($datas)
 	{
-		$keys = array();
-		foreach ($datas as $key => $value) {
-			$field = $this->fieldName($key);
-			$key = $this->aliasName($key, 'S');
-			if ($value instanceof QueryBuilder) {
-				$this->sqls['set'][$key] = $field.'=('.$value->text().')';
-			} elseif (strpos($value, '(') !== false) {
-				$this->sqls['set'][$key] = $field.'='.$value;
-			} else {
-				$this->sqls['set'][$key] = $field.'='.$key;
-				$this->sqls['values'][$key] = $value;
+		if (is_array($datas)) {
+			$keys = array();
+			foreach ($datas as $key => $value) {
+				if (is_int($key)) {
+					$this->sqls['set'][$value] = $value;
+				} else {
+					$field = $this->fieldName($key);
+					$key = $this->aliasName($key, 'S');
+					if ($value instanceof QueryBuilder) {
+						$this->sqls['set'][$key] = $field.'=('.$value->text().')';
+					} elseif (strpos($value, '(') !== false) {
+						$this->sqls['set'][$key] = $field.'='.$value;
+					} else {
+						$this->sqls['set'][$key] = $field.'='.$key;
+						$this->sqls['values'][$key] = $value;
+					}
+				}
 			}
+		} else {
+			$this->sqls['set'][$datas] = $datas;
 		}
 		return $this;
 	}

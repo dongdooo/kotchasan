@@ -152,11 +152,11 @@ class PdoMysqlDriver extends Driver
 	/**
 	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param array|object $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
-	public function insert($table, $save)
+	public function insert($table_name, $save)
 	{
 		$keys = array();
 		$values = array();
@@ -164,7 +164,7 @@ class PdoMysqlDriver extends Driver
 			$keys[] = $key;
 			$values[':'.$key] = $value;
 		}
-		$sql = 'INSERT INTO `'.$table.'` (`'.implode('`,`', $keys);
+		$sql = 'INSERT INTO `'.$table_name.'` (`'.implode('`,`', $keys);
 		$sql .= '`) VALUES (:'.implode(',:', $keys).')';
 		try {
 			$query = $this->connection->prepare($sql);
@@ -235,33 +235,33 @@ class PdoMysqlDriver extends Driver
 	 * ใช้ในการหาค่า id ถัดไป
 	 *
 	 * @param string $field ชื่อฟิลด์ที่ต้องการหาค่าสูงสุด
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param string $alias ชื่อของผลลัพท์ ถ้าไม่ระบุจะเป็นชื่อเดียวกับชื่อฟิลด์
 	 * @return string SQL Command
 	 *
 	 * @assert ('id', 'world', array(array('module_id', 'D.id'))) [==] '(1 + IFNULL((SELECT MAX(`id`) FROM `world` WHERE `module_id` = D.`id`), 0)) AS `id`'
 	 */
-	public function buildNext($field, $table, $condition = null, $alias = null)
+	public function buildNext($field, $table_name, $condition = null, $alias = null)
 	{
 		if (empty($condition)) {
 			$condition = '';
 		} else {
 			$condition = ' WHERE '.$this->buildWhere($condition);
 		}
-		return '(1 + IFNULL((SELECT MAX(`'.$field.'`) FROM `'.$table.'`'.$condition.'), 0)) AS `'.($alias ? $alias : $field).'`';
+		return '(1 + IFNULL((SELECT MAX(`'.$field.'`) FROM `'.$table_name.'`'.$condition.'), 0)) AS `'.($alias ? $alias : $field).'`';
 	}
 
 	/**
 	 * เรียกดูข้อมูล
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array $sort เรียงลำดับ
 	 * @param int $limit จำนวนข้อมูลที่ต้องการ
 	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
 	 */
-	public function select($table, $condition, $sort = array(), $limit = 0)
+	public function select($table_name, $condition, $sort = array(), $limit = 0)
 	{
 		$values = array();
 		$condition = $this->buildWhere($condition);
@@ -269,7 +269,7 @@ class PdoMysqlDriver extends Driver
 			$values = $condition[1];
 			$condition = $condition[0];
 		}
-		$sql = 'SELECT * FROM `'.$table.'` WHERE '.$condition;
+		$sql = 'SELECT * FROM `'.$table_name.'` WHERE '.$condition;
 		if (!empty($sort)) {
 			$qs = array();
 			foreach ($sort as $item) {
@@ -309,12 +309,12 @@ class PdoMysqlDriver extends Driver
 	/**
 	 * ฟังก์ชั่นแก้ไขข้อมูล
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array|object $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function update($table, $condition, $save)
+	public function update($table_name, $condition, $save)
 	{
 		$sets = array();
 		$values = array();
@@ -327,7 +327,7 @@ class PdoMysqlDriver extends Driver
 			$values = ArrayTool::replace($values, $condition[1]);
 			$condition = $condition[0];
 		}
-		$sql = 'UPDATE `'.$table.'` SET '.implode(', ', $sets).' WHERE '.$condition;
+		$sql = 'UPDATE `'.$table_name.'` SET '.implode(', ', $sets).' WHERE '.$condition;
 		try {
 			$query = $this->connection->prepare($sql);
 			$query->execute($values);

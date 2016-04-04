@@ -12,6 +12,7 @@ use \Kotchasan\LoginInterface;
 use \Kotchasan\Password;
 use \Kotchasan\Language;
 use \Kotchasan\Http\Request;
+use \Kotchasan\Text;
 
 /**
  * คลาสสำหรับตรวจสอบการ Login
@@ -71,7 +72,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		// การเข้ารหัส
 		$pw = new Password(self::$cfg->password_key);
 		// ค่าที่ส่งมา
-		self::$text_email = $login->get('email', $pw);
+		self::$text_email = Text::username($login->get('email', $pw));
 		self::$text_password = $login->get('password', $pw);
 		$login_remember = $login->get('remember', $pw) == 1 ? 1 : 0;
 		// ตรวจสอบการ login
@@ -102,7 +103,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 				$login_result = $login->checkLogin(self::$text_email, self::$text_password);
 				if (is_string($login_result)) {
 					// ข้อความผิดพลาด
-					self::$login_input = $login_result == 'Incorrect password' ? 'login_password' : 'login_email';
+					self::$login_input = self::$login_input == 'password' ? 'login_password' : 'login_email';
 					self::$login_message = Language::get($login_result);
 					// logout ลบ session และ cookie
 					unset($_SESSION['login']);
