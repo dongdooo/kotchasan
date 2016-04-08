@@ -30,7 +30,7 @@ class View extends \Kotchasan\View
 		echo '</style>';
 		echo '</head><body style="height:100%;width:100%;margin:0;font-family:Itim, Tahoma, Loma;color:#666;">';
 		echo '<div class=warper style="display:block"><div class="warper"><div>';
-		echo '<img src="'.WEB_URL.'../../skin/img/kotchasan.png" style="width:100px" alt="Kotchasan PHP Framework">';
+		echo '<img src="kotchasan.png" style="width:100px" alt="Kotchasan PHP Framework">';
 		echo '<h1 style="line-height:1.8;margin:0;text-shadow:3px 3px 0 rgba(0,0,0,0.1);font-weight:normal;">คชสาร (Kotchasan)</h1>';
 		echo 'Siam PHP Framework';
 		echo '</div></div></body></html>';
