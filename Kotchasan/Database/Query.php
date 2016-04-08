@@ -253,7 +253,7 @@ abstract class Query extends \Kotchasan\KBase
 	/**
 	 * สร้าง query เรียงลำดับ
 	 *
-	 * @param mixed $fields array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....
+	 * @param array|string $fields array('field ASC','field DESC') หรือ 'field ASC', 'field DESC', ....
 	 * @return string
 	 */
 	protected function buildOrder($fields)
@@ -269,6 +269,21 @@ abstract class Query extends \Kotchasan\KBase
 			}
 		}
 		return implode(', ', $sqls);
+	}
+
+	/**
+	 * สร้าง query สำหรับ GROUP BY
+	 *
+	 * @param array|string $fields array('U.id', 'U.username') หรือ string U.id
+	 * @return string
+	 */
+	protected function buildGroup($fields)
+	{
+		$sqls = array();
+		foreach ((array)$fields as $item) {
+			$sqls[] = $this->fieldName($item);
+		}
+		return empty($sqls) ? '' : implode(', ', $sqls);
 	}
 
 	/**

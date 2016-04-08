@@ -34,13 +34,13 @@ final class Database
 	{
 		if (empty(self::$instances[$name])) {
 			$param = (object)array(
-				'settings' => (object)array(
-					'char_set' => 'utf8',
-					'dbdriver' => 'mysql',
-					'hostname' => 'localhost'
-				),
-				'tables' => (object)array(
-				)
+					'settings' => (object)array(
+						'char_set' => 'utf8',
+						'dbdriver' => 'mysql',
+						'hostname' => 'localhost'
+					),
+					'tables' => (object)array(
+					)
 			);
 			if (is_file(APP_PATH.'settings/database.php')) {
 				$config = include APP_PATH.'settings/database.php';
@@ -61,7 +61,7 @@ final class Database
 				}
 			}
 			// โหลด driver (base)
-			include VENDOR_DIR.'Database/Driver.php';
+			require_once VENDOR_DIR.'Database/Driver.php';
 			// โหลด driver ตาม config ถ้าไม่พบ ใช้ PdoMysqlDriver
 			if (is_file(VENDOR_DIR.'Database/'.$param->settings->dbdriver.'Driver.php')) {
 				$class = ucfirst($param->settings->dbdriver).'Driver';
@@ -69,7 +69,7 @@ final class Database
 				// default driver
 				$class = 'PdoMysqlDriver';
 			}
-			include VENDOR_DIR.'Database/'.$class.'.php';
+			require_once VENDOR_DIR.'Database/'.$class.'.php';
 			$class = 'Kotchasan\\Database\\'.$class;
 			self::$instances[$name] = new $class;
 			self::$instances[$name]->connect($param);

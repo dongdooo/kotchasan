@@ -10,8 +10,6 @@ namespace Kotchasan\Orm;
 
 use \Kotchasan\Database\Query;
 use \Kotchasan\Database\Schema;
-use \Kotchasan\Database\DbCache as Cache;
-use \Kotchasan\Cache\CacheItem;
 use \Kotchasan\Orm\Field;
 use \Kotchasan\ArrayTool;
 
