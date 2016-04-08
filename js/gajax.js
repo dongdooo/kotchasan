@@ -1173,7 +1173,7 @@ window.$K = (function () {
 				return true;
 			};
 			var _docurrency = function (e) {
-				this.value = this.value.currFormat;
+				this.value = this.value.currFormat();
 			};
 			var _docheck = function (e) {
 				var val = this.value;

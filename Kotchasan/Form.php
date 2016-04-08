@@ -246,6 +246,16 @@ class Form extends \Kotchasan\KBase
 		return $obj;
 	}
 
+	public static function currency($attributes = array())
+	{
+		$obj = new static;
+		$obj->tag = 'input';
+		$attributes['type'] = 'text';
+		$attributes['class'] = 'currency';
+		$obj->attributes = $attributes;
+		return $obj;
+	}
+
 	public static function button($attributes = array())
 	{
 		$obj = new static;
