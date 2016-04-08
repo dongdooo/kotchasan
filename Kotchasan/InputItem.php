@@ -178,6 +178,18 @@ class InputItem
 	}
 
 	/**
+	 * รับค่าสำหรับ password อักขระทุกตัวไม่มีช่องว่าง
+	 *
+	 * @return string
+	 *
+	 * @assert create(" 0\n12   34\r\r6\t5 ")->password() [==] '0123465'
+	 */
+	public function password()
+	{
+		return preg_replace('/[^\w]+/', '', $this->value);
+	}
+
+	/**
 	 * ฟังก์ชั่น แปลง & " ' < > \ เป็น HTML entities
 	 * และลบช่องว่างหัวท้าย
 	 * ใช้แปลงค่าที่รับจาก input ที่ไม่ยอมรับ tag
