@@ -172,7 +172,7 @@ abstract class Driver extends Query
 		} else {
 			$values = array();
 		}
-		$sql = 'DELETE FROM `'.$table.'` WHERE '.$condition;
+		$sql = 'DELETE FROM '.$table.' WHERE '.$condition;
 		if (is_int($limit) && $limit > 0) {
 			$sql .= ' LIMIT '.$limit;
 		}
@@ -268,7 +268,7 @@ abstract class Driver extends Query
 	 */
 	public function lastId($table)
 	{
-		$result = $this->doCustomQuery("SHOW TABLE STATUS LIKE '$table'");
+		$result = $this->doCustomQuery('SHOW TABLE STATUS LIKE '.$table);
 		return $result && sizeof($result) == 1 ? (int)$result[0]['Auto_increment'] : 0;
 	}
 
@@ -344,7 +344,7 @@ abstract class Driver extends Query
 	 */
 	public function tableExists($table)
 	{
-		return $this->doQuery("SELECT 1 FROM `$table` LIMIT 1") === false ? false : true;
+		return $this->doQuery("SELECT 1 FROM $table LIMIT 1") === false ? false : true;
 	}
 
 	/**
@@ -355,7 +355,7 @@ abstract class Driver extends Query
 	 */
 	public function truncate($table)
 	{
-		return $this->query("TRUNCATE TABLE `$table`") === false ? false : true;
+		return $this->query('TRUNCATE TABLE '.$table) === false ? false : true;
 	}
 
 	/**

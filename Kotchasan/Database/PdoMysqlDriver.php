@@ -164,11 +164,12 @@ class PdoMysqlDriver extends Driver
 			$keys[] = $key;
 			$values[':'.$key] = $value;
 		}
-		$sql = 'INSERT INTO `'.$table_name.'` (`'.implode('`,`', $keys);
+		$sql = 'INSERT INTO '.$table_name.' (`'.implode('`,`', $keys);
 		$sql .= '`) VALUES (:'.implode(',:', $keys).')';
 		try {
 			$query = $this->connection->prepare($sql);
 			$query->execute($values);
+			$this->log(__FUNCTION__, $sql, $values);
 			self::$query_count++;
 			return (int)$this->connection->lastInsertId();
 		} catch (PDOException $e) {
@@ -184,27 +185,29 @@ class PdoMysqlDriver extends Driver
 	 * @return string sql command
 	 *
 	 * @assert (array('update' => '`user`', 'where' => '`id` = 1', 'set' => array('`id` = 1', "`email` = 'admin@localhost'"))) [==] "UPDATE `user` SET `id` = 1, `email` = 'admin@localhost' WHERE `id` = 1"
-	 * @assert (array('insert' => 'user', 'values' => array('id' => 1, 'email' => 'admin@localhost'))) [==] "INSERT INTO `user` (`id`, `email`) VALUES (:id, :email)"
+	 * @assert (array('insert' => '`user`', 'values' => array('id' => 1, 'email' => 'admin@localhost'))) [==] "INSERT INTO `user` (`id`, `email`) VALUES (:id, :email)"
 	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'join' => array(" INNER JOIN ..."))) [==] "SELECT * FROM `user` INNER JOIN ... WHERE `id` = 1 ORDER BY `id` LIMIT 1,10"
+	 * @assert (array('select'=>'*', 'from'=>'`user`','where'=>'`id` = 1', 'order' => '`id`', 'start' => 1, 'limit' => 10, 'group' => '`id`')) [==] "SELECT * FROM `user` WHERE `id` = 1 GROUP BY `id` ORDER BY `id` LIMIT 1,10"
+	 * @assert (array('delete' => '`user`', 'where' => '`id` = 1')) [==] "DELETE FROM `user` WHERE `id` = 1"
 	 */
 	public function makeQuery($sqls)
 	{
 		$sql = '';
 		if (isset($sqls['insert'])) {
 			$keys = array_keys($sqls['values']);
-			$sql = 'INSERT INTO `'.$sqls['insert'].'` (`'.implode('`, `', $keys);
+			$sql = 'INSERT INTO '.$sqls['insert'].' (`'.implode('`, `', $keys);
 			$sql .= "`) VALUES (:".implode(", :", $keys).")";
 		} else {
 			if (isset($sqls['select'])) {
 				$sql = 'SELECT '.$sqls['select'];
 				if (isset($sqls['from'])) {
-					$sql.=' FROM '.$sqls['from'];
+					$sql .= ' FROM '.$sqls['from'];
 				}
 			}
 			if (isset($sqls['update'])) {
 				$sql = 'UPDATE '.$sqls['update'];
 			} elseif (isset($sqls['delete'])) {
-				$sql = 'DELETE FROM `'.$sqls['delete'].'`';
+				$sql = 'DELETE FROM '.$sqls['delete'];
 			}
 			if (isset($sqls['set'])) {
 				$sql .= ' SET '.implode(', ', $sqls['set']);
@@ -240,7 +243,7 @@ class PdoMysqlDriver extends Driver
 	 * @param string $alias ชื่อของผลลัพท์ ถ้าไม่ระบุจะเป็นชื่อเดียวกับชื่อฟิลด์
 	 * @return string SQL Command
 	 *
-	 * @assert ('id', 'world', array(array('module_id', 'D.id'))) [==] '(1 + IFNULL((SELECT MAX(`id`) FROM `world` WHERE `module_id` = D.`id`), 0)) AS `id`'
+	 * @assert ('id', '`world`', array(array('module_id', 'D.id'))) [==] '(1 + IFNULL((SELECT MAX(`id`) FROM `world` WHERE `module_id` = D.`id`), 0)) AS `id`'
 	 */
 	public function buildNext($field, $table_name, $condition = null, $alias = null)
 	{
@@ -249,7 +252,7 @@ class PdoMysqlDriver extends Driver
 		} else {
 			$condition = ' WHERE '.$this->buildWhere($condition);
 		}
-		return '(1 + IFNULL((SELECT MAX(`'.$field.'`) FROM `'.$table_name.'`'.$condition.'), 0)) AS `'.($alias ? $alias : $field).'`';
+		return '(1 + IFNULL((SELECT MAX(`'.$field.'`) FROM '.$table_name.$condition.'), 0)) AS `'.($alias ? $alias : $field).'`';
 	}
 
 	/**
@@ -269,7 +272,7 @@ class PdoMysqlDriver extends Driver
 			$values = $condition[1];
 			$condition = $condition[0];
 		}
-		$sql = 'SELECT * FROM `'.$table_name.'` WHERE '.$condition;
+		$sql = 'SELECT * FROM '.$table_name.' WHERE '.$condition;
 		if (!empty($sort)) {
 			$qs = array();
 			foreach ($sort as $item) {
@@ -327,10 +330,11 @@ class PdoMysqlDriver extends Driver
 			$values = ArrayTool::replace($values, $condition[1]);
 			$condition = $condition[0];
 		}
-		$sql = 'UPDATE `'.$table_name.'` SET '.implode(', ', $sets).' WHERE '.$condition;
+		$sql = 'UPDATE '.$table_name.' SET '.implode(', ', $sets).' WHERE '.$condition;
 		try {
 			$query = $this->connection->prepare($sql);
 			$query->execute($values);
+			$this->log(__FUNCTION__, $sql, $values);
 			self::$query_count++;
 			return true;
 		} catch (PDOException $e) {

@@ -154,11 +154,11 @@ abstract class Query extends \Kotchasan\KBase
 				$table = '('.$table[0].') AS '.$table[1];
 			}
 		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
-			$table = '`'.$this->tableWithPrefix($match[1]).'` AS '.$match[4];
+			$table = $this->tableWithPrefix($match[1]).' AS '.$match[4];
 		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([a-zA-Z0-9]+)$/', $table, $match)) {
-			$table = '`'.$this->tableWithPrefix($match[1]).'` AS `'.$match[4].'`';
+			$table = $this->tableWithPrefix($match[1]).' AS `'.$match[4].'`';
 		} else {
-			$table = '`'.$this->tableWithPrefix($table).'`';
+			$table = $this->tableWithPrefix($table);
 		}
 		return $table;
 	}
@@ -171,8 +171,9 @@ abstract class Query extends \Kotchasan\KBase
 	 */
 	public function tableWithPrefix($table)
 	{
+		$dbname = empty($this->db->settings->dbname) ? '' : '`'.$this->db->settings->dbname.'`.';
 		$prefix = empty($this->db->settings->prefix) ? '' : $this->db->settings->prefix.'_';
-		return $prefix.(isset($this->db->tables->$table) ? $this->db->tables->$table : $table);
+		return $dbname.'`'.$prefix.(isset($this->db->tables->$table) ? $this->db->tables->$table : $table).'`';
 	}
 
 	/**
@@ -187,6 +188,9 @@ abstract class Query extends \Kotchasan\KBase
 			if ($fields[0] instanceof QueryBuilder) {
 				// QueryBuilder
 				$ret = '('.$fields[0]->text().') AS `'.$fields[1].'`';
+			} elseif (preg_match('/^([a-zA-Z0-9\\\]+)::([a-zA-Z0-9]+)$/', $fields[0], $match)) {
+				// Recordset
+				$ret = '\''.addslashes($fields[0]).'\' AS `'.$fields[1].'`';
 			} else {
 				// multiples
 				$rets = array();
@@ -237,9 +241,9 @@ abstract class Query extends \Kotchasan\KBase
 		$ret = $this->buildWhere($on);
 		$sql = is_array($ret) ? $ret[0] : $ret;
 		if (preg_match('/^([a-zA-Z0-9_]+)([\s]+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
-			$sql = ' '.$type.' JOIN `'.$this->tableWithPrefix($match[1]).'` AS '.$match[4].' ON '.$sql;
+			$sql = ' '.$type.' JOIN '.$this->tableWithPrefix($match[1]).' AS '.$match[4].' ON '.$sql;
 		} elseif (preg_match('/^([a-z0-9_]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $table, $match)) {
-			$sql = ' '.$type.' JOIN `'.$this->tableWithPrefix($match[1]).'` AS `'.$match[3].'` ON '.$sql;
+			$sql = ' '.$type.' JOIN '.$this->tableWithPrefix($match[1]).' AS `'.$match[3].'` ON '.$sql;
 		} else {
 			$sql = ' '.$type.' JOIN '.$table.' ON '.$sql;
 		}
@@ -578,13 +582,6 @@ abstract class Query extends \Kotchasan\KBase
 					$result = "$key $operator ($match[1].`$match[2]`)";
 				} else {
 					$result = "$key $operator $match[1].`$match[2]`";
-				}
-			} elseif (preg_match('/^([a-z0-9_]+)\.([a-z0-9_]+)$/i', $value, $match)) {
-				// value เป็น table.field
-				if ($operator == 'IN' || $operator == 'NOT IN') {
-					$result = "$key $operator (`$match[1]`.`$match[2]`)";
-				} else {
-					$result = "$key $operator `$match[1]`.`$match[2]`";
 				}
 			} else {
 				// value เป็น string

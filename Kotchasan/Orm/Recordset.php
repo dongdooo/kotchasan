@@ -501,7 +501,7 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function tableWithAlias($alias = null)
 	{
-		return '`'.$this->table_name.'` AS '.(empty($alias) ? $this->table_alias : $alias);
+		return $this->table_name.' AS '.(empty($alias) ? $this->table_alias : $alias);
 	}
 
 	/**
@@ -618,6 +618,16 @@ class Recordset extends Query implements \Iterator
 			$this->sqls['where'] = $where;
 		}
 		return $this;
+	}
+
+	/**
+	 * คืนค่า value สำหรับการ execute
+	 *
+	 * @return array
+	 */
+	public function getValues()
+	{
+		return $this->values;
 	}
 
 	/**

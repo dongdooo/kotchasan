@@ -3681,14 +3681,14 @@ window.$K = (function () {
 		},
 		show: function (obj, fullscreen) {
 			this.zoom.className = this.btnnav + (fullscreen ? ' zoomin' : ' zoomout');
-			var self = this;
+			var img, title, self = this;
 			this.loading.className = this.loadingClass + ' show';
 			if (obj.href) {
 				img = obj.href;
-				caption = obj.title;
+				title = obj.title;
 			} else {
 				img = obj.src;
-				caption = obj.alt;
+				title = obj.alt;
 			}
 			new preload(img, function () {
 				self.loading.className = self.loadingClass;
@@ -3696,7 +3696,6 @@ window.$K = (function () {
 				if (!fullscreen) {
 					var w = this.width;
 					var h = this.height;
-					var vp = self.body.viewportOffset();
 					var dm = self.body.getDimensions();
 					var hOffset = dm.height - self.body.getClientHeight() + parseInt(self.body.getStyle('marginTop')) + parseInt(self.body.getStyle('marginBottom'));
 					var wOffset = dm.width - self.body.getClientWidth() + parseInt(self.body.getStyle('marginLeft')) + parseInt(self.body.getStyle('marginRight'));
@@ -3733,8 +3732,8 @@ window.$K = (function () {
 					self.img.style.height = 'auto';
 				}
 				new GDragMove('GLightbox_' + self.id, self.img);
-				if (caption && caption != '') {
-					self.caption.innerHTML = caption.replace(/[\n]/g, '<br>');
+				if (title && title != '') {
+					self.caption.innerHTML = title.replace(/[\n]/g, '<br>');
 					self.caption.parentNode.className = 'show';
 				} else {
 					self.caption.parentNode.className = '';

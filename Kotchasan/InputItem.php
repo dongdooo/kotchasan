@@ -210,11 +210,11 @@ class InputItem
 	 *
 	 * @return string
 	 *
-	 * @assert create("ทด\/สอบ\n<?php echo '555'?>")->textarea() [==] "ทด&#92;/สอบ&lt;br /&gt;\n&lt;?php echo '555'?&gt;"
+	 * @assert create("ทด\/สอบ\n<?php echo '555'?>")->textarea() [==] "ทด&#92;/สอบ\n&lt;?php echo '555'?&gt;"
 	 */
 	public function textarea()
 	{
-		return trim(preg_replace(array('/</u', '/>/u', '/\\\/u'), array('&lt;', '&gt;', '&#92;'), nl2br($this->value)));
+		return trim(preg_replace(array('/</s', '/>/s', '/\\\/s'), array('&lt;', '&gt;', '&#92;'), $this->value));
 	}
 
 	/**

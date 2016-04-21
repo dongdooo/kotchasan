@@ -9,7 +9,6 @@
 namespace Kotchasan;
 
 use \Kotchasan\Database\Query;
-use \Kotchasan\Http\Request;
 
 /**
  * Model base class

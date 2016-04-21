@@ -211,6 +211,7 @@ final class Language extends \Kotchasan\KBase
 	 * @param array $languages ข้อมูลภาษาที่ต้องการตรวจสอบ
 	 * @param string $key รายการที่ต้องการตรวจสอบ
 	 * @return int คืนค่าลำดับที่พบ (รายการแรกคือ 0), คืนค่า -1 ถ้าไม่พบ
+	 * 
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'One') [==] 0
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'two') [==] 100
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'O') [==] -1
@@ -296,6 +297,7 @@ final class Language extends \Kotchasan\KBase
 	 * อ่านชื่อภาษาที่กำลังใช้งานอยู่
 	 *
 	 * @return string
+	 *
 	 * @assert () [==] 'th'
 	 */
 	public static function name()
@@ -307,10 +309,11 @@ final class Language extends \Kotchasan\KBase
 	}
 
 	/**
-	 * อ่านภาษา
+	 * ฟังก์ชั่นอ่านภาษา
 	 *
-	 * @param string $key
+	 * @param string $key ข้อความในภาษาอังกฤษ หรือ คีย์ของภาษา
 	 * @return mixed
+	 *
 	 * @assert ('YEAR_OFFSET') [==] 543
 	 * @assert (array(1 => 'not found')) [==] 'not found'
 	 */
@@ -319,11 +322,32 @@ final class Language extends \Kotchasan\KBase
 		if (null === self::$languages) {
 			new static;
 		}
+		// มาจากการ Parse Theme
 		if (is_array($key)) {
-			// มาจากการ Parse Theme
 			$key = $key[1];
 		}
 		return isset(self::$languages->$key) ? self::$languages->$key : $key;
+	}
+
+	/**
+	 * ฟังก์ชั่นอ่านภาษา
+	 *
+	 * @param string $key ข้อความในภาษาอังกฤษ หรือ คีย์ของภาษา
+	 * @param array $replace ข้อความที่จะนำมาแทนที่เช่น array(':key' => 'value', ':key' => 'value')
+	 * @return mixed
+	 *
+	 * @assert ('You want to :action', array(':action' => 'delete')) [==] 'You want to delete'
+	 */
+	public static function replace($key, $replace)
+	{
+		if (null === self::$languages) {
+			new static;
+		}
+		$value = isset(self::$languages->$key) ? self::$languages->$key : $key;
+		foreach ($replace as $k => $v) {
+			$value = str_replace($k, $v, $value);
+		}
+		return $value;
 	}
 
 	/**
@@ -349,6 +373,7 @@ final class Language extends \Kotchasan\KBase
 	 *
 	 * @param string $key
 	 * @param mixed $default
+	 *
 	 * @assert ('YEAR_OFFSET') [==] 543
 	 * @assert ('not found', 'default') [==] 'default'
 	 */

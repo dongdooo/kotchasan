@@ -115,7 +115,7 @@ class CKEditor extends Html
 
 	/**
 	 * ฟังก์ชั่นตรวจสอบความสามารถในการอัปโหลดของ CKEDITOR
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function enabledUpload()

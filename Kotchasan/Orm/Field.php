@@ -115,7 +115,7 @@ class Field extends \Kotchasan\KBase
 	}
 
 	/**
-	 * vjkoชื่อฟิลด์ที่เป็น Primary Key
+	 * คืนค่าชื่อฟิลด์ที่เป็น Primary Key
 	 *
 	 * @return string
 	 */

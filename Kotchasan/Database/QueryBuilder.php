@@ -282,6 +282,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert select("'email' name", '0 AS id')->text() [==] "SELECT 'email' AS `name`,0 AS `id`"
 	 * @assert select("(SELECT FROM) q")->text() [==] "SELECT (SELECT FROM) AS `q`"
 	 * @assert select()->text()  [==] "SELECT *"
+	 * @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain`='kotchasan.com'"
 	 */
 	public function select($fields = '*')
 	{
