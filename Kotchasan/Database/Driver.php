@@ -353,7 +353,7 @@ abstract class Driver extends Query
 	 * @param  string $table table name
 	 * @return bool คืนค่า true ถ้าสำเร็จ
 	 */
-	public function truncate($table)
+	public function emptyTable($table)
 	{
 		return $this->query('TRUNCATE TABLE '.$table) === false ? false : true;
 	}

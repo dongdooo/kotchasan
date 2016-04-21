@@ -542,9 +542,9 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @return bool คืนค่า true ถ้าสำเร็จ
 	 */
-	public function truncate()
+	public function emptyTable()
 	{
-		return $this->db()->truncate($this->table_name);
+		return $this->db()->emptyTable($this->table_name);
 	}
 
 	/**

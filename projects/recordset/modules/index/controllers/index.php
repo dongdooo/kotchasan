@@ -35,7 +35,7 @@ class Controller extends \Kotchasan\Controller
 		$fields = $rs->getFields();
 		echo implode(', ', array_keys($fields)).'<br>';
 		// ลบข้อมูลทั้งตาราง
-		$rs->truncate();
+		$rs->emptyTable();
 		// insert new record
 		for ($i = 0; $i < 10000; $i++) {
 			$query = World::create();
