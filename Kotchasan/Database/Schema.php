@@ -55,7 +55,7 @@ class Schema
 	private function init($table)
 	{
 		if (empty($this->tables[$table])) {
-			$sql = "SHOW FULL COLUMNS FROM `$table`";
+			$sql = "SHOW FULL COLUMNS FROM $table";
 			$columns = $this->db->cacheOn()->customQuery($sql, true);
 			if (empty($columns)) {
 				throw new Exception($this->db->getError());
