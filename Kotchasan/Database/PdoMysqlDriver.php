@@ -11,6 +11,7 @@ namespace Kotchasan\Database;
 use \Kotchasan\Database\Driver;
 use \Kotchasan\ArrayTool;
 use \PDO;
+use \Kotchasan\Database\QueryBuilder;
 
 /**
  * PDO MySQL Database Adapter Class
@@ -323,7 +324,7 @@ class PdoMysqlDriver extends Driver
 		$values = array();
 		foreach ($save as $key => $value) {
 			$sets[] = '`'.$key.'` = :_'.$key;
-			$values[':_'.$key] = $value;
+			$values[':_'.$key] = $value instanceof QueryBuilder ? '('.$value->text().')' : $value;
 		}
 		$condition = $this->buildWhere($condition);
 		if (is_array($condition)) {

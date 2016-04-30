@@ -228,11 +228,25 @@ class UploadedFile implements UploadedFileInterface
 	/**
 	 * อ่านการตั้งค่าขนาดของไฟลอัปโหลด
 	 *
-	 * @return string
+	 * @param bool $return_byte false (default) คืนค่าเป็นข้อความเช่น 2M, true คืนค่าเป็นตัวเลข (byte)
+	 * @return string|int
 	 */
-	public static function getUploadSize()
+	public static function getUploadSize($return_byte = false)
 	{
-		return ini_get('upload_max_filesize');
+		$val = trim(ini_get('upload_max_filesize'));
+		if ($return_byte) {
+			$last = strtolower($val[strlen($val) - 1]);
+			switch ($last) {
+				// The 'G' modifier is available since PHP 5.1.0
+				case 'g':
+					$val *= 1024;
+				case 'm':
+					$val *= 1024;
+				case 'k':
+					$val *= 1024;
+			}
+		}
+		return $val;
 	}
 
 	/**

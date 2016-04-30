@@ -68,15 +68,15 @@ class Date
 		if (empty($time)) {
 			$time = time();
 		} elseif (is_string($time) && preg_match('/([0-9]+){1,4}-([0-9]+){1,2}-([0-9]+){1,2}(\s([0-9]+){1,2}:([0-9]+){1,2}:([0-9]+){1,2})?/', $time, $match)) {
-			$time = mktime(empty($match[4]) ? 0 : (int)$match[4], empty($match[5]) ? 0 : (int)$match[5], empty($match[6]) ? 0 : (int)$match[6], (int)$match[2], (int)$match[3], (int)$match[1]);
+			$time = mktime(empty($match[5]) ? 0 : (int)$match[5], empty($match[6]) ? 0 : (int)$match[6], empty($match[7]) ? 0 : (int)$match[7], (int)$match[2], (int)$match[3], (int)$match[1]);
 		}
 		$lang = Language::getItems(array(
-			'DATE_FORMAT',
-			'DATE_SHORT',
-			'DATE_LONG',
-			'MONTH_SHORT',
-			'MONTH_LONG',
-			'YEAR_OFFSET'
+				'DATE_FORMAT',
+				'DATE_SHORT',
+				'DATE_LONG',
+				'MONTH_SHORT',
+				'MONTH_LONG',
+				'YEAR_OFFSET'
 		));
 		if (empty($format)) {
 			$format = $lang['DATE_FORMAT'];
@@ -89,12 +89,14 @@ class Date
 					case ':':
 					case '/':
 					case '-':
+					case '.':
+					case ',':
 						$ret .= $item;
 						break;
-					case 'D':
+					case 'l':
 						$ret .= $lang['DATE_SHORT'][date('w', $time)];
 						break;
-					case 'l':
+					case 'L':
 						$ret .= $lang['DATE_LONG'][date('w', $time)];
 						break;
 					case 'M':

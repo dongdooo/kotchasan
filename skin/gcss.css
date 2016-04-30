@@ -376,16 +376,16 @@ mark {
 	color: #FFF;
 }
 .new {
-	padding-right: 2.5em !important;
+	padding-right: 2em !important;
 }
 .update {
-	padding-right: 3.6em !important;
+	padding-right: 3.1em !important;
 }
 .hot {
-	padding-right: 1.9em;
+	padding-right: 1.4em;
 }
 .recommend {
-	padding-right: 2.1em;
+	padding-right: 1.6em;
 }
 /* layout */
 .gcss-wrapper {
@@ -962,19 +962,34 @@ textarea.cke_editable {
 .button.light {
 	color: #4A4D50;
 }
+.color-silver {
+	color: #CCC;
+}
 .facebook .light {
 	background-color: #EEE;
 	color: #333;
 	border-color: rgba(0, 0, 0, 0.2);
 }
+.color-gray {
+	color: #9E9E9E;
+}
 .bg-gray {
 	background-color: #9E9E9E;
+}
+.color-dark {
+	color: #212121;
 }
 .bg-dark {
 	background-color: #212121;
 }
+.color-black {
+	color: #000;
+}
 .bg-black {
 	background-color: #000;
+}
+.color-white {
+	color: #FFF;
 }
 .bg-white {
 	background-color: #FFF;
@@ -982,14 +997,26 @@ textarea.cke_editable {
 .pretty .button.light {
 	text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
 }
+.color-red {
+	color: #F44336;
+}
 .bg-red, .button.red, .button.cancle, .button.admin, .button.delete {
 	background-color: #F44336;
+}
+.color-magenta {
+	color: #F50057;
 }
 .bg-magenta, .button.magenta {
 	background-color: #F50057;
 }
+.color-orange {
+	color: #FF9800;
+}
 .bg-orange, .button.orange, .button.forgot, .button.update {
 	background-color: #FF9800;
+}
+.color-blue {
+	color: #2196F3;
 }
 .bg-blue, .button.blue, .button.register, .button.logout, .button.add {
 	background-color: #2196F3;
@@ -997,8 +1024,14 @@ textarea.cke_editable {
 .facebook .blue {
 	background-color: #5B74A8;
 }
+.color-pink {
+	color: #E91E63;
+}
 .bg-pink, .button.pink, .button.clear {
 	background-color: #E91E63;
+}
+.color-green {
+	color: #4CAF50;
 }
 .bg-green, .button.green, .button.ok, .button.send, .button.save, .button.login {
 	background-color: #4CAF50;
@@ -1006,17 +1039,32 @@ textarea.cke_editable {
 .facebook .green {
 	background-color: #4CAF50;
 }
+.color-rosy {
+	color: #D50000;
+}
 .bg-rosy, .button.rosy, .button.go, .button.upload {
 	background-color: #D50000;
+}
+.color-brown {
+	color: #795548;
 }
 .bg-brown, .button.brown, .button.print {
 	background-color: #795548;
 }
+.color-purple {
+	color: #9C27B0;
+}
 .bg-purple, .button.purple, .button.next {
 	background-color: #9C27B0;
 }
+.color-cyan {
+	color: #00BCD4;
+}
 .bg-cyan, .button.cyan, .button.copy {
 	background-color: #00BCD4;
+}
+.color-gold {
+	color: #FFC400;
 }
 .bg-gold, .button.gold, .button.preview {
 	background-color: #FFC400;
@@ -1257,7 +1305,6 @@ form .comment {
 	display: inline-block;
 }
 .usericon img {
-	background-color: #EEE;
 	width: 100%;
 	max-height: 200px;
 	max-width: 200px;
@@ -2938,7 +2985,7 @@ a.skip_content {
 	float: left;
 	margin: 5px 5px 5px 0;
 	display: inline-block;
-	max-width: 40%;
+	max-width: 60px;
 	vertical-align: top;
 }
 .thumbview .figure {
@@ -3474,9 +3521,6 @@ a.skip_content {
 	body.responsive .document-list > .row > .col4:nth-child(2n+1) {
 		margin-left: 0;
 	}
-	body.responsive #board-list .col2 {
-		max-width: 15em;
-	}
 	body.responsive .table_nav > fieldset {
 		display: inline-block;
 		clear: both;
@@ -3560,11 +3604,11 @@ a.skip_content {
 		margin: 0 0 5px 0;
 		clear: both;
 	}
+	body.responsive .mobile-block,
 	body.responsive .gbox > [class*="col"],
 	body.responsive .gbox > .row > [class*="col"],
 	body.responsive .document-list > .col2,
 	body.responsive .document-list > .row > .col2,
-	body.responsive .mobile-block,
 	body.responsive .ggrid > [class*="block"],
 	body.responsive .ggrid > .row > [class*="block"] {
 		float: none;

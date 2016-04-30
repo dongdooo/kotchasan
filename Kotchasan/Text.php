@@ -110,15 +110,13 @@ class Text
 
 	/**
 	 * ฟังก์ชั่น HTML highlighter
-	 * ทำ highlight ข้อความส่วนที่เป็นโค้ด
-	 * จัดการแปลง BBCode
+	 * แปลง BBCode
 	 * แปลงข้อความ http เป็นลิงค์
 	 *
 	 * @param string $detail ข้อความ
-	 * @param bool $canview true (default) จะแสดงข้อความเตือน 'ยังไม่ได้เข้าระบบ' หากไม่ได้เข้าระบบ สำหรับส่วนที่อยู่ในกรอบ code
 	 * @return string คืนค่าข้อความ
 	 */
-	public static function highlighter($detail, $canview = true)
+	public static function highlighter($detail)
 	{
 		$patt[] = '/\[(\/)?(i|dfn|b|strong|u|em|ins|del|sub|sup|small|big|ul|ol|li)\]/isu';
 		$replace[] = '<\\1\\2>';
@@ -134,20 +132,6 @@ class Text
 		$replace[] = '<a href="\\1\\2://\\3" target="_blank" rel="nofollow">\\4</a>';
 		$patt[] = '/\[url=(\/)?(.*)\](.*)\[\/url\]/U';
 		$replace[] = '<a href="'.\WEB_URL.'\\2" target="_blank" rel="nofollow">\\3</a>';
-		$patt[] = '/(\[code=([a-z]{1,})\](.*?)\[\/code\])/uis';
-		$replace[] = $canview ? '<code class="content-code \\2">\\3[/code]' : '<code class="content-code">'.Language::get('Can not view this content').'[/code]';
-		$patt[] = '/(\[code\](.*?)\[\/code\])/uis';
-		$replace[] = $canview ? '<code class="content-code">\\2[/code]' : '<code class="content-code">'.Language::get('Can not view this content').'[/code]';
-		$patt[] = '/\[\/code\]/usi';
-		$replace[] = '</code>';
-		$patt[] = '/\[\/quote\]/usi';
-		$replace[] = '</blockquote>';
-		$patt[] = '/\[quote( q=[0-9]+)?\]/usi';
-		$replace[] = '<blockquote><b>'.Language::get('Quote from the question').'</b>';
-		$patt[] = '/\[quote r=([0-9]+)\]/usi';
-		$replace[] = '<blockquote><b>'.Language::get('Quote from the answer').' <em>#\\1</em></b>';
-		$patt[] = '/\[google\](.*?)\[\/google\]/usi';
-		$replace[] = '<a class="googlesearch" href="http://www.google.co.th/search?q=\\1&amp;&meta=lr%3Dlang_th" target="_blank" rel="nofollow">\\1</a>';
 		$patt[] = '/([^["]]|\r|\n|\s|\t|^)(https?:\/\/([^\s<>\"\']+))/';
 		$replace[] = '\\1<a href="\\2" target="_blank" rel="nofollow">\\2</a>';
 		$patt[] = '/\[youtube\]([a-z0-9-_]+)\[\/youtube\]/i';

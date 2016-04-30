@@ -34,7 +34,7 @@ class Template
 	 *
 	 * @var int
 	 */
-	protected $cols;
+	protected $cols = 0;
 	/**
 	 * ตัวแปรสำหรับการขึ้นแถวใหม่ (Grid)
 	 *
@@ -75,7 +75,6 @@ class Template
 		$obj = new static;
 		$obj->skin = $obj->load($owner, $module, $name);
 		$obj->items = array();
-		$obj->cols = -1;
 		$obj->num = -1;
 		return $obj;
 	}
@@ -94,7 +93,6 @@ class Template
 			$obj = new static;
 			$obj->skin = file_get_contents($filename);
 			$obj->items = array();
-			$obj->cols = -1;
 			$obj->num = -1;
 			return $obj;
 		} else {
@@ -107,6 +105,7 @@ class Template
 	 * ฟังก์ชั่นนี้จะแทนที่ตัวแปรที่ส่งทั้งหมดลงใน template ทันที
 	 *
 	 * @param array $array ชื่อที่ปรากฏใน template รูปแบบ array(key1=>val1,key2=>val2)
+	 * @return \static
 	 */
 	public function add($array)
 	{
@@ -114,12 +113,13 @@ class Template
 		foreach ($array as $key => $value) {
 			$datas[$key] = $value;
 		}
-		if (!empty($this->cols) && $this->num == 0) {
+		if ($this->cols > 0 && $this->num == 0) {
 			$this->items[] = "</div>\n<div class=row>";
 			$this->num = $this->cols;
 		}
 		$this->items[] = self::pregReplace(array_keys($datas), array_values($datas), $this->skin);
 		$this->num--;
+		return $this;
 	}
 
 	/**
@@ -156,12 +156,16 @@ class Template
 	 */
 	public function render()
 	{
-		if ($this->cols === -1) {
+		if ($this->cols === 0) {
+			// template
 			return empty($this->items) ? $this->skin : implode("\n", $this->items);
-		} elseif ($this->cols === 0) {
-			return implode("\n", $this->items);
+		} elseif (empty($this->items)) {
+			// grid ไม่มีรายการ
+			return '';
+		} else {
+			// grid
+			return "<div class=row>\n".implode("\n", $this->items)."\n</div>";
 		}
-		return "<div class=row>\n".implode("\n", $this->items)."\n</div>";
 	}
 
 	/**

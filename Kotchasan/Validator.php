@@ -27,7 +27,6 @@ class Validator extends \Kotchasan\KBase
 	 * @assert ('admin@localhost.com') [==] true
 	 * @assert ('admin@localhost') [==] true
 	 * @assert ('ทดสอบ@localhost') [==] false
-	 * @assert ('admin@ไทย') [==] true
 	 */
 	public static function email($email)
 	{

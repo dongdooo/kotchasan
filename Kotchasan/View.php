@@ -8,10 +8,8 @@
 
 namespace Kotchasan;
 
-use \Kotchasan\Controller;
 use \Kotchasan\Language;
 use \Kotchasan\Template;
-use \Kotchasan\Http\Request;
 
 /**
  * View base class
@@ -40,16 +38,27 @@ class View extends \Kotchasan\KBase
 	 * @var array
 	 */
 	protected $headers = array();
+	/**
+	 * ตัวแปรเก็บเนื่อหาของเว็บไซต์ ที่จะแทนที่หลังจาก render แล้ว
+	 *
+	 * @var array
+	 */
+	protected $after_contents = array();
 
 	/**
 	 * ใส่เนื้อหาลงใน $contens
 	 *
-	 * @param array $array ชื่อที่ปรากฏใน template รูปแบบ array(key1=>val1,key2=>val2)
+	 * @param array $array ชื่อที่ปรากฏใน template รูปแบบ array(key1 => val1, key2 => val2)
+	 * @param bool $before true (default) ใส่ก่อน render, false ใส่หลัง render
 	 */
-	public function setContents($array)
+	public function setContents($array, $before = true)
 	{
 		foreach ($array as $key => $value) {
-			$this->contents[$key] = $value;
+			if ($before) {
+				$this->contents[$key] = $value;
+			} else {
+				$this->after_contents[$key] = $value;
+			}
 		}
 	}
 
@@ -95,6 +104,9 @@ class View extends \Kotchasan\KBase
 		$this->contents['/{SKIN}/'] = Template::$src;
 		$this->contents['/{LANGUAGE}/'] = Language::name();
 		$this->contents['/^[\s\t]+/m'] = '';
+		foreach ($this->after_contents as $key => $value) {
+			$this->contents[$key] = $value;
+		}
 		// แทนที่ลงใน Template
 		if ($template === null) {
 			// ถ้าไม่ได้กำหนดมาใช้ index.html
