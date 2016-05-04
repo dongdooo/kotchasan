@@ -586,7 +586,7 @@ abstract class Query extends \Kotchasan\KBase
 			} else {
 				// value เป็น string
 				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));
-				$result = array($key.$operator.$q, array($q => $value));
+				$result = array($key.' '.$operator.' '.$q, array($q => $value));
 			}
 		} else {
 			$result = $params;

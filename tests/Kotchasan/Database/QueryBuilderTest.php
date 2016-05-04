@@ -32,7 +32,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Generated from @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name`='test'".
+	 * Generated from @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name` = 'test'".
 	 *
 	 * @covers Kotchasan\Database\QueryBuilder::delete
 	 */
@@ -40,7 +40,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertEquals(
-		"DELETE FROM `user` WHERE `id` = 1 AND `name`='test'", $this->object->delete('user', array(array('id', 1), array('name', 'test')))->text()
+		"DELETE FROM `user` WHERE `id` = 1 AND `name` = 'test'", $this->object->delete('user', array(array('id', 1), array('name', 'test')))->text()
 		);
 	}
 
@@ -318,7 +318,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Generated from @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain`='kotchasan.com'".
+	 * Generated from @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain` = 'kotchasan.com'".
 	 *
 	 * @covers Kotchasan\Database\QueryBuilder::select
 	 */
@@ -326,7 +326,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertEquals(
-		"SELECT * WHERE `domain`='kotchasan.com'", $this->object->select()->where(array('domain', 'kotchasan.com'))->text()
+		"SELECT * WHERE `domain` = 'kotchasan.com'", $this->object->select()->where(array('domain', 'kotchasan.com'))->text()
 		);
 	}
 

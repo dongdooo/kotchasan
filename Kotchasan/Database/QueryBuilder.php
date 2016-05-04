@@ -80,7 +80,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @param mixed $condition query string หรือ array
 	 * @return \static
 	 *
-	 * @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name`='test'"
+	 * @assert delete('user', array(array('id', 1), array('name', 'test')))->text() [==] "DELETE FROM `user` WHERE `id` = 1 AND `name` = 'test'"
 	 */
 	public function delete($table, $condition)
 	{
@@ -282,7 +282,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert select("'email' name", '0 AS id')->text() [==] "SELECT 'email' AS `name`,0 AS `id`"
 	 * @assert select("(SELECT FROM) q")->text() [==] "SELECT (SELECT FROM) AS `q`"
 	 * @assert select()->text()  [==] "SELECT *"
-	 * @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain`='kotchasan.com'"
+	 * @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain` = 'kotchasan.com'"
 	 */
 	public function select($fields = '*')
 	{
