@@ -38,3 +38,4 @@
 * http://www.kotchasan.com/projects/site/ สร้างเว็บไซต์ด้วย template และมีเมนู แบบง่ายๆ
 * http://www.kotchasan.com/projects/recordset/ ตัวอย่างการใช้งานฐานข้อมูล (Recordset)
 * http://www.kotchasan.com/projects/admin/ ตัวอย่างการใช้งานฟอร์ม Login
+* http://www.kotchasan.com/projects/youtube/ ตัวอย่างการใช้งาน Youtube API
