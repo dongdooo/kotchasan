@@ -66,7 +66,7 @@ abstract class Query extends \Kotchasan\KBase
 	 */
 	public function buildNext($field, $table, $condition = null, $alias = null)
 	{
-		return $this->db->buildNext($field, $this->tableWithPrefix($table), $condition, $alias);
+		return $this->db->buildNext($field, $this->getFullTableName($table), $condition, $alias);
 	}
 
 	/**
@@ -154,11 +154,11 @@ abstract class Query extends \Kotchasan\KBase
 				$table = '('.$table[0].') AS '.$table[1];
 			}
 		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
-			$table = $this->tableWithPrefix($match[1]).' AS '.$match[4];
+			$table = $this->getFullTableName($match[1]).' AS '.$match[4];
 		} elseif (preg_match('/^([a-zA-Z0-9_]+)(\s+(as|AS))?[\s]+([a-zA-Z0-9]+)$/', $table, $match)) {
-			$table = $this->tableWithPrefix($match[1]).' AS `'.$match[4].'`';
+			$table = $this->getFullTableName($match[1]).' AS `'.$match[4].'`';
 		} else {
-			$table = $this->tableWithPrefix($table);
+			$table = $this->getFullTableName($table);
 		}
 		return $table;
 	}
@@ -167,13 +167,24 @@ abstract class Query extends \Kotchasan\KBase
 	 * ฟังก์ชั่นอ่านชื่อตารางจากการตั้งค่าฐานข้อมุล
 	 *
 	 * @param string $table ชื่อตารางตามที่กำหนดใน settings/datasbase.php
-	 * @return string ชื่อตารางรวม prefix ถ้าไม่มีชื่อกำหนดไว้ จะคืนค่า prefix ตามด้วย $table
+	 * @return string ชื่อตารางรวม prefix ถ้าไม่มีชื่อกำหนดไว้ จะคืนค่า $table ครอบชื่อตารางด้วย ``
 	 */
-	public function tableWithPrefix($table)
+	public function getFullTableName($table)
 	{
 		$dbname = empty($this->db->settings->dbname) ? '' : '`'.$this->db->settings->dbname.'`.';
+		return $dbname.'`'.$this->getTableName($table).'`';
+	}
+
+	/**
+	 * ฟังก์ชั่นอ่านชื่อตารางจากการตั้งค่าฐานข้อมุล
+	 *
+	 * @param string $table ชื่อตารางตามที่กำหนดใน settings/datasbase.php
+	 * @return string ชื่อตารางรวม prefix ถ้าไม่มีชื่อกำหนดไว้ จะคืนค่า $table
+	 */
+	public function getTableName($table)
+	{
 		$prefix = empty($this->db->settings->prefix) ? '' : $this->db->settings->prefix.'_';
-		return $dbname.'`'.$prefix.(isset($this->db->tables->$table) ? $this->db->tables->$table : $table).'`';
+		return $prefix.(isset($this->db->tables->$table) ? $this->db->tables->$table : $table);
 	}
 
 	/**
@@ -241,9 +252,9 @@ abstract class Query extends \Kotchasan\KBase
 		$ret = $this->buildWhere($on);
 		$sql = is_array($ret) ? $ret[0] : $ret;
 		if (preg_match('/^([a-zA-Z0-9_]+)([\s]+(as|AS))?[\s]+([A-Z0-9]{1,2})$/', $table, $match)) {
-			$sql = ' '.$type.' JOIN '.$this->tableWithPrefix($match[1]).' AS '.$match[4].' ON '.$sql;
+			$sql = ' '.$type.' JOIN '.$this->getFullTableName($match[1]).' AS '.$match[4].' ON '.$sql;
 		} elseif (preg_match('/^([a-z0-9_]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $table, $match)) {
-			$sql = ' '.$type.' JOIN '.$this->tableWithPrefix($match[1]).' AS `'.$match[3].'` ON '.$sql;
+			$sql = ' '.$type.' JOIN '.$this->getFullTableName($match[1]).' AS `'.$match[3].'` ON '.$sql;
 		} else {
 			$sql = ' '.$type.' JOIN '.$table.' ON '.$sql;
 		}

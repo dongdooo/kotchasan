@@ -48,13 +48,12 @@ window.$K = (function () {
 		return isNaN(n) ? 0 : n;
 	};
 	window.trans = function (val) {
-		var patt = /^[_]+|[_]+$/g;
-		var text = val.replace(/[\s]/g, '_').replace('?', '').replace(patt, '').toUpperCase();
 		try {
-			val = eval(text);
+			var patt = /^[_]+|[_]+$/g;
+			return eval(val.replace(/[\s]/g, '_').replace('?', '').replace(patt, '').toUpperCase());
 		} catch (e) {
+			return val;
 		}
-		return val;
 	};
 	Function.prototype.bind = function (o) {
 		var __method = this;

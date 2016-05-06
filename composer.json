@@ -2,7 +2,7 @@
 	"name": "goragod/kotchasan",
 	"version": "1.0.0-beta",
 	"description": "Kotchasan PHP Framework",
-	"keywords": ["framework", "PHP"],
+	"keywords": ["PHP Framework", "PHP", "Web Framework"],
 	"license": "MIT",
 	"homepage": "http://www.kotchasan.com",
 	"authors": [

@@ -85,7 +85,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	public function delete($table, $condition)
 	{
 		$this->sqls['function'] = 'query';
-		$this->sqls['delete'] = $this->tableWithPrefix($table);
+		$this->sqls['delete'] = $this->getFullTableName($table);
 		$this->where($condition);
 		return $this;
 	}
@@ -197,7 +197,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	public function insert($table, $datas)
 	{
 		$this->sqls['function'] = 'query';
-		$this->sqls['insert'] = $this->tableWithPrefix($table);
+		$this->sqls['insert'] = $this->getFullTableName($table);
 		$keys = array();
 		foreach ($datas as $key => $value) {
 			$this->sqls['values'][$key] = $value;

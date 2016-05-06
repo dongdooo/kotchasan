@@ -380,17 +380,17 @@ class Recordset extends Query implements \Iterator
 			} else {
 				$t = strtolower($class);
 			}
-			$this->table_name = $this->tableWithPrefix($t);
+			$this->table_name = $this->getFullTableName($t);
 			$this->table_alias = $t;
 		} elseif (preg_match('/([a-z0-9A-Z_]+)(\s+(as|AS))?\s+([A-Z0-9]{1,2})/', $table, $match)) {
-			$this->table_name = $this->tableWithPrefix($match[1]);
+			$this->table_name = $this->getFullTableName($match[1]);
 			$this->table_alias = $match[4];
 		} elseif (preg_match('/([a-z0-9A-Z_]+)(\s+(as|AS))?\s+([a-zA-Z0-9]{1,2})/', $table, $match)) {
-			$this->table_name = $this->tableWithPrefix($match[1]);
+			$this->table_name = $this->getFullTableName($match[1]);
 			$this->table_alias = $match[4];
 		} else {
 			// ใช้ชื่อตารางเป็นชื่อรอง
-			$this->table_name = $this->tableWithPrefix($table);
+			$this->table_name = $this->getFullTableName($table);
 			$this->table_alias = $table;
 		}
 	}

@@ -158,12 +158,12 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นลบ record
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ 1 (default) รายการแรกที่เจอ, 0 หมายถึงลบทุกรายการ
 	 * @return int|bool สำเร็จคืนค่าจำนวนแถวที่มีผล ไม่สำเร็จคืนค่า false
 	 */
-	public function delete($table, $condition, $limit = 1)
+	public function delete($table_name, $condition, $limit = 1)
 	{
 		$condition = $this->buildWhere($condition);
 		if (is_array($condition)) {
@@ -172,7 +172,7 @@ abstract class Driver extends Query
 		} else {
 			$values = array();
 		}
-		$sql = 'DELETE FROM '.$table.' WHERE '.$condition;
+		$sql = 'DELETE FROM '.$table_name.' WHERE '.$condition;
 		if (is_int($limit) && $limit > 0) {
 			$sql .= ' LIMIT '.$limit;
 		}
@@ -203,15 +203,15 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นตรวจสอบว่ามีฟิลด์ หรือไม่.
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param string $field ชื่อฟิลด์
 	 * @return bool คืนค่า true หากมีฟิลด์นี้อยู่ ไม่พบคืนค่า false
 	 */
-	public function fieldExists($table, $field)
+	public function fieldExists($table_name, $field)
 	{
-		if (!empty($table) && !empty($field)) {
+		if (!empty($table_name) && !empty($field)) {
 			$field = strtolower($field);
-			foreach (Schema::create($this->db)->fields($table) as $key => $values) {
+			foreach (Schema::create($this->db)->fields($table_name) as $key => $values) {
 				if (strtolower($key) == $field) {
 					return true;
 				}
@@ -223,15 +223,15 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่น query ข้อมูล คืนค่าข้อมูลทุกรายการที่ตรงตามเงื่อนไข
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array $sort เรียงลำดับ
 	 * @return array คืนค่า แอเรย์ของ object ไม่พบคืนค่าแอรย์ว่าง
 	 */
-	public function find($table, $condition, $sort = array())
+	public function find($table_name, $condition, $sort = array())
 	{
 		$result = array();
-		foreach ($this->select($table, $condition, $sort) as $item) {
+		foreach ($this->select($table_name, $condition, $sort) as $item) {
 			$result[] = (object)$item;
 		}
 		return $result;
@@ -240,13 +240,13 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่น query ข้อมูล คืนค่าข้อมูลรายการเดียว
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @return object|bool คืนค่า object ของข้อมูล ไม่พบคืนค่า false
 	 */
-	public function first($table, $condition)
+	public function first($table_name, $condition)
 	{
-		$result = $this->select($table, $condition, array(), 1);
+		$result = $this->select($table_name, $condition, array(), 1);
 		return sizeof($result) == 1 ? (object)$result[0] : false;
 	}
 
@@ -263,12 +263,12 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นอ่าน ID ล่าสุดของตาราง สำหรับตารางที่มีการกำหนด Auto_increment ไว้.
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @return int คืนค่า id ล่าสุดของตาราง
 	 */
-	public function lastId($table)
+	public function lastId($table_name)
 	{
-		$result = $this->doCustomQuery('SHOW TABLE STATUS LIKE '.$table);
+		$result = $this->doCustomQuery("SHOW TABLE STATUS LIKE '$table_name'");
 		return $result && sizeof($result) == 1 ? (int)$result[0]['Auto_increment'] : 0;
 	}
 
@@ -339,35 +339,35 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นตรวจสอบว่ามีตาราง หรือไม่.
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @return bool คืนค่า true หากมีตารางนี้อยู่ ไม่พบคืนค่า false
 	 */
-	public function tableExists($table)
+	public function tableExists($table_name)
 	{
-		return $this->doQuery("SELECT 1 FROM $table LIMIT 1") === false ? false : true;
+		return $this->doQuery("SELECT 1 FROM $table_name LIMIT 1") === false ? false : true;
 	}
 
 	/**
 	 * ฟังก์ชั่นลบข้อมูลทั้งหมดในตาราง
 	 *
-	 * @param  string $table table name
+	 * @param  string $table_name table name
 	 * @return bool คืนค่า true ถ้าสำเร็จ
 	 */
-	public function emptyTable($table)
+	public function emptyTable($table_name)
 	{
-		return $this->query('TRUNCATE TABLE '.$table) === false ? false : true;
+		return $this->query("TRUNCATE TABLE $table_name") === false ? false : true;
 	}
 
 	/**
 	 * อัปเดทข้อมูลทุก record
 	 *
-	 * @param array $save ข้อมูลที่ต้องการบันทึก
-	 * array('key1'=>'value1', 'key2'=>'value2', ...)
+	 * @param  string $table_name table name
+	 * @param array $save ข้อมูลที่ต้องการบันทึก array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	public function updateAll($table, $save)
+	public function updateAll($table_name, $save)
 	{
-		return $this->update($table, array(1, 1), $save);
+		return $this->update($table_name, array(1, 1), $save);
 	}
 
 	/**
@@ -387,11 +387,11 @@ abstract class Driver extends Query
 	/**
 	 * ฟังก์ชั่นเพิ่มข้อมูลใหม่ลงในตาราง
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param array $save ข้อมูลที่ต้องการบันทึก
 	 * @return int|bool สำเร็จ คืนค่า id ที่เพิ่ม ผิดพลาด คืนค่า false
 	 */
-	abstract public function insert($table, $save);
+	abstract public function insert($table_name, $save);
 
 	/**
 	 * ฟังก์ชั่นสร้างคำสั่ง sql query
@@ -404,21 +404,21 @@ abstract class Driver extends Query
 	/**
 	 * เรียกดูข้อมูล
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array $sort เรียงลำดับ
 	 * @param int $limit จำนวนข้อมูลที่ต้องการ
 	 * @return array ผลลัพท์ในรูป array ถ้าไม่สำเร็จ คืนค่าแอเรย์ว่าง
 	 */
-	abstract public function select($table, $condition, $sort = array(), $limit = 0);
+	abstract public function select($table_name, $condition, $sort = array(), $limit = 0);
 
 	/**
 	 * ฟังก์ชั่นแก้ไขข้อมูล
 	 *
-	 * @param string $table ชื่อตาราง
+	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
 	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
-	abstract public function update($table, $condition, $save);
+	abstract public function update($table_name, $condition, $save);
 }
