@@ -102,7 +102,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 * กำหนดค่า queryParams
 	 *
 	 * @param array $query
-	 * @return self
+	 * @return \static
 	 */
 	public function withQueryParams(array $query)
 	{
@@ -164,7 +164,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 * กำหนดค่า uploadedFiles
 	 *
 	 * @param array $uploadedFiles
-	 * @return self
+	 * @return \static
 	 */
 	public function withUploadedFiles(array $uploadedFiles)
 	{
@@ -200,7 +200,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 *
 	 * @param string $name ชื่อของ attributes
 	 * @param mixed $value ค่าของ attribute
-	 * @return self
+	 * @return \static
 	 */
 	public function withAttribute($name, $value)
 	{
@@ -213,7 +213,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 * ลบ attributes
 	 *
 	 * @param string $name ชื่อของ attributes
-	 * @return self
+	 * @return \static
 	 */
 	public function withoutAttribute($name)
 	{
@@ -282,7 +282,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $value ค่าของตัวแปร
-	 * @return self
+	 * @return \static
 	 */
 	public function setSession($name, $value)
 	{
@@ -308,7 +308,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 *
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
-	 * @return self
+	 * @return \static
 	 */
 	public function server($name, $default = null)
 	{
@@ -417,9 +417,9 @@ class Request extends AbstractRequest implements RequestInterface
 	private function createInputItem($source, $name, $default)
 	{
 		if (isset($source[$name])) {
-			return is_array($source[$name]) ? new Inputs($source[$name]) : new InputItem($source[$name]);
+			return is_array($source[$name]) ? new Inputs($source[$name], true) : new InputItem($source[$name], true);
 		} else {
-			return is_array($default) ? new Inputs($default) : new InputItem($default);
+			return is_array($default) ? new Inputs($default, false) : new InputItem($default, false);
 		}
 	}
 }

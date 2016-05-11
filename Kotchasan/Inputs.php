@@ -39,7 +39,7 @@ class Inputs implements \Iterator
 	}
 
 	/**
-	 * magic function คืนค่าข้อมูลสำหรับ input ชนิด array
+	 * magic method คืนค่าข้อมูลสำหรับ input ชนิด array
 	 *
 	 * @param string $name
 	 * @param array $arguments
@@ -51,7 +51,7 @@ class Inputs implements \Iterator
 		if (method_exists('\Kotchasan\InputItem', $name)) {
 			$result = array();
 			foreach ($this->datas as $key => $item) {
-				$result[$key] = $item->$name();
+				$result[$key] = $item->$name($arguments);
 			}
 			return $result;
 		} else {

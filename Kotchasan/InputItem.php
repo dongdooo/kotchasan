@@ -23,26 +23,35 @@ class InputItem
 	 * @var mixed
 	 */
 	protected $value;
+	/**
+	 * ตัวแปรสำหรับบอกว่ามี input ส่งมา
+	 *
+	 * @var bool
+	 */
+	protected $exists;
 
 	/**
 	 * Class Constructer
 	 *
-	 * @param mixed $value default null
+	 * @param mixed $value null (default)
+	 * @param bool $exists true (default) มี input ส่งมา, false ใช้ค่า default
 	 */
-	public function __construct($value = null)
+	public function __construct($value = null, $exists = true)
 	{
 		$this->value = $value;
+		$this->exists = $exists;
 	}
 
 	/**
 	 * สร้าง Object
 	 *
 	 * @param mixed $value
+	 * @param bool $exists true (default) มี input ส่งมา, false ใช้ค่า default
 	 * @return \static
 	 */
-	public static function create($value)
+	public static function create($value, $exists = true)
 	{
-		return new static($value);
+		return new static($value, $exists);
 	}
 
 	/**
@@ -53,6 +62,20 @@ class InputItem
 	public function all()
 	{
 		return $this->value;
+	}
+
+	/**
+	 * ตรวจสอบว่ามี input ส่งมาหรือไม่
+	 *
+	 * @return bool คืนค่า true ถ้ามี input ส่งมา, false ใช้ค่า default
+	 *
+	 * @assert create(null)->exists() [==] true
+	 * @assert create(null, true)->exists() [==] true
+	 * @assert create(null, false)->exists() [==] false
+	 */
+	public function exists()
+	{
+		return $this->exists;
 	}
 
 	/**

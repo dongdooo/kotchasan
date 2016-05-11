@@ -89,7 +89,7 @@ class View extends \Kotchasan\KBase
 	/**
 	 * ส่งออกเป็น HTML
 	 *
-	 * @param string $template HTML Template ถ้าไม่กำหนดมาจะใช้ index.html
+	 * @param string|null $template HTML Template ถ้าไม่กำหนด (null) จะใช้ index.html
 	 */
 	public function renderHTML($template = null)
 	{
@@ -112,7 +112,7 @@ class View extends \Kotchasan\KBase
 			// ถ้าไม่ได้กำหนดมาใช้ index.html
 			$template = Template::load('', '', 'index');
 		}
-		echo Template::pregReplace(array_keys($this->contents), array_values($this->contents), $template);
+		return Template::pregReplace(array_keys($this->contents), array_values($this->contents), $template);
 	}
 
 	/**

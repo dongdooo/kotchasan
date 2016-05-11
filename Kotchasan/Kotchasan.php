@@ -65,7 +65,7 @@ class Kotchasan extends Kotchasan\KBase
 	 * สร้าง Application สามารถเรียกใช้ได้ครั้งเดียวเท่านั้น
 	 *
 	 * @param Config $cfg ถ้าไม่กำหนดมาจะใช้ค่าเริ่มต้นของคชสาร
-	 * @return \self
+	 * @return \static
 	 */
 	public static function createWebApplication(Config $cfg = null)
 	{

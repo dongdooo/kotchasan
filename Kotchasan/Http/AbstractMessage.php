@@ -23,7 +23,7 @@ abstract class AbstractMessage implements MessageInterface
 	/**
 	 * @var string
 	 */
-	private $protocol = '1.1';
+	protected $protocol = '1.1';
 	/**
 	 * @var StreamInterface
 	 */
@@ -47,7 +47,7 @@ abstract class AbstractMessage implements MessageInterface
 	 * กำหนดเวอร์ชั่นของโปรโตคอล
 	 *
 	 * @param string $version เช่น 1.1, 1.0
-	 * @return self
+	 * @return \static
 	 */
 	public function withProtocolVersion($version)
 	{
@@ -63,11 +63,7 @@ abstract class AbstractMessage implements MessageInterface
 	 */
 	public function getHeaders()
 	{
-		$result = array();
-		foreach ($this->headers as $values) {
-			$result[$values[0]] = $values[1];
-		}
-		return $result;
+		return $this->headers;
 	}
 
 	/**
@@ -78,7 +74,7 @@ abstract class AbstractMessage implements MessageInterface
 	 */
 	public function hasHeader($name)
 	{
-		return isset($this->headers[strtolower($name)]);
+		return isset($this->headers[$name]);
 	}
 
 	/**
@@ -89,14 +85,7 @@ abstract class AbstractMessage implements MessageInterface
 	 */
 	public function getHeader($name)
 	{
-		$result = array();
-		$name = strtolower($name);
-		if (isset($this->headers[$name])) {
-			foreach ($this->headers[$name] as $values) {
-				$result[] = $values[1];
-			}
-		}
-		return $result;
+		return isset($this->headers[$name]) ? $this->headers[$name] : array();
 	}
 
 	/**
@@ -114,41 +103,54 @@ abstract class AbstractMessage implements MessageInterface
 	/**
 	 * กำหนด header แทนที่รายการเดิม
 	 *
-	 * @param string $name
-	 * @param string|string[] $value
-	 * @return self
+	 * @param string $name ชื่อของ Header
+	 * @param string|string[] $value ค่าของ Header เป็น string หรือ แอเรย์ของ string
+	 * @return \static
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withHeader($name, $value)
 	{
 		$this->filterHeader($name);
 		$clone = clone $this;
-		$clone->headers[strtolower($name)] = array(
-			$name,
-			is_array($value) ? $value : (array)$value
-		);
+		$clone->headers[$name] = is_array($value) ? $value : (array)$value;
+		return $clone;
+	}
+
+	/**
+	 * กำหนด header พร้อมกันหลายรายการ แทนที่รายการเดิม
+	 *
+	 * @param array $headers
+	 * @return \static
+	 * @throws \InvalidArgumentException for invalid header names or values.
+	 */
+	public function withHeaders($headers)
+	{
+		$clone = clone $this;
+		foreach ($headers as $name => $value) {
+			$this->filterHeader($name);
+			$clone->headers[$name] = is_array($value) ? $value : (array)$value;
+		}
 		return $clone;
 	}
 
 	/**
 	 * เพิ่ม header ใหม่
 	 *
-	 * @param string $name
-	 * @param string|string[] $value Header value(s).
-	 * @return self
+	 * @param string $name ชื่อของ Header
+	 * @param string|string[] $value ค่าของ Header เป็น string หรือ แอเรย์ของ string
+	 * @return \static
 	 * @throws \InvalidArgumentException ถ้าชื่อ header ไม่ถูกต้อง
 	 */
 	public function withAddedHeader($name, $value)
 	{
 		$this->filterHeader($name);
 		$clone = clone $this;
-		$key = strtolower($name);
 		if (is_array($value)) {
 			foreach ($value as $item) {
-				$clone->headers[$key][] = array($name, $item);
+				$clone->headers[$name][] = $item;
 			}
 		} else {
-			$clone->headers[$key][] = array($name, $value);
+			$clone->headers[$name][] = $value;
 		}
 		return $clone;
 	}
@@ -157,7 +159,7 @@ abstract class AbstractMessage implements MessageInterface
 	 * ลบ header
 	 *
 	 * @param string $name ชื่อ header ที่ต้องการลบ
-	 * @return self
+	 * @return \static
 	 */
 	public function withoutHeader($name)
 	{
@@ -180,7 +182,7 @@ abstract class AbstractMessage implements MessageInterface
 	 * กำหนด stream
 	 *
 	 * @param StreamInterface $body.
-	 * @return self
+	 * @return \static
 	 */
 	public function withBody(StreamInterface $body)
 	{

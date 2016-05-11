@@ -98,6 +98,9 @@ em {
 strong {
 	font-weight: bold;
 }
+figure {
+	margin: 0 0 10px 0;
+}
 img {
 	border: none;
 	vertical-align: middle;
@@ -200,10 +203,4 @@ table > thead > tr > th.th {
 table th > span {
 	display: block;
 	color: #F90;
-}
-article.r {
-	margin-bottom: 10px;
-}
-article.r div.detail {
-	margin: 10px;
 }

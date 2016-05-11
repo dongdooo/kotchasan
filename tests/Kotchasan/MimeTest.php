@@ -39,7 +39,7 @@ class MimeTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertEquals(
-		array('jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png'), \Kotchasan\Mime::get(array('jpg', 'gif', 'png'))
+			array('jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png'), \Kotchasan\Mime::get(array('jpg', 'gif', 'png'))
 		);
 	}
 
@@ -52,7 +52,7 @@ class MimeTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertTrue(
-		\Kotchasan\Mime::check(array('jpg', 'gif', 'png'), 'image/png')
+			\Kotchasan\Mime::check(array('jpg', 'gif', 'png'), 'image/png')
 		);
 	}
 
@@ -65,7 +65,7 @@ class MimeTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$this->assertEquals(
-		"image/jpeg,image/gif,image/png", \Kotchasan\Mime::getEccept(array('jpg', 'gif', 'png'))
+			"image/jpeg,image/gif,image/png", \Kotchasan\Mime::getEccept(array('jpg', 'gif', 'png'))
 		);
 	}
 
@@ -77,7 +77,7 @@ class MimeTest extends \PHPUnit_Framework_TestCase
 	{
 		// Remove the following lines when you implement this test.
 		$this->markTestIncomplete(
-		'This test has not been implemented yet.'
+			'This test has not been implemented yet.'
 		);
 	}
 }

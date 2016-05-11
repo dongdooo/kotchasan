@@ -18,6 +18,7 @@
   text-transform: none;
   margin-right: 5px;
   min-width: 1em;
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

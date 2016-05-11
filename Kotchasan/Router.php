@@ -41,7 +41,7 @@ class Router extends \Kotchasan\KBase
 	 * Initial Router
 	 *
 	 * @param string $className คลาสที่จะรับค่าจาก Router
-	 * @return self
+	 * @return \static
 	 * @throws \InvalidArgumentException หากไม่พบคลาสเป้าหมาย
 	 */
 	public function init($className)

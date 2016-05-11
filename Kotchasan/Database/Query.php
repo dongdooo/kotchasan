@@ -281,6 +281,9 @@ abstract class Query extends \Kotchasan\KBase
 			} elseif (preg_match('/^([a-z0-9_]+)(\.([a-z0-9_]+))?(([\s]+)?(ASC|DESC))?$/i', $item, $match)) {
 				// field.id DESC
 				$sqls[] = '`'.$match[1].'`'.(empty($match[3]) ? '' : '.`'.$match[3].'`').(isset($match[6]) ? " $match[6]" : '');
+			} elseif (strtoupper($item) === 'RAND()') {
+				// RAND()
+				$sqls[] = 'RAND()';
 			}
 		}
 		return implode(', ', $sqls);

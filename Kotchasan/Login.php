@@ -163,7 +163,6 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 				'id' => 1,
 				'email' => $username,
 				'password' => $password,
-				'displayname' => $username,
 				'status' => 1
 			);
 		}

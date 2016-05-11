@@ -533,7 +533,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 *
 	 * @param array $params
 	 * @param bool $encode false (default) เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
-	 * @return \self
+	 * @return \static
 	 */
 	public function withParams($params, $encode = false)
 	{

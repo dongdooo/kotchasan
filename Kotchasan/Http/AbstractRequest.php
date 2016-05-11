@@ -52,7 +52,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	 * กำหนดค่า request target.
 	 *
 	 * @param mixed $requestTarget
-	 * @return self
+	 * @return \static
 	 */
 	public function withRequestTarget($requestTarget)
 	{
@@ -75,7 +75,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	 * กำหนดค่า HTTP method
 	 *
 	 * @param string $method
-	 * @return self
+	 * @return \static
 	 */
 	public function withMethod($method)
 	{
@@ -102,7 +102,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	 *
 	 * @param Uri $uri
 	 * @param bool $preserveHost
-	 * @return self
+	 * @return \static
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false)
 	{

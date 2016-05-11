@@ -214,7 +214,7 @@ class ListItem
 	 * โหลดแอเรย์จากไฟล์
 	 *
 	 * @param string $file ชื่อไฟล์ที่ต้องการโหลดรวม path
-	 * @return \self
+	 * @return \static
 	 */
 	public function loadFromFile($file)
 	{

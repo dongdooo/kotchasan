@@ -47,6 +47,6 @@ class Controller extends \Kotchasan\Controller
 			'/{TIME}/' => Date::format()
 		));
 		// ส่งออกเป็น HTML
-		$view->renderHTML();
+		echo $view->renderHTML();
 	}
 }
