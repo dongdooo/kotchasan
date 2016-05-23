@@ -34,7 +34,7 @@ class Image
 	 * @param int $thumbwidth ความกว้างของรูปภาพที่ต้องการ
 	 * @param int $thumbheight ความสูงของรูปภาพที่ต้องการ
 	 * @param string $watermark (optional) ข้อความลายน้ำ
-	 * @return bool สำเร็จคืนค่า true
+	 * @return boolean สำเร็จคืนค่า true
 	 */
 	public static function crop($source, $target, $thumbwidth, $thumbheight, $watermark = '')
 	{

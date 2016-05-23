@@ -193,7 +193,7 @@ class Template
 	/**
 	 * ตรวจสอบว่ามีไฟล์ Template ถูกเลือกหรือไม่
 	 *
-	 * @return bool true ถ้าไม่พบไฟล์ Template หรือ Template ว่างเปล่า, อื่นๆคืนค่า False
+	 * @return boolean true ถ้าไม่พบไฟล์ Template หรือ Template ว่างเปล่า, อื่นๆคืนค่า False
 	 */
 	public function isEmpty()
 	{

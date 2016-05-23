@@ -90,6 +90,12 @@ class DataTable extends \Kotchasan\KBase
 	 */
 	private $responsive = false;
 	/**
+	 * แสดงส่วนหัวของตาราง
+	 *
+	 * @var bool
+	 */
+	private $showCaption = true;
+	/**
 	 * URL สำหรับรับค่าจาก action ต่างๆ เช่นการลบ
 	 * เช่น index/[controller|model]/className/method.php
 	 *
@@ -401,12 +407,14 @@ class DataTable extends \Kotchasan\KBase
 			$e = min($count, $s + $this->perPage - 1);
 		}
 		// table caption
-		if (empty($search)) {
-			$caption = Language::get('All :count entries, displayed :start to :end, page :page of :total pages');
-		} else {
-			$caption = Language::get('Search <strong>:search</strong> found :count entries, displayed :start to :end, page :page of :total pages');
+		if ($this->showCaption) {
+			if (empty($search)) {
+				$caption = Language::get('All :count entries, displayed :start to :end, page :page of :total pages');
+			} else {
+				$caption = Language::get('Search <strong>:search</strong> found :count entries, displayed :start to :end, page :page of :total pages');
+			}
+			$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		}
-		$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		// เรียงลำดับ
 		if (!empty($this->sort) && ($this->sortType == 'asc' || $this->sortType == 'desc') && in_array($this->sort, array_keys($this->columns))) {
 			if (isset($this->model)) {
@@ -452,7 +460,9 @@ class DataTable extends \Kotchasan\KBase
 			}
 			// table
 			$content[] = '<div class="tablebody"><table'.implode('', $prop).'>';
-			$content[] = '<caption>'.$caption.'</caption>';
+			if ($this->showCaption) {
+				$content[] = '<caption>'.$caption.'</caption>';
+			}
 			$row = array();
 			$i = 0;
 			$colCount = 0;
@@ -551,12 +561,12 @@ class DataTable extends \Kotchasan\KBase
 		foreach ($this->datas as $o => $items) {
 			if (empty($this->perPage) || ($n > $start && $n < $end)) {
 				$src_items = $items;
-				if (isset($this->onRow)) {
-					$items = call_user_func($this->onRow, $items);
-				}
 				// id ของข้อมูล
 				$id = isset($items[$this->primaryKey]) ? $items[$this->primaryKey] : $o;
 				$prop = array('id="'.$this->id.'_'.$id.'"');
+				if (isset($this->onRow)) {
+					$items = call_user_func($this->onRow, $items, $o, $prop);
+				}
 				if (isset($this->dragColumn)) {
 					$prop[] = 'class="sort"';
 				}

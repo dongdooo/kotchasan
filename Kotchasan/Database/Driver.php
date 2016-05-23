@@ -74,7 +74,7 @@ abstract class Driver extends Query
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
 	 *
-	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
 	 * @return \static
 	 */
 	public function cacheOn($auto_save = true)
@@ -125,7 +125,7 @@ abstract class Driver extends Query
 	 * ฟังก์ชั่นประมวลผลคำสั่ง SQL สำหรับสอบถามข้อมูล คืนค่าผลลัพท์เป็นแอเรย์ของข้อมูลที่ตรงตามเงื่อนไข.
 	 *
 	 * @param string $sql query string
-	 * @param bool $toArray (option) default  false คืนค่าผลลัทเป็น Object, true คืนค่าเป็น Array
+	 * @param boolean $toArray default  false คืนค่าผลลัทเป็น Object, true คืนค่าเป็น Array
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
 	 * @return array คืนค่าผลการทำงานเป็น record ของข้อมูลทั้งหมดที่ตรงตามเงื่อนไข ไม่พบคืนค่าแอเรย์ว่าง
 	 */
@@ -147,7 +147,7 @@ abstract class Driver extends Query
 	 * ฟังก์ชั่นตรวจสอบว่ามี database หรือไม่
 	 *
 	 * @param string $database ชื่อฐานข้อมูล
-	 * @return bool คืนค่า true หากมีฐานข้อมูลนี้อยู่ ไม่พบคืนค่า false
+	 * @return boolean คืนค่า true หากมีฐานข้อมูลนี้อยู่ ไม่พบคืนค่า false
 	 */
 	public function databaseExists($database)
 	{
@@ -205,7 +205,7 @@ abstract class Driver extends Query
 	 *
 	 * @param string $table_name ชื่อตาราง
 	 * @param string $field ชื่อฟิลด์
-	 * @return bool คืนค่า true หากมีฟิลด์นี้อยู่ ไม่พบคืนค่า false
+	 * @return boolean คืนค่า true หากมีฟิลด์นี้อยู่ ไม่พบคืนค่า false
 	 */
 	public function fieldExists($table_name, $field)
 	{
@@ -315,7 +315,7 @@ abstract class Driver extends Query
 	 *
 	 * @param string $sql
 	 * @param array $values ถ้าระบุตัวแปรนี้จะเป็นการบังคับใช้คำสั่ง prepare แทน query
-	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 */
 	public function query($sql, $values = array())
 	{
@@ -340,7 +340,7 @@ abstract class Driver extends Query
 	 * ฟังก์ชั่นตรวจสอบว่ามีตาราง หรือไม่.
 	 *
 	 * @param string $table_name ชื่อตาราง
-	 * @return bool คืนค่า true หากมีตารางนี้อยู่ ไม่พบคืนค่า false
+	 * @return boolean คืนค่า true หากมีตารางนี้อยู่ ไม่พบคืนค่า false
 	 */
 	public function tableExists($table_name)
 	{
@@ -351,7 +351,7 @@ abstract class Driver extends Query
 	 * ฟังก์ชั่นลบข้อมูลทั้งหมดในตาราง
 	 *
 	 * @param  string $table_name table name
-	 * @return bool คืนค่า true ถ้าสำเร็จ
+	 * @return boolean คืนค่า true ถ้าสำเร็จ
 	 */
 	public function emptyTable($table_name)
 	{
@@ -363,7 +363,7 @@ abstract class Driver extends Query
 	 *
 	 * @param  string $table_name table name
 	 * @param array $save ข้อมูลที่ต้องการบันทึก array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function updateAll($table_name, $save)
 	{
@@ -418,7 +418,7 @@ abstract class Driver extends Query
 	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	abstract public function update($table_name, $condition, $save);
 }

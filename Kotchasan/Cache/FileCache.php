@@ -89,7 +89,7 @@ class FileCache extends Cache
 	 * ตรวจสอบแคช
 	 *
 	 * @param string $key
-	 * @return bool true ถ้ามี
+	 * @return boolean true ถ้ามี
 	 */
 	public function hasItem($key)
 	{
@@ -99,7 +99,7 @@ class FileCache extends Cache
 	/**
 	 * เคลียร์แคช
 	 *
-	 * @return bool true ถ้าลบเรียบร้อย, หรือ false ถ้าไม่สำเร็จ
+	 * @return boolean true ถ้าลบเรียบร้อย, หรือ false ถ้าไม่สำเร็จ
 	 */
 	public function clear()
 	{
@@ -137,7 +137,7 @@ class FileCache extends Cache
 	 * ลบแคชหลายๆรายการ
 	 *
 	 * @param array $keys
-	 * @return bool true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
+	 * @return boolean true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
 	 */
 	public function deleteItems(array $keys)
 	{
@@ -153,7 +153,7 @@ class FileCache extends Cache
 	 * บันทึกแคช
 	 *
 	 * @param CacheItemInterface $item
-	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 * @throws CacheException
 	 */
 	public function save(CacheItemInterface $item)
@@ -186,7 +186,7 @@ class FileCache extends Cache
 	 * ตรวจสอบวันหมดอายุของไฟล์แคช
 	 *
 	 * @param string $file
-	 * @return bool คืนค่า true ถ้าแคชสามารถใช้งานได้
+	 * @return boolean คืนค่า true ถ้าแคชสามารถใช้งานได้
 	 */
 	private function isExpired($file)
 	{

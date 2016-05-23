@@ -126,7 +126,7 @@ class ListItem
 	 * ลบรายการที่กำหนด
 	 *
 	 * @param string $key ของรายการที่ต้องการจะลบ
-	 * @return bool คืนค่า true ถ้าสำเร็จ, false ถ้าไม่พบ
+	 * @return boolean คืนค่า true ถ้าสำเร็จ, false ถ้าไม่พบ
 	 */
 	public function delete($key)
 	{
@@ -229,7 +229,7 @@ class ListItem
 	/**
 	 * บันทึกเป็นไฟล์
 	 *
-	 * @return bool true ถ้าสำเร็จ
+	 * @return boolean true ถ้าสำเร็จ
 	 */
 	public function saveToFile()
 	{

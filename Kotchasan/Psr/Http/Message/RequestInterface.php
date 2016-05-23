@@ -123,7 +123,7 @@ interface RequestInterface extends MessageInterface
 	 *
 	 * @link http://tools.ietf.org/html/rfc3986#section-4.3
 	 * @param UriInterface $uri New request URI to use.
-	 * @param bool $preserveHost Preserve the original state of the Host header.
+	 * @param boolean $preserveHost Preserve the original state of the Host header.
 	 * @return self
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false);

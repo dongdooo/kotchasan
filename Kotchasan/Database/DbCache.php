@@ -87,7 +87,7 @@ class DbCache
 	 * query ครั้งต่อไปถ้าจะใช้ cache ต้อง เปิดการใช้งาน cache ก่อนทุกครั้ง
 	 *
 	 * @param array $datas ข้อมูลที่จะบันทึก
-	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 */
 	public function save($datas)
 	{
@@ -103,7 +103,7 @@ class DbCache
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
 	 *
-	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
 	 */
 	public function cacheOn($auto_save = true)
 	{
@@ -123,7 +123,7 @@ class DbCache
 	/**
 	 * เคลียร์แคช
 	 *
-	 * @return bool true ถ้าลบเรียบร้อย, หรือ array ของรายการที่ไม่สำเร็จ
+	 * @return boolean true ถ้าลบเรียบร้อย, หรือ array ของรายการที่ไม่สำเร็จ
 	 */
 	public function clear()
 	{

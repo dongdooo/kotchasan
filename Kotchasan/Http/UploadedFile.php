@@ -85,7 +85,7 @@ class UploadedFile implements UploadedFileInterface
 	 * @param string $mimeType MIME Type
 	 * @param int $size ขนาดไฟล์อัปโหลด
 	 * @param int $error ข้อผิดพลาดการอัปโหลด UPLOAD_ERR_XXX
-	 * @param bool $sapi Indicates if the upload is in a SAPI environment.
+	 * @param boolean $sapi Indicates if the upload is in a SAPI environment.
 	 */
 	public function __construct($path, $originalName, $mimeType = null, $size = null, $error = null, $sapi = true)
 	{
@@ -118,7 +118,7 @@ class UploadedFile implements UploadedFileInterface
 	 * ย้ายไฟล์อัปโหลดไปยังที่อยู่ใหม่
 	 *
 	 * @param string $targetPath ที่อยู่ปลายทางที่ต้องการย้าย
-	 * @return bool true ถ้าอัปโหลดเรียบร้อย
+	 * @return boolean true ถ้าอัปโหลดเรียบร้อย
 	 * @throws \InvalidArgumentException ข้อผิดพลาดหากที่อยู่ปลายทางไม่สามารถเขียนได้
 	 * @throws \RuntimeException ข้อผิดพลาดการอัปโหลด
 	 */
@@ -208,7 +208,7 @@ class UploadedFile implements UploadedFileInterface
 	 * ตรวจสอบนามสกุลของไฟล์อัปโหลด
 	 *
 	 * @param array $exts รายการนามสกุลของไฟล์อัปโหลดที่ยอมรับ เช่น [jpg, gif, png]
-	 * @return bool คืนค่า true ถ้านามสกุลของไฟล์อัปโหลดอยู่ใน $exts
+	 * @return boolean คืนค่า true ถ้านามสกุลของไฟล์อัปโหลดอยู่ใน $exts
 	 */
 	public function validFileExt($exts)
 	{
@@ -218,7 +218,7 @@ class UploadedFile implements UploadedFileInterface
 	/**
 	 * ตรวจสอบไฟล์อัปโหลด
 	 *
-	 * @return bool คืนค่า true ถ้ามีไฟล์อัปโหลด
+	 * @return boolean คืนค่า true ถ้ามีไฟล์อัปโหลด
 	 */
 	public function hasUploadFile()
 	{
@@ -228,7 +228,7 @@ class UploadedFile implements UploadedFileInterface
 	/**
 	 * อ่านการตั้งค่าขนาดของไฟลอัปโหลด
 	 *
-	 * @param bool $return_byte false (default) คืนค่าเป็นข้อความเช่น 2M, true คืนค่าเป็นตัวเลข (byte)
+	 * @param boolean $return_byte false (default) คืนค่าเป็นข้อความเช่น 2M, true คืนค่าเป็นตัวเลข (byte)
 	 * @return string|int
 	 */
 	public static function getUploadSize($return_byte = false)
@@ -253,7 +253,7 @@ class UploadedFile implements UploadedFileInterface
 	 * สำเนาไฟล์อัปโหลดไปยังที่อยู่ใหม่
 	 *
 	 * @param string $targetPath ที่อยู่ปลายทางที่ต้องการย้าย
-	 * @return bool true ถ้าอัปโหลดเรียบร้อย
+	 * @return boolean true ถ้าอัปโหลดเรียบร้อย
 	 * @throws \RuntimeException ข้อผิดพลาดการอัปโหลด
 	 * @throws \InvalidArgumentException ไดเรคทอรี่ไม่สามารถเขียนได้
 	 */
@@ -325,7 +325,7 @@ class UploadedFile implements UploadedFileInterface
 	 *
 	 * @param array $exts นามสกุลของไฟล์รูปภาพที่ยอมรับ เช่น [jpg, gif, png]
 	 * @param string $targetDir ไดเรคทอรี่ปลายทาง
-	 * @return bool คืนค่า true ถ้าสามารถอัปโหลดได้
+	 * @return boolean คืนค่า true ถ้าสามารถอัปโหลดได้
 	 * @throws \RuntimeException ถ้าชนิดของไฟล์อัปโหลดไม่ถูกต้อง
 	 * @throws \InvalidArgumentException ถ้าไดเร็คทอรี่ไม่สามารถเขียนได้
 	 */

@@ -34,7 +34,11 @@ class Inputs implements \Iterator
 	public function __construct(array $items = array())
 	{
 		foreach ($items as $key => $value) {
-			$this->datas[$key] = InputItem::create($value);
+			if (is_array($value)) {
+				$this->datas[$key] = new static($value);
+			} else {
+				$this->datas[$key] = InputItem::create($value);
+			}
 		}
 	}
 

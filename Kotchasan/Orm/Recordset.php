@@ -159,7 +159,7 @@ class Recordset extends Query implements \Iterator
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
 	 *
-	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
 	 * @return \static
 	 */
 	public function cacheOn($auto_save = true)
@@ -196,9 +196,9 @@ class Recordset extends Query implements \Iterator
 	 * ลบ record กำหนดโดย $condition
 	 *
 	 * @param mixed $condition int (primaryKey), string (SQL QUERY), array
-	 * @param bool $all false (default) ลบรายการเดียว, true ลบทุกรายการที่ตรงตามเงื่อนไข
+	 * @param boolean $all false (default) ลบรายการเดียว, true ลบทุกรายการที่ตรงตามเงื่อนไข
 	 * @param string $oprator สำหรับเชื่อมแต่ละ $condition เข้าด้วยกัน AND (default), OR
-	 * @return bool true ถ้าสำเร็จ
+	 * @return boolean true ถ้าสำเร็จ
 	 */
 	public function delete($condition = array(), $all = false, $oprator = 'AND')
 	{
@@ -540,7 +540,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * ฟังก์ชั่นลบข้อมูลทั้งหมดในตาราง
 	 *
-	 * @return bool คืนค่า true ถ้าสำเร็จ
+	 * @return boolean คืนค่า true ถ้าสำเร็จ
 	 */
 	public function emptyTable()
 	{
@@ -552,7 +552,7 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @param array $condition
 	 * @param array|Field $save
-	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function update($condition, $save)
 	{
@@ -588,7 +588,7 @@ class Recordset extends Query implements \Iterator
 	 *
 	 * @param array $save ข้อมูลที่ต้องการบันทึก
 	 * array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function updateAll($save)
 	{

@@ -22,7 +22,7 @@ class Validator extends \Kotchasan\KBase
 	 * ตรวจสอบความถูกของอีเมล์
 	 *
 	 * @param string $email
-	 * @return bool คืนค่า true ถ้ารูปแบบอีเมล์ถูกต้อง
+	 * @return boolean คืนค่า true ถ้ารูปแบบอีเมล์ถูกต้อง
 	 *
 	 * @assert ('admin@localhost.com') [==] true
 	 * @assert ('admin@localhost') [==] true
@@ -73,7 +73,7 @@ class Validator extends \Kotchasan\KBase
 	 * ฟังก์ชั่นสำหรับตรวจสอบความถูกต้องของรหัสบัตรประชาชน
 	 *
 	 * @param string $id ตัวเลข 13 หลัก
-	 * @return bool คืนค่า true=ถูกต้อง และ false=ไม่ถูกต้อง
+	 * @return boolean คืนค่า true=ถูกต้อง และ false=ไม่ถูกต้อง
 	 *
 	 * @assert ('0123456789016') [==] true
 	 * @assert ('0123456789015') [==] false

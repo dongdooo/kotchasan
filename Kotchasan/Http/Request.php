@@ -360,7 +360,7 @@ class Request extends AbstractRequest implements RequestInterface
 	/**
 	 * ฟังก์ชั่น ตรวจสอบ referer
 	 *
-	 * @return bool คืนค่า true ถ้า referer มาจากเว็บไซต์นี้
+	 * @return boolean คืนค่า true ถ้า referer มาจากเว็บไซต์นี้
 	 */
 	public function isReferer()
 	{

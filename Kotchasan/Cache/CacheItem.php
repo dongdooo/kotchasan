@@ -73,7 +73,7 @@ class CacheItem implements CacheItemInterface
 	/**
 	 * ฟังก์ชั่นตรวจสอบว่ามีการกำหนดข้อมูลลงในแคชหรือไม่
 	 *
-	 * @return bool true ถ้ามีการใส่ value ในแคชแล้ว
+	 * @return boolean true ถ้ามีการใส่ value ในแคชแล้ว
 	 */
 	public function isHit()
 	{

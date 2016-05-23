@@ -512,7 +512,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 * ฟังก์ชั่นแปลง Queryparams เป็น Querystring
 	 *
 	 * @param array $params
-	 * @param bool $encode false เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
+	 * @param boolean $encode false เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
 	 * @return string
 	 */
 	public function paramsToQuery($params, $encode)
@@ -532,7 +532,7 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	 * ฟังก์ชั่นแทนที่ Query params ลงใน URL
 	 *
 	 * @param array $params
-	 * @param bool $encode false (default) เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
+	 * @param boolean $encode false (default) เชื่อม Querystring ด้วย &, true  เชื่อม Querystring ด้วย &amp;
 	 * @return \static
 	 */
 	public function withParams($params, $encode = false)

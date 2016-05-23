@@ -301,7 +301,7 @@ class PdoMysqlDriver extends Driver
 	 * เลือกฐานข้อมูล.
 	 *
 	 * @param string $database
-	 * @return bool false หากไม่สำเร็จ
+	 * @return boolean false หากไม่สำเร็จ
 	 */
 	public function selectDB($database)
 	{
@@ -316,7 +316,7 @@ class PdoMysqlDriver extends Driver
 	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param array|object $save ข้อมูลที่ต้องการบันทึก รูปแบบ array('key1'=>'value1', 'key2'=>'value2', ...)
-	 * @return bool สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
+	 * @return boolean สำเร็จ คืนค่า true, ผิดพลาด คืนค่า false
 	 */
 	public function update($table_name, $condition, $save)
 	{

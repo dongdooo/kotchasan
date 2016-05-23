@@ -44,7 +44,7 @@ abstract class Cache extends \Kotchasan\KBase implements CacheItemPoolInterface
 	 * ลบแคช
 	 *
 	 * @param string $key
-	 * @return bool true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
+	 * @return boolean true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
 	 */
 	public function deleteItem($key)
 	{
@@ -55,7 +55,7 @@ abstract class Cache extends \Kotchasan\KBase implements CacheItemPoolInterface
 	 * กำหนดรายการแคชสำหรับบันทึกในภายหลัง
 	 *
 	 * @param CacheItemInterface $item
-	 * @return bool false ถ้าไม่มีรายการในคิว
+	 * @return boolean false ถ้าไม่มีรายการในคิว
 	 */
 	public function saveDeferred(CacheItemInterface $item)
 	{
@@ -66,7 +66,7 @@ abstract class Cache extends \Kotchasan\KBase implements CacheItemPoolInterface
 	/**
 	 * บันทึกรายการแคชในคิว
 	 *
-	 * @return bool ถ้ามีบางรายการไม่สำเร็จคืนค่า false
+	 * @return boolean ถ้ามีบางรายการไม่สำเร็จคืนค่า false
 	 */
 	public function commit()
 	{

@@ -9,7 +9,6 @@
 namespace Kotchasan;
 
 use \Kotchasan\Html;
-use \Kotchasan\Text;
 use \Kotchasan\Login;
 
 /**

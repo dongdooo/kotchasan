@@ -70,7 +70,7 @@ abstract class AbstractMessage implements MessageInterface
 	 * ตรวจสอบว่ามี header หรือไม่
 	 *
 	 * @param string $name
-	 * @return bool คืนค่า true ถ้ามี
+	 * @return boolean คืนค่า true ถ้ามี
 	 */
 	public function hasHeader($name)
 	{

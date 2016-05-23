@@ -101,7 +101,7 @@ class AbstractRequest extends AbstractMessage implements RequestInterface
 	 * กำหนดค่า Uri
 	 *
 	 * @param Uri $uri
-	 * @param bool $preserveHost
+	 * @param boolean $preserveHost
 	 * @return \static
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false)

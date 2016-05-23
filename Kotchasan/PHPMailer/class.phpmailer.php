@@ -847,7 +847,7 @@ class PHPMailer
 	 * Uses the imap_rfc822_parse_adrlist function if the IMAP extension is available.
 	 * Note that quotes in the name part are removed.
 	 * @param string $addrstr The address list string
-	 * @param bool $useimap Whether to use the IMAP extension to parse the list
+	 * @param boolean $useimap Whether to use the IMAP extension to parse the list
 	 * @return array
 	 * @link http://www.andrew.cmu.edu/user/agreen1/testing/mrbs/web/Mail/RFC822.php A more careful implementation
 	 */
@@ -1039,7 +1039,7 @@ class PHPMailer
 	/**
 	 * Tells whether IDNs (Internationalized Domain Names) are supported or not. This requires the
 	 * "intl" and "mbstring" PHP extensions.
-	 * @return bool "true" if required functions for IDN support are present
+	 * @return boolean "true" if required functions for IDN support are present
 	 */
 	public function idnSupported()
 	{

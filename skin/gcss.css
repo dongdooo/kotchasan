@@ -2944,6 +2944,9 @@ table p,
 .icons :before {
 	margin-right: 0;
 }
+td.icons {
+	white-space: nowrap;
+}
 a.skip_content {
 	position: absolute;
 	top: 0;

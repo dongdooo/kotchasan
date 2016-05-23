@@ -57,7 +57,7 @@ class ApcCache extends Cache
 	 * ตรวจสอบแคช
 	 *
 	 * @param string $key
-	 * @return bool true ถ้ามี
+	 * @return boolean true ถ้ามี
 	 */
 	public function hasItem($key)
 	{
@@ -67,7 +67,7 @@ class ApcCache extends Cache
 	/**
 	 * เคลียร์แคช
 	 *
-	 * @return bool true ถ้าลบเรียบร้อย, หรือ false ถ้าไม่สำเร็จ
+	 * @return boolean true ถ้าลบเรียบร้อย, หรือ false ถ้าไม่สำเร็จ
 	 */
 	public function clear()
 	{
@@ -78,7 +78,7 @@ class ApcCache extends Cache
 	 * ลบแคชหลายๆรายการ
 	 *
 	 * @param array $keys
-	 * @return bool true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
+	 * @return boolean true ถ้าสำเร็จ, false ถ้าไม่สำเร็จ
 	 */
 	public function deleteItems(array $keys)
 	{
@@ -94,7 +94,7 @@ class ApcCache extends Cache
 	 * บันทึกแคช
 	 *
 	 * @param CacheItemInterface $item
-	 * @return bool สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
+	 * @return boolean สำเร็จคืนค่า true ไม่สำเร็จคืนค่า false
 	 * @throws CacheException
 	 */
 	public function save(CacheItemInterface $item)

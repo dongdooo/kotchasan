@@ -35,7 +35,7 @@ class Config
 	 *
 	 * @var array
 	 */
-	public $languages = array('en');
+	public $languages = array('th');
 	/**
 	 * template ที่กำลังใช้งานอยู่ (ชื่อโฟลเดอร์)
 	 *
@@ -128,6 +128,12 @@ class Config
 	 * @var string
 	 */
 	public $char_set = 'UTF-8';
+	/**
+	 * รายชื่อฟิลด์จากตารางสมาชิก สำหรับตรวจสอบการ login
+	 *
+	 * @var array
+	 */
+	public $login_fields = array('email');
 
 	/**
 	 * เรียกใช้งาน Class แบบสามารถเรียกได้ครั้งเดียวเท่านั้น
@@ -213,7 +219,7 @@ class Config
 	 *
 	 * @param array $config
 	 * @param string $file ไฟล์ config (fullpath)
-	 * @return bool คืนค่า true ถ้าสำเร็จ
+	 * @return boolean คืนค่า true ถ้าสำเร็จ
 	 */
 	public static function save($config, $file)
 	{

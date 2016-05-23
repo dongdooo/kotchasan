@@ -23,7 +23,7 @@ class ArrayTool
 	 *
 	 * @param array $array แอเรย์ที่ต้องการเรียงลำดับ
 	 * @param string $sort_key (optional) คืย์ของ $array ที่ต้องการในการเรียง (default id)
-	 * @param bool $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
+	 * @param boolean $sort_desc true=เรียงจากมากไปหาน้อย, false=เรียงจากน้อยไปหามาก (default false)
 	 * @return array
 	 *
 	 * @assert (array(array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'), array('id' => 1, 'value' => 'one'))) [==] array(array('id' => 1, 'value' => 'one'), array('id' => 2, 'value' => 'two'), array('id' => 3, 'value' => 'three'))
@@ -190,7 +190,7 @@ class ArrayTool
 	 *
 	 * @param string $str ข้อมูล serialize
 	 * @param array $source ข้อมูลตั้งต้น ถ้าใช้ฟังก์ชั่นนี้ในการแปลงข้อมูล ค่านี้จะเป็นแอเรย์ว่าง (ค่าเริ่มต้น)
-	 * @param bool $replace true (default) แทนที่ข้อมูลเดิม, false เก็บข้อมูลเดิมไว้
+	 * @param boolean $replace true (default) แทนที่ข้อมูลเดิม, false เก็บข้อมูลเดิมไว้
 	 * @return array
 	 *
 	 * @assert ('') [==] array()

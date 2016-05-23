@@ -34,7 +34,7 @@ class InputItem
 	 * Class Constructer
 	 *
 	 * @param mixed $value null (default)
-	 * @param bool $exists true (default) มี input ส่งมา, false ใช้ค่า default
+	 * @param boolean $exists true (default) มี input ส่งมา, false ใช้ค่า default
 	 */
 	public function __construct($value = null, $exists = true)
 	{
@@ -46,7 +46,7 @@ class InputItem
 	 * สร้าง Object
 	 *
 	 * @param mixed $value
-	 * @param bool $exists true (default) มี input ส่งมา, false ใช้ค่า default
+	 * @param boolean $exists true (default) มี input ส่งมา, false ใช้ค่า default
 	 * @return \static
 	 */
 	public static function create($value, $exists = true)
@@ -67,7 +67,7 @@ class InputItem
 	/**
 	 * ตรวจสอบว่ามี input ส่งมาหรือไม่
 	 *
-	 * @return bool คืนค่า true ถ้ามี input ส่งมา, false ใช้ค่า default
+	 * @return boolean คืนค่า true ถ้ามี input ส่งมา, false ใช้ค่า default
 	 *
 	 * @assert create(null)->exists() [==] true
 	 * @assert create(null, true)->exists() [==] true
@@ -390,7 +390,7 @@ class InputItem
 	/**
 	 * แปลง & " ' < > \ เป็น HTML entities ใช้แทน htmlspecialchars() ของ PHP
 	 *
-	 * @param bool $double_encode true (default) แปลง รหัส HTML เช่น &amp; เป็น &amp;amp;, false ไม่แปลง
+	 * @param boolean $double_encode true (default) แปลง รหัส HTML เช่น &amp; เป็น &amp;amp;, false ไม่แปลง
 	 * @return \static
 	 */
 	private function htmlspecialchars($double_encode = true)

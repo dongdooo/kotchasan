@@ -40,7 +40,7 @@ class Date
 	 * แปลงตัวเลขเป็นชื่อเดือนตามภาษาที่ใช้งานอยู่
 	 *
 	 * @param int $month 1-12
-	 * @param bool $short_month true (default) ชื่อเดือนแบบสั้น เช่น มค., false ชื่อเดือนแบบเต็ม เช่น มกราคม
+	 * @param boolean $short_month true (default) ชื่อเดือนแบบสั้น เช่น มค., false ชื่อเดือนแบบเต็ม เช่น มกราคม
 	 * @return string 1 มกราคม...12 ธันวาคม
 	 * @assert (1) [==] 'ม.ค.'
 	 * @assert (1, false) [==] 'มกราคม'
@@ -59,7 +59,7 @@ class Date
 	 * แปลงตัวเลขเป็นชื่อวันตามภาษาที่ใช้งานอยู่
 	 *
 	 * @param int $date 0-6
-	 * @param bool $short_date true (default) วันที่แบบสั้น เช่น อ., false ชื่อเดือนแบบเต็ม เช่น อาทิตย์
+	 * @param boolean $short_date true (default) วันที่แบบสั้น เช่น อ., false ชื่อเดือนแบบเต็ม เช่น อาทิตย์
 	 * @return string 0 อาทิตย์...6 เสาร์
 	 * @assert (0) [==] 'อา.'
 	 * @assert (0, false) [==] 'อาทิตย์'

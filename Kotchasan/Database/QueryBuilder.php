@@ -50,7 +50,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	/**
 	 * เปิดการใช้งานแคช
 	 * จะมีการตรวจสอบจากแคชก่อนการสอบถามข้อมูล
-	 * @param bool $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
+	 * @param boolean $auto_save (options) true (default) บันทึกผลลัพท์อัตโนมัติ, false ต้องบันทึกแคชเอง
 	 * @return \static
 	 */
 	public function cacheOn($auto_save = true)

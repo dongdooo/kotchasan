@@ -162,7 +162,7 @@ class Stream implements StreamInterface
 	/**
 	 * ตรวจสอบว่า pointer อยู่ที่จุดสุดท้ายของ stream หรือยัง
 	 *
-	 * @return bool true ถ้าอยู่ที่จุดสิ้นสุดของไฟล์
+	 * @return boolean true ถ้าอยู่ที่จุดสิ้นสุดของไฟล์
 	 */
 	public function eof()
 	{
@@ -172,7 +172,7 @@ class Stream implements StreamInterface
 	/**
 	 * อ่านความสามารถในการกำหนดตำแหน่งของ pointer
 	 *
-	 * @return bool true ถ้าสามารถ seek ได้
+	 * @return boolean true ถ้าสามารถ seek ได้
 	 */
 	public function isSeekable()
 	{
@@ -209,7 +209,7 @@ class Stream implements StreamInterface
 	/**
 	 * ตรวจสอบว่าสามารถเขียน stream ได้หรือไม่
 	 *
-	 * @return bool ถ้าเขียนได้
+	 * @return boolean ถ้าเขียนได้
 	 */
 	public function isWritable()
 	{
@@ -241,7 +241,7 @@ class Stream implements StreamInterface
 	/**
 	 * ตรวจสอบว่าสามารถอ่านข้อมูล stream ได้หรือไม่
 	 *
-	 * @return bool true ถ้าอ่านได้
+	 * @return boolean true ถ้าอ่านได้
 	 */
 	public function isReadable()
 	{
