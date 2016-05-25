@@ -79,6 +79,7 @@ class DOMNode
 		$this->nodeName = strtoupper($nodeName);
 		$this->parentNode = $parentNode;
 		$this->nodeValue = $nodeValue;
+		$this->attributes['DISPLAY'] = $this->isInlineElement() ? 'INLINE' : 'BLOCK';
 		foreach ($attributes as $key => $value) {
 			$this->attributes[strtoupper($key)] = $value;
 		}
@@ -172,7 +173,7 @@ class DOMNode
 	 */
 	public function unentities($html)
 	{
-		return str_replace(array('&nbsp;', '&amp;', '&lt;', '&gt;'), array(' ', '&', '<', '>'), $html);
+		return str_replace(array('&nbsp;', '&amp;', '&lt;', '&gt;', '&#39;', '&quot;'), array(' ', '&', '<', '>', "'", '"'), $html);
 	}
 
 	/**

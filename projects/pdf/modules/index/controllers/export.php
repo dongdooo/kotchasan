@@ -21,7 +21,7 @@ class Controller extends \Kotchasan\Controller
 {
 
 	/**
-	 * แสดงผล
+	 * ส่งออกเป็น PDF
 	 *
 	 * @param Request $request
 	 */
@@ -29,7 +29,7 @@ class Controller extends \Kotchasan\Controller
 	{
 		$pdf = new \Kotchasan\Pdf;
 		$pdf->AddPage();
-		$pdf->WriteHTML(str_replace('{WEBURL}', WEB_URL, file_get_contents('./modules/index/controllers/pdf.html')));
+		$pdf->WriteHTML($request->post('content')->toString());
 		$pdf->Output();
 	}
 }
