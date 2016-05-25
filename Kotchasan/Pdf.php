@@ -48,6 +48,7 @@ class Pdf extends \PDF\FPDF
 		$this->I = 0;
 		$this->U = 0;
 		$this->unit = $unit;
+		$this->fontSize = $fontSize;
 		// ฟ้อนต์ภาษาไทย
 		$this->AddFont('loma', '', 'Loma.php');
 		$this->AddFont('loma', 'B', 'Loma-Bold.php');
@@ -58,7 +59,6 @@ class Pdf extends \PDF\FPDF
 		$this->AddFont('angsana', 'I', 'angsai.php');
 		$this->AddFont('angsana', 'BI', 'angsaz.php');
 		// ฟอ้นต์เริ่มต้น
-		$this->fontSize = $fontSize;
 		$this->SetFont('loma', '', $this->fontSize);
 		// default styles
 		$this->css = array(
@@ -111,9 +111,11 @@ class Pdf extends \PDF\FPDF
 				'BORDER-COLOR' => '#DDDDDD',
 				'BACKGROUND-COLOR' => '#F9F9F9',
 				'COLOR' => '#666666',
-				'SIZE' => $this->fontSize - 1,
+				'SIZE' => $this->fontSize + 4,
 				'PADDING' => 2,
-				'DISPLAY' => 'BLOCK'
+				'DISPLAY' => 'BLOCK',
+				'FONT-FAMILY' => 'angsana',
+				'FONT-STYLE' => 'ITALIC'
 			),
 			'TABLE' => array(
 				'BORDER-COLOR' => '#DDDDDD'
@@ -143,6 +145,9 @@ class Pdf extends \PDF\FPDF
 			),
 			'BG2' => array(
 				'BACKGROUND-COLOR' => '#F9F9F9'
+			),
+			'FULLWIDTH' => array(
+				'WIDTH' => '100%'
 			)
 		);
 	}
@@ -200,7 +205,7 @@ class Pdf extends \PDF\FPDF
 		if ($node->nodeName == '') {
 			// โหนดข้อความ
 			$lineHeight = empty($node->parentNode->attributes['LINE-HEIGHT']) ? $this->lineHeight : $node->parentNode->attributes['LINE-HEIGHT'];
-			if ($node->parentNode && $node->parentNode->attributes['DISPLAY'] == 'BLOCK' && sizeof($node->parentNode->childNodes) == 1) {
+			if ($node->parentNode && $node->parentNode->attributes['DISPLAY'] !== 'INLINE' && sizeof($node->parentNode->childNodes) == 1) {
 				// block node
 				$align = empty($node->parentNode->attributes['TEXT-ALIGN']) ? '' : substr($node->parentNode->attributes['TEXT-ALIGN'], 0, 1);
 				$border = empty($node->parentNode->attributes['BORDER-COLOR']) ? 0 : 1;
@@ -223,6 +228,8 @@ class Pdf extends \PDF\FPDF
 				$this->lastBlock = false;
 			}
 		} else {
+			// อ่าน CSS ของโหนด
+			$this->loadStyle($node);
 			// open tag
 			if ($node->nodeName == 'BR') {
 				// ขึ้นบรรทัดใหม่
@@ -239,9 +246,9 @@ class Pdf extends \PDF\FPDF
 			} else {
 				// ขึ้นบรรทัดใหม่
 				if (!$this->lastBlock) {
-					if ($node->attributes['DISPLAY'] == 'BLOCK') {
+					if ($node->attributes['DISPLAY'] !== 'INLINE') {
 						$this->Ln();
-					} elseif ($node->previousSibling && $node->previousSibling->attributes['DISPLAY'] == 'BLOCK') {
+					} elseif ($node->previousSibling && $node->previousSibling->attributes['DISPLAY'] !== 'INLINE') {
 						$this->Ln();
 					}
 				}
@@ -262,77 +269,73 @@ class Pdf extends \PDF\FPDF
 	}
 
 	/**
+	 * อ่าน CSS ของโหนด
+	 *
+	 * @param DOMNode $node
+	 */
+	protected function loadStyle($node)
+	{
+		// style เริ่มต้น
+		if (isset($this->css[$node->nodeName])) {
+			foreach ($this->css[$node->nodeName] as $key => $value) {
+				$node->attributes[$key] = $value;
+			}
+		}
+		// style จาก property style
+		if (!empty($node->attributes['STYLE'])) {
+			foreach (explode(';', strtoupper($node->attributes['STYLE'])) as $style) {
+				if (preg_match('/^([A-Z\-]+)[\s]{0,}\:[\s]{0,}([A-Z0-9\-]+).*?/', trim($style), $match)) {
+					$node->attributes[$match[1]] = $match[2];
+				}
+			}
+			unset($node->attributes['STYLE']);
+		}
+		// style จาก class
+		if (isset($node->attributes['CLASS'])) {
+			foreach (explode(' ', $node->attributes['CLASS']) as $class) {
+				$class = strtoupper($class);
+				if (isset($this->cssClass[$class])) {
+					foreach ($this->cssClass[$class] as $key => $value) {
+						if (!isset($node->attributes[$key])) {
+							$node->attributes[$key] = strtoupper($value);
+						}
+					}
+				}
+			}
+		}
+		// padding
+		if (!empty($node->attributes['PADDING'])) {
+			$value = (int)$node->attributes['PADDING'];
+			if (!isset($node->attributes['PADDING-LEFT'])) {
+				$node->attributes['PADDING-LEFT'] = $value;
+			}
+			if (!isset($node->attributes['PADDING-TOP'])) {
+				$node->attributes['PADDING-TOP'] = $value;
+			}
+			if (!isset($node->attributes['PADDING-RIGHT'])) {
+				$node->attributes['PADDING-RIGHT'] = $value;
+			}
+			if (!isset($node->attributes['PADDING-BOTTOM'])) {
+				$node->attributes['PADDING-BOTTOM'] = $value;
+			}
+			unset($node->attributes['PADDING']);
+		}
+	}
+
+	/**
 	 * กำหนด CSS
 	 *
 	 * @param DOMNode $node
 	 */
 	protected function applyCSS($node)
 	{
-		if (isset($this->css[$node->nodeName])) {
-			foreach ($this->css[$node->nodeName] as $key => $value) {
-				if ($key === 'PADDING') {
-					if (empty($node->attributes['PADDING-LEFT'])) {
-						$node->attributes['PADDING-LEFT'] = $value;
-					}
-					if (empty($node->attributes['PADDING-TOP'])) {
-						$node->attributes['PADDING-TOP'] = $value;
-					}
-					if (empty($node->attributes['PADDING-RIGHT'])) {
-						$node->attributes['PADDING-RIGHT'] = $value;
-					}
-					if (empty($node->attributes['PADDING-BOTTOM'])) {
-						$node->attributes['PADDING-BOTTOM'] = $value;
-					}
-				} else {
-					$node->attributes[$key] = $value;
-				}
-			}
-		}
-		if (isset($node->attributes['CLASS'])) {
-			foreach (explode(' ', $node->attributes['CLASS']) as $class) {
-				$class = strtoupper($class);
-				if (isset($this->cssClass[$class])) {
-					foreach ($this->cssClass[$class] as $key => $value) {
-						if ($key === 'PADDING') {
-							if (empty($node->attributes['PADDING-LEFT'])) {
-								$node->attributes['PADDING-LEFT'] = $value;
-							}
-							if (empty($node->attributes['PADDING-TOP'])) {
-								$node->attributes['PADDING-TOP'] = $value;
-							}
-							if (empty($node->attributes['PADDING-RIGHT'])) {
-								$node->attributes['PADDING-RIGHT'] = $value;
-							}
-							if (empty($node->attributes['PADDING-BOTTOM'])) {
-								$node->attributes['PADDING-BOTTOM'] = $value;
-							}
-						} else {
-							$node->attributes[$key] = $value;
-						}
-					}
-				}
-			}
-			unset($node->attributes['CLASS']);
-		}
-		// ขนาดตัวอักษร
-		if (isset($node->attributes['SIZE'])) {
-			$node->FontSizePt = $this->FontSizePt;
-			$this->SetFontSize($node->attributes['SIZE']);
-		}
-		// ตัวหนา
-		if (isset($node->attributes['FONT-WEIGHT']) && $node->attributes['FONT-WEIGHT'] == 'BOLD') {
-			$this->SetStyle('B', true);
-		}
-		// ตัวเอียง
-		if (isset($node->attributes['FONT-STYLE']) && $node->attributes['FONT-STYLE'] == 'ITALIC') {
-			$this->SetStyle('I', true);
-		}
-		// ขีดเส้นใต้
-		if (isset($node->attributes['TEXT-DECORATION']) && $node->attributes['TEXT-DECORATION'] == 'UNDERLINE') {
-			$this->SetStyle('U', true);
+		// แบบตัวอักษร
+		if (!empty($node->attributes['FONT-FAMILY'])) {
+			$node->FontFamily = $this->FontFamily;
+			$this->SetFont($node->attributes['FONT-FAMILY']);
 		}
 		// สีตัวอักษร
-		if (isset($node->attributes['COLOR'])) {
+		if (!empty($node->attributes['COLOR'])) {
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sr)?g/', $this->TextColor, $match)) {
 				$node->TextColor = array(
 					'r' => $match[1],
@@ -344,7 +347,7 @@ class Pdf extends \PDF\FPDF
 			$this->SetTextColor($r, $g, $b);
 		}
 		// สีพื้น
-		if (isset($node->attributes['BACKGROUND-COLOR'])) {
+		if (!empty($node->attributes['BACKGROUND-COLOR'])) {
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sr)?g/', $this->FillColor, $match)) {
 				$node->FillColor = array(
 					'r' => $match[1],
@@ -356,7 +359,7 @@ class Pdf extends \PDF\FPDF
 			$this->SetFillColor($r, $g, $b);
 		}
 		// สีกรอบ
-		if (isset($node->attributes['BORDER-COLOR'])) {
+		if (!empty($node->attributes['BORDER-COLOR'])) {
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sR)?G/', $this->DrawColor, $match)) {
 				$node->DrawColor = array(
 					'r' => $match[1],
@@ -367,6 +370,23 @@ class Pdf extends \PDF\FPDF
 			list($r, $g, $b) = $this->colorToRGb($node->attributes['BORDER-COLOR']);
 			$this->SetDrawColor($r, $g, $b);
 		}
+		// ตัวหนา
+		if (!empty($node->attributes['FONT-WEIGHT'])) {
+			$this->SetStyle('B', $node->attributes['FONT-WEIGHT'] == 'BOLD');
+		}
+		// ตัวเอียง
+		if (!empty($node->attributes['FONT-STYLE'])) {
+			$this->SetStyle('I', $node->attributes['FONT-STYLE'] == 'ITALIC');
+		}
+		// ขีดเส้นใต้
+		if (!empty($node->attributes['TEXT-DECORATION'])) {
+			$this->SetStyle('U', $node->attributes['TEXT-DECORATION'] == 'UNDERLINE');
+		}
+		// ขนาดตัวอักษร
+		if (!empty($node->attributes['SIZE'])) {
+			$node->FontSizePt = $this->FontSizePt;
+			$this->SetFontSize($node->attributes['SIZE']);
+		}
 	}
 
 	/**
@@ -376,32 +396,36 @@ class Pdf extends \PDF\FPDF
 	 */
 	protected function restoredCSS($node)
 	{
+		// แบบตัวอักษร
+		if (!empty($node->attributes['FONT-FAMILY'])) {
+			$this->SetFont($node->FontFamily);
+		}
 		// สีกรอบ
-		if (isset($node->attributes['BORDER-COLOR']) && isset($node->DrawColor)) {
+		if (!empty($node->attributes['BORDER-COLOR']) && isset($node->DrawColor)) {
 			$this->SetDrawColor($node->DrawColor['r'], $node->DrawColor['g'], $node->DrawColor['b']);
 		}
 		// สีพื้น
-		if (isset($node->attributes['BACKGROUND-COLOR']) && isset($node->FillColor)) {
+		if (!empty($node->attributes['BACKGROUND-COLOR']) && isset($node->FillColor)) {
 			$this->SetFillColor($node->FillColor['r'], $node->FillColor['g'], $node->FillColor['b']);
 		}
 		// สีตัวอักษร
-		if (isset($node->attributes['COLOR']) && isset($node->TextColor)) {
+		if (!empty($node->attributes['COLOR']) && isset($node->TextColor)) {
 			$this->SetTextColor($node->TextColor['r'], $node->TextColor['g'], $node->TextColor['b']);
 		}
 		// ตัวหนา
-		if (isset($node->attributes['FONT-WEIGHT']) && $node->attributes['FONT-WEIGHT'] == 'BOLD') {
-			$this->SetStyle('B', false);
+		if (!empty($node->attributes['FONT-WEIGHT'])) {
+			$this->SetStyle('B', $node->attributes['FONT-WEIGHT'] != 'BOLD');
 		}
 		// ตัวเอียง
-		if (isset($node->attributes['FONT-STYLE']) && $node->attributes['FONT-STYLE'] == 'ITALIC') {
-			$this->SetStyle('I', false);
+		if (!empty($node->attributes['FONT-STYLE'])) {
+			$this->SetStyle('I', $node->attributes['FONT-STYLE'] != 'ITALIC');
 		}
 		// ขีดเส้นใต้
-		if (isset($node->attributes['TEXT-DECORATION']) && $node->attributes['TEXT-DECORATION'] == 'UNDERLINE') {
-			$this->SetStyle('U', false);
+		if (!empty($node->attributes['TEXT-DECORATION'])) {
+			$this->SetStyle('U', $node->attributes['TEXT-DECORATION'] != 'UNDERLINE');
 		}
 		// ขนาดตัวอักษร
-		if (isset($node->attributes['SIZE'])) {
+		if (!empty($node->attributes['SIZE'])) {
 			$this->SetFontSize($node->FontSizePt);
 		}
 	}
@@ -453,9 +477,9 @@ class Pdf extends \PDF\FPDF
 		// ขึ้นบรรทัดใหม่
 		$ln = 2;
 		if (!$this->lastBlock) {
-			if ($node->attributes['DISPLAY'] == 'BLOCK') {
+			if ($node->attributes['DISPLAY'] !== 'INLINE') {
 				$ln = 7;
-			} elseif ($node->previousSibling && $node->previousSibling->attributes['DISPLAY'] == 'BLOCK') {
+			} elseif ($node->previousSibling && $node->previousSibling->attributes['DISPLAY'] !== 'INLINE') {
 				$ln = 7;
 			}
 		}
@@ -511,7 +535,7 @@ class Pdf extends \PDF\FPDF
 				$this->Image($node->attributes['SRC'], $left, $top, $width, $height);
 				$this->lastBlock = true;
 			} else {
-				if ($node->attributes['DISPLAY'] == 'INLINE' && $node->previousSibling && $node->previousSibling->attributes['DISPLAY'] == 'BLOCK') {
+				if ($node->attributes['DISPLAY'] == 'INLINE' && $node->previousSibling && $node->previousSibling->attributes['DISPLAY'] !== 'INLINE') {
 					// ขึ้นบรรทัดใหม่
 					$x = $this->lMargin;
 					$y = $this->y + $this->lineHeight;
@@ -520,7 +544,6 @@ class Pdf extends \PDF\FPDF
 					$x = $this->GetX();
 					$y = $this->GetY();
 				}
-
 				$this->Image($node->attributes['SRC'], $x, $y);
 				$this->x = $x + $width;
 				$this->y = $y;
@@ -596,6 +619,8 @@ class Pdf extends \PDF\FPDF
 		if (!$this->lastBlock) {
 			$this->Ln();
 		}
+		// อ่าน CSS ของโหนด
+		$this->loadStyle($table);
 		// คำนวณความกว้างของ Cell
 		$columnSizes = $this->calculateColumnsWidth($table);
 		// กำหนด CSS
@@ -605,19 +630,18 @@ class Pdf extends \PDF\FPDF
 		// thead, tbody, tfoot
 		foreach ($table->childNodes as $table_group) {
 			foreach ($table_group->childNodes as $tr) {
+				// อ่าน CSS ของโหนด
+				$this->loadStyle($tr);
 				// คำนวณความสูงของแถว
 				$h = 0;
 				foreach ($tr->childNodes as $col => $td) {
-					$cls = array();
-					if (!empty($td->attributes['CLASS'])) {
-						$cls[] = $td->attributes['CLASS'];
+					// apply css จาก tr
+					foreach ($tr->attributes as $key => $value) {
+						$td->attributes[$key] = $value;
 					}
-					if (!empty($tr->attributes['CLASS'])) {
-						$cls[] = $tr->attributes['CLASS'];
-					}
-					if (!empty($cls)) {
-						$td->attributes['CLASS'] = implode(' ', $cls);
-					}
+					// อ่าน CSS ของโหนด
+					$this->loadStyle($td);
+					// คำนวณจำนวนแถวของข้อความ
 					$h = max($h, $this->NbLines($columnSizes[$col], $td->nodeValue));
 				}
 				$h = $h * $lineHeight;
@@ -666,17 +690,6 @@ class Pdf extends \PDF\FPDF
 	{
 		// page width
 		$cw = $this->w - $this->lMargin - $this->rMargin;
-		// คำนวณขนาดของตาราง
-		if (!empty($table->attributes['CLASS'])) {
-			foreach (explode(' ', $table->attributes['CLASS']) as $class) {
-				switch (strtoupper($class)) {
-					case 'FULLWIDTH':
-						// class=fullwidth
-						$table_width = $cw;
-						break;
-				}
-			}
-		}
 		if (!empty($table->attributes['WIDTH'])) {
 			// ความกว้างของตาราง width=xxx
 			$table_width = $this->calculateSize($table->attributes['WIDTH'], $cw);

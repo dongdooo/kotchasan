@@ -61,15 +61,17 @@ class DOMParser
 				} elseif ($e[0] == '/') {
 					// close tag
 					$node = $node->parentNode;
-				} else {
+				} elseif (preg_match('/^([a-zA-Z0-9]+)([\s]{0,}(.*))?$/', $e, $a2)) {
 					// open tag
-					$a2 = explode(' ', $e);
-					$tag = strtoupper(array_shift($a2));
+					$tag = strtoupper($a2[1]);
 					// attributes
 					$attributes = array();
-					foreach ($a2 as $v) {
-						if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
-							$attributes[strtoupper($a3[1])] = $a3[2];
+					if (!empty($a2[3]) && preg_match_all('/(\\w+)\s*=\\s*("[^"]*"|\'[^\']*\'|[^"\'\\s>]*)/', $a2[3], $matches, PREG_SET_ORDER)) {
+						foreach ($matches as $match) {
+							if (($match[2][0] == '"' || $match[2][0] == "'") && $match[2][0] == $match[2][strlen($match[2]) - 1]) {
+								$match[2] = substr($match[2], 1, -1);
+							}
+							$attributes[strtoupper($match[1])] = $match[2];
 						}
 					}
 					if ($tag == 'BR' || $tag == 'IMG' || $tag == 'INPUT' || $tag == 'HR') {
