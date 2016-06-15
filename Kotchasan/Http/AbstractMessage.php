@@ -119,7 +119,7 @@ abstract class AbstractMessage implements MessageInterface
 	/**
 	 * กำหนด header พร้อมกันหลายรายการ แทนที่รายการเดิม
 	 *
-	 * @param array $headers
+	 * @param array $headers array($key => $value, $key => $value...)
 	 * @return \static
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */

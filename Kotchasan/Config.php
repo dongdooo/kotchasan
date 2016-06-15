@@ -35,7 +35,7 @@ class Config
 	 *
 	 * @var array
 	 */
-	public $languages = array('th');
+	public $languages = array('en');
 	/**
 	 * template ที่กำลังใช้งานอยู่ (ชื่อโฟลเดอร์)
 	 *

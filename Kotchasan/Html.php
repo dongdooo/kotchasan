@@ -87,11 +87,12 @@ class Html extends \Kotchasan\KBase
 	 */
 	public function add($tag, $attributes = array())
 	{
+		$tag = strtolower($tag);
 		if ($tag == 'groups' || $tag == 'groups-table') {
 			if (isset($attributes['label'])) {
 				$item = self::fieldset(array(
-					'class' => 'item',
-					'title' => $attributes['label']
+						'class' => 'item',
+						'title' => $attributes['label']
 				));
 			} else {
 				$item = new static('div', array('class' => 'item'));
@@ -126,6 +127,66 @@ class Html extends \Kotchasan\KBase
 			if (isset($attributes['comment'])) {
 				$item->add('div', $comment);
 			}
+		} elseif ($tag == 'radiogroups' || $tag == 'checkboxgroups') {
+			$class = empty($attributes['class']) ? 'item '.$tag : trim($attributes['class'].' item '.$tag);
+			if (isset($attributes['label'])) {
+				$obj = self::fieldset(array(
+						'class' => $class,
+						'title' => $attributes['label']
+				));
+			} else {
+				$obj = new static('div', array(
+					'class' => $class
+				));
+			}
+			$this->rows[] = $obj;
+			if (isset($attributes['name'])) {
+				$name = $attributes['name'];
+			} elseif (isset($attributes['id'])) {
+				$name = $tag == 'checkboxgroups' ? $attributes['id'].'[]' : $attributes['id'];
+			} else {
+				$name = false;
+			}
+			foreach ($attributes['options'] as $v => $label) {
+				if (is_array($attributes['value'])) {
+					$checked = isset($attributes['value']) && in_array($v, $attributes['value']);
+				} else {
+					$checked = isset($attributes['value']) && $v == $attributes['value'];
+				}
+				$item = array(
+					'label' => $label,
+					'value' => $v,
+					'checked' => $checked
+				);
+				if ($name) {
+					$item['name'] = $name;
+				}
+				if (isset($attributes['id'])) {
+					$item['id'] = $attributes['id'];
+					$result_id = $attributes['id'];
+					unset($attributes['id']);
+				}
+				$obj->add($tag == 'radiogroups' ? 'radio' : 'checkbox', $item);
+			}
+			if (!empty($attributes['comment'])) {
+				$obj->add('div', array(
+					'id' => 'result_'.$result_id,
+					'class' => 'comment',
+					'innerHTML' => $attributes['comment']
+				));
+			}
+		} elseif ($tag == 'antispam') {
+			$antispam = new Antispam();
+			$attributes['antispamid'] = $antispam->getId();
+			if (isset($attributes['value']) && $attributes['value'] === true) {
+				$attributes['value'] = $antispam->getValue();
+			}
+			$obj = self::create($tag, $attributes);
+			$this->rows[] = $obj;
+			$this->rows[] = self::create('hidden', array(
+					'id' => $attributes['id'].'id',
+					'value' => $attributes['antispamid']
+			));
 		} else {
 			$obj = self::create($tag, $attributes);
 			$this->rows[] = $obj;

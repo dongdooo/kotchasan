@@ -25,16 +25,30 @@
 			this.table = $E(id);
 			this.search = o['search'] || '';
 			this.sort = o['sort'] || null;
-			this.sort_type = o['sort_type'] || null;
 			this.page = o['page'] || 1;
 			var hs,
 				sort_patt = /sort_(none|asc|desc)\s(col_([\w]+))(|\s.*)$/,
 				action_patt = /button[\s][a-z]+[\s]action/,
 				temp = this;
-			var _doSort = function () {
+			var _doSort = function (e) {
 				if (hs = sort_patt.exec(this.className)) {
-					temp.sort_type = hs[1] == 'none' ? 'asc' : hs[1] == 'asc' ? 'desc' : 'none';
-					temp.sort = hs[3];
+					var sort = new Array();
+					if (GEvent.isCtrlKey(e)) {
+						var patt = new RegExp(hs[3] + '[\\s](asc|desc|none)');
+						forEach(temp.sort.split(','), function () {
+							if (!patt.test(this)) {
+								sort.push(this);
+							}
+						});
+					}
+					if (hs[1] == 'none') {
+						sort.push(hs[3] + '%20asc');
+					} else if (hs[1] == 'asc') {
+						sort.push(hs[3] + '%20desc');
+					} else {
+						sort.push(hs[3] + '%20none');
+					}
+					temp.sort = sort.join(',');
 					window.location = temp.redirect();
 				}
 			};
@@ -44,7 +58,7 @@
 						callClick(this, _doSort);
 					}
 				});
-				this.inint(this.table);
+				this.init(this.table);
 				var doAction = function () {
 					var action = '',
 						cs = new Array(),
@@ -87,7 +101,14 @@
 							action = fn('action', hs[1], hs[2], hs[4]);
 						}
 					} else {
-						action = 'action=' + this.id;
+						hs = patt.exec(this.id);
+						if (hs[1] == 'delete') {
+							if (confirm(trans('You want to delete ?'))) {
+								action = 'action=delete&id=' + hs[2];
+							}
+						} else {
+							action = 'action=' + hs[1] + '&id=' + hs[2];
+						}
 					}
 					if (action != '') {
 						temp.callAction(this, action);
@@ -150,7 +171,7 @@
 				}
 			});
 		},
-		inintTR: function (el) {
+		initTR: function (el) {
 			var row = 0,
 				temp = this;
 			forEach($G(el).elems('tr'), function () {
@@ -163,7 +184,7 @@
 				}
 			});
 		},
-		inint: function (el) {
+		init: function (el) {
 			var hs,
 				a_patt = /(delete|icon)[_\-](plus|minus|[0-9]+)/,
 				check_patt = /check_([0-9]+)/,
@@ -175,8 +196,8 @@
 					var tbody = tr.parentNode;
 					var ntr = tr.copy(false);
 					tr.after(ntr);
-					temp.inint(ntr);
-					temp.inintTR(tbody);
+					temp.init(ntr);
+					temp.initTR(tbody);
 					ntr.highlight();
 					ntr = ntr.getElementsByTagName('input')[0];
 					if (ntr) {
@@ -188,7 +209,7 @@
 					var tbody = tr.parentNode;
 					if (tbody.elems('tr').length > 1 && confirm(trans('You want to delete ?'))) {
 						tr.remove();
-						temp.inintTR(tbody);
+						temp.initTR(tbody);
 					}
 				} else if (hs = a_patt.exec(c)) {
 					var action = '';
@@ -206,7 +227,7 @@
 										var tr = $G(temp.table.id + '_' + ds.id);
 										var tbody = tr.parentNode;
 										tr.remove();
-										temp.inintTR(tbody);
+										temp.initTR(tbody);
 									}
 								}
 							} else if (xhr.responseText != '') {
@@ -255,7 +276,7 @@
 				}
 			});
 			if (this.options.pmButton) {
-				this.inintTR(el);
+				this.initTR(el);
 			}
 		},
 		setSort: function (sort, patt) {
@@ -296,14 +317,13 @@
 			}
 			var us = new Array();
 			for (var p in urls) {
-				if (p != 'sort' && p != 'sort_type' && p != 'page' && p != 'search') {
+				if (p != 'sort' && p != 'page' && p != 'search') {
 					us.push(urls[p]);
 				}
 			}
 			us.push('page=' + this.page);
 			if (this.sort) {
 				us.push('sort=' + this.sort);
-				us.push('sort_type=' + this.sort_type);
 			}
 			if (this.search) {
 				us.push('search=' + encodeURIComponent(this.search));

@@ -29,7 +29,7 @@ class Controller extends \Kotchasan\Controller
 	public function index(Request $request)
 	{
 		// session cookie
-		$request->inintSession();
+		$request->initSession();
 		// ตรวจสอบการ login
 		Login::create();
 		if (Login::isMember()) {

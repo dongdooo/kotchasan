@@ -79,7 +79,6 @@ class DOMNode
 		$this->nodeName = strtoupper($nodeName);
 		$this->parentNode = $parentNode;
 		$this->nodeValue = $nodeValue;
-		$this->attributes['DISPLAY'] = $this->isInlineElement() ? 'INLINE' : 'BLOCK';
 		foreach ($attributes as $key => $value) {
 			$this->attributes[strtoupper($key)] = $value;
 		}
@@ -94,50 +93,6 @@ class DOMNode
 	public function hasChildNodes()
 	{
 		return !empty($this->childNodes);
-	}
-
-	/**
-	 * ตรวจสอบว่าเป็น element แบบ Inline หรือไม่
-	 *
-	 * @return boolean คืนค่า true ถ้าเป็น Inline Elements หรือ false ถ้าเป็น Block-level Elements
-	 */
-	public function isInlineElement()
-	{
-		switch ($this->nodeName) {
-			case '' :
-			case 'B' :
-			case 'BIG' :
-			case 'I' :
-			case 'SMALL' :
-			case 'TT' :
-			case 'ABBR' :
-			case 'ACRONYM' :
-			case 'CITE' :
-			case 'CODE' :
-			case 'DFN' :
-			case 'EM' :
-			case 'STRONG' :
-			case 'SAMP' :
-			case 'TIME' :
-			case 'VAR' :
-			case 'A' :
-			case 'BDO' :
-			case 'BR' :
-			case 'IMG' :
-			case 'MAP' :
-			case 'OBJECT' :
-			case 'Q' :
-			case 'SCRIPT' :
-			case 'SPAN' :
-			case 'SUB' :
-			case 'BUTTON' :
-			case 'INPUT' :
-			case 'LABEL' :
-			case 'SELECT' :
-			case 'TEXTAREA' :
-				return true;
-		}
-		return false;
 	}
 
 	/**
@@ -191,6 +146,49 @@ class DOMNode
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * ตรวจสอบว่าเป็น element แบบ Inline หรือไม่
+	 *
+	 * @return boolean คืนค่า true ถ้าเป็น Inline Elements หรือ false ถ้าเป็น Block-level Elements
+	 */
+	public function isInlineElement()
+	{
+		switch ($this->nodeName) {
+			case 'B' :
+			case 'BIG' :
+			case 'I' :
+			case 'SMALL' :
+			case 'TT' :
+			case 'ABBR' :
+			case 'ACRONYM' :
+			case 'CITE' :
+			case 'CODE' :
+			case 'DFN' :
+			case 'EM' :
+			case 'STRONG' :
+			case 'SAMP' :
+			case 'TIME' :
+			case 'VAR' :
+			case 'A' :
+			case 'BDO' :
+			case 'BR' :
+			case 'IMG' :
+			case 'MAP' :
+			case 'OBJECT' :
+			case 'Q' :
+			case 'SCRIPT' :
+			case 'SPAN' :
+			case 'SUB' :
+			case 'BUTTON' :
+			case 'INPUT' :
+			case 'LABEL' :
+			case 'SELECT' :
+			case 'TEXTAREA' :
+				return true;
 		}
 		return false;
 	}

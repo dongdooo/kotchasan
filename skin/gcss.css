@@ -410,7 +410,7 @@ body.responsive .gcss-wrapper {
 .header h1 > a {
 	display: block;
 }
-.header a, header a, footer a, .header a:hover, header a:hover, footer a:hover {
+.header h1 > a, .header h1 > a:hover {
 	color: inherit;
 }
 header p, footer p {
@@ -1308,6 +1308,9 @@ form .comment {
 	width: 100%;
 	max-height: 200px;
 	max-width: 200px;
+}
+.radiogroups > label, .checkboxgroups > label {
+	display: block;
 }
 /* dropdown panel */
 .gdpanel {
@@ -2309,8 +2312,14 @@ input[type="text"].gddcolor {
 .input-groups > :first-child {
 	padding-left: 0;
 }
+.width5 {
+	width: 5% !important;
+}
 .width10 {
 	width: 10% !important;
+}
+.width15 {
+	width: 15% !important;
 }
 .width20 {
 	width: 20% !important;
@@ -2324,14 +2333,26 @@ input[type="text"].gddcolor {
 .width33 {
 	width: 33.33% !important;
 }
+.width35 {
+	width: 35% !important;
+}
 .width40 {
 	width: 40% !important;
+}
+.width45 {
+	width: 45% !important;
 }
 .width50 {
 	width: 50% !important;
 }
+.width55 {
+	width: 55% !important;
+}
 .width60 {
 	width: 60% !important;
+}
+.width65 {
+	width: 65% !important;
 }
 .width70 {
 	width: 70% !important;
@@ -2342,8 +2363,14 @@ input[type="text"].gddcolor {
 .width80 {
 	width: 80% !important;
 }
+.width85 {
+	width: 85% !important;
+}
 .width90 {
 	width: 90% !important;
+}
+.width95 {
+	width: 95% !important;
 }
 .width100,
 table.fullwidth,
@@ -2753,8 +2780,8 @@ table.collapse > tfoot > tr > th,
 table.collapse > thead > tr > td,
 table.collapse > tbody > tr > td,
 table.collapse > tfoot > tr > td,
-.collapse .td,
-.collapse .th {
+.collapse > .td,
+.collapse > .th {
 	padding: 0;
 }
 table.border > thead > tr > th,

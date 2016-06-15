@@ -49,9 +49,7 @@ final class Language extends \Kotchasan\KBase
 		// ภาษาที่เลือก
 		$lang = self::$request->get('lang', self::$request->cookie('my_lang', '')->toString())->toString();
 		if (empty($lang)) {
-			if (empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-				$lang = 'en';
-			} else {
+			if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) && defined('AUTO_LANGUAGE')) {
 				// ภาษาจาก Browser
 				$datas = explode(',', preg_replace('/(;\s?q=[0-9\.]+)|\s/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE']))));
 				$lang = substr(reset($datas), 0, 2);
@@ -211,7 +209,7 @@ final class Language extends \Kotchasan\KBase
 	 * @param array $languages ข้อมูลภาษาที่ต้องการตรวจสอบ
 	 * @param string $key รายการที่ต้องการตรวจสอบ
 	 * @return int คืนค่าลำดับที่พบ (รายการแรกคือ 0), คืนค่า -1 ถ้าไม่พบ
-	 * 
+	 *
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'One') [==] 0
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'two') [==] 100
 	 * @assert (array(array('id' => 0, 'key' => 'One'), array('id' => 100, 'key' => 'Two')), 'O') [==] -1

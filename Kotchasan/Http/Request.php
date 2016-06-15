@@ -339,7 +339,7 @@ class Request extends AbstractRequest implements RequestInterface
 	/**
 	 * ฟังก์ชั่นเริ่มต้นใช้งาน session
 	 */
-	public function inintSession()
+	public function initSession()
 	{
 		$sessid = $this->get('sessid')->toString();
 		if (!empty($sessid) && preg_match('/[a-zA-Z0-9]{20,}/', $sessid)) {

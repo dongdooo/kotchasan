@@ -9,6 +9,7 @@
 namespace Kotchasan;
 
 use \Kotchasan\Html;
+use \Kotchasan\Antispam;
 
 /**
  * Form class
@@ -56,21 +57,38 @@ class Form extends \Kotchasan\KBase
 		$prop = array();
 		$event = array();
 		foreach ($this->attributes as $k => $v) {
-			if ($k === 'itemClass' || $k === 'labelClass' || $k === 'label' || $k === 'comment' || $k === 'value' || $k === 'dataPreview' || $k === 'previewSrc' || $k === 'options' || $k === 'optgroup' || $k === 'validator') {
-				$$k = $v;
-			} elseif ($k === 'result') {
-				$prop[$k] = 'data-'.$k.'="'.$v.'"';
-			} elseif (is_int($k)) {
-				$prop[$v] = $v;
-			} elseif ($v === true) {
-				$prop[$k] = $k;
-			} elseif ($v === false) {
-				continue;
-			} elseif (preg_match('/^on([a-z]+)/', $k, $match)) {
-				$event[$match[1]] = $v;
-			} else {
-				$prop[$k] = $k.'="'.$v.'"';
-				$$k = $v;
+			switch ($k) {
+				case 'itemClass':
+				case 'labelClass':
+				case 'label':
+				case 'comment':
+				case 'value':
+				case 'dataPreview':
+				case 'previewSrc':
+				case 'options':
+				case 'optgroup':
+				case 'validator':
+				case 'antispamid':
+				case 'text':
+				case 'validator':
+					$$k = $v;
+					break;
+				case 'result':
+					$prop[$k] = 'data-'.$k.'="'.$v.'"';
+				default:
+					if (is_int($k)) {
+						$prop[$v] = $v;
+					} elseif ($v === true) {
+						$prop[$k] = $k;
+					} elseif ($v === false) {
+						continue;
+					} elseif (preg_match('/^on([a-z]+)/', $k, $match)) {
+						$event[$match[1]] = $v;
+					} else {
+						$prop[$k] = $k.'="'.$v.'"';
+						$$k = $v;
+					}
+					break;
 			}
 		}
 		if (isset($id) && empty($name)) {
@@ -138,14 +156,17 @@ class Form extends \Kotchasan\KBase
 		} else {
 			$element = '<'.$this->tag.' '.$prop.'></'.$this->tag.'>';
 		}
+		if (!empty($antispamid)) {
+			$element = Antispam::createImage($antispamid, true).$element;
+		}
 		if (empty($itemClass)) {
 			$input = empty($comment) ? '' : '<div class="item">';
 			if (empty($labelClass) && empty($label)) {
 				$input .= $element;
-			} elseif (isset($type) && $type === 'checkbox') {
+			} elseif (isset($type) && ($type === 'checkbox' || $type === 'radio')) {
 				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.$element.'&nbsp;'.$label.'</label>';
 			} else {
-				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.( empty($label) ? '' : $label.'&nbsp;').$element.'</label>';
+				$input .= '<label'.(empty($labelClass) ? '' : ' class="'.$labelClass.'"').'>'.(empty($label) ? '' : $label.'&nbsp;').$element.'</label>';
 			}
 			if (!empty($comment)) {
 				$input .= '<div class="comment"'.(empty($id) ? '' : ' id="result_'.$id.'"').'>'.$comment.'</div></div>';
@@ -214,6 +235,23 @@ class Form extends \Kotchasan\KBase
 		$obj = new static;
 		$obj->tag = 'input';
 		$attributes['type'] = 'email';
+		$obj->attributes = $attributes;
+		return $obj;
+	}
+
+	public static function antispam($attributes = array())
+	{
+		$obj = new static;
+		$obj->tag = 'input';
+		$attributes['type'] = 'text';
+		$labelClass = array(
+			'antispam' => 'antispam',
+			'g-input' => 'g-input'
+		);
+		foreach (explode(' ', $attributes['labelClass']) as $c) {
+			$labelClass[$c] = $c;
+		}
+		$attributes['labelClass'] = implode(' ', $labelClass);
 		$obj->attributes = $attributes;
 		return $obj;
 	}

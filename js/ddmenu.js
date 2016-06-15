@@ -133,7 +133,7 @@
 			var _domouseout = function (e) {
 				this.removeClass('hover focus');
 			};
-			function inintmenu(ul, tab, id) {
+			function initMenu(ul, tab, id) {
 				var li = ul.firstChild;
 				while (li) {
 					if (li.tagName && li.tagName.toLowerCase() == 'li') {
@@ -150,13 +150,13 @@
 							li.addClass(id + ' sublevelmenu');
 						}
 						if (uls.length > 0) {
-							inintmenu(uls[0], 0, id);
+							initMenu(uls[0], 0, id);
 						}
 					}
 					li = li.nextSibling;
 				}
 			}
-			inintmenu(this.menu, 1, this.id);
+			initMenu(this.menu, 1, this.id);
 			this.menu.tabIndex = 0;
 			this.menu.addEvent('keydown', _dokeydown);
 			this.menu.addEvent('click', function (e) {

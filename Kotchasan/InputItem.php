@@ -181,10 +181,13 @@ class InputItem
 	 * @return string
 	 *
 	 * @assert create(" http://www.kotchasan.com?a=1&b=2&amp;c=3 ")->url() [==] 'http://www.kotchasan.com?a=1&amp;b=2&amp;c=3'
+	 * @assert create("javascript:alert('xxx')")->url() [==] 'alertxxx'
+	 * @assert create("http://www.xxx.com/javascript/")->url() [==] 'http://www.xxx.com/javascript/'
 	 */
 	public function url()
 	{
-		return trim($this->htmlspecialchars(false));
+		$this->value = preg_replace('/(^javascript:|[\(\)\'\"]+)/', '', trim($this->value));
+		return $this->htmlspecialchars(false);
 	}
 
 	/**
@@ -324,14 +327,18 @@ class InputItem
 	}
 
 	/**
-	 * ฟังก์ชั่นลบอักขระที่ไม่ต้องการออก
+	 * ฟังก์ชั่นแทนที่อักขระที่ไม่ต้องการ
 	 *
 	 * @param string $format Regular Expression อักขระที่ยอมรับ เช่น \d\s\-:
+	 * @param string $replace ข้อความแทนที่
 	 * @return string
+	 *
+	 * @assert create('admin,1234')->filter('0-9a-zA-Z,') [==] 'admin,1234'
+	 * @assert create('adminกข,12ฟ34')->filter('0-9a-zA-Z,') [==] 'admin,1234'
 	 */
-	public function filter($format)
+	public function filter($format, $replace = '')
 	{
-		return trim(preg_replace('/[^'.$format.']/', '', $this->value));
+		return trim(preg_replace('/[^'.$format.']/', $replace, $this->value));
 	}
 
 	/**
@@ -366,6 +373,7 @@ class InputItem
 	 *
 	 * @assert create(12345)->number() [==] '12345'
 	 * @assert create(0.12345)->number() [==] '012345'
+	 * @assert create(ทด0123สอ4บ5)->number() [==] '012345'
 	 */
 	public function number()
 	{

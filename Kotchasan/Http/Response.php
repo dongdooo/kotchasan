@@ -199,7 +199,7 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @return \static
 	 */
-	public function sendHeaders()
+	protected function sendHeaders()
 	{
 		if (headers_sent()) {
 			return $this;
@@ -218,7 +218,7 @@ class Response extends Message implements ResponseInterface
 	 *
 	 * @return \static
 	 */
-	public function sendContent()
+	protected function sendContent()
 	{
 		if ($this->content) {
 			echo $this->content;

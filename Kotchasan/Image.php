@@ -262,4 +262,23 @@ class Image
 		imagettftext($imgsrc, $font_size, 0, $x, $y, $alpha_color, $font, $text);
 		return $imgsrc;
 	}
+	/**
+	 * อ่านข้อมูล Exif ของรูปภาพ
+	 *
+	 * @param string $src
+	 * @return array|boolean array(width, height, mime) ของรูปภาพ, false ถ้าไม่สามารถอ่านได้
+	 */
+	public static function info($src)
+	{
+		// Exif
+		$info = getImageSize($src);
+		if ($info && $info[0] > 0 && $info[1] > 0) {
+			return array(
+				'width' => $info[0],
+				'height' => $info[1],
+				'mime' => $info['mime']
+			);
+		}
+		return false;
+	}
 }

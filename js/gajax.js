@@ -779,7 +779,7 @@ window.$K = (function () {
 				}
 			}
 			if (this.ret) {
-				if (value != '') {
+				if (value && value != '') {
 					this.ret.innerHTML = value;
 				}
 				this.ret.replaceClass('valid', 'invalid' + (className ? ' ' + className : ''));
@@ -800,7 +800,7 @@ window.$K = (function () {
 			this.replaceClass('invalid valid wait required', '');
 			return this;
 		},
-		inint: function (e) {
+		init: function (e) {
 			this.elem = e;
 			var elem = this.element();
 			if (!elem) {
@@ -1045,7 +1045,7 @@ window.$K = (function () {
 			}
 			return this;
 		},
-		inintLoading: function (loading, center, c) {
+		initLoading: function (loading, center, c) {
 			this.loading = loading;
 			this.center = center;
 			if (c) {
@@ -1145,7 +1145,7 @@ window.$K = (function () {
 				}
 			};
 			var elements = new Array();
-			var _oninint = function () {
+			var _oninit = function () {
 				var obj = new Object;
 				obj.tagName = $G(this).tagName.toLowerCase();
 				obj.title = this.title;
@@ -1331,9 +1331,9 @@ window.$K = (function () {
 					_docheck.call(text);
 				}
 			};
-			forEach(frm.getElementsByTagName('input'), _oninint);
-			forEach(frm.getElementsByTagName('select'), _oninint);
-			forEach(frm.getElementsByTagName('textarea'), _oninint);
+			forEach(frm.getElementsByTagName('input'), _oninit);
+			forEach(frm.getElementsByTagName('select'), _oninit);
+			forEach(frm.getElementsByTagName('textarea'), _oninit);
 			frm.onsubmit = function () {
 				var loading = true;
 				var ret = true;
@@ -1496,7 +1496,7 @@ window.$K = (function () {
 			}
 			return this;
 		},
-		inintLoading: function (loading, center) {
+		initLoading: function (loading, center) {
 			this.loading = loading;
 			this.center = center;
 			return this;
@@ -2679,8 +2679,8 @@ window.$K = (function () {
 			this.callback = callback;
 			this.wait = wait || 1000;
 		},
-		inintLoading: function (loading, center) {
-			this.req.inintLoading(loading, center);
+		initLoading: function (loading, center) {
+			this.req.initLoading(loading, center);
 			return this;
 		},
 		add: function (id, evt, callback) {
@@ -3726,7 +3726,7 @@ window.$K = (function () {
 			var key = GEvent.keyCode(e);
 			if (key == 13) {
 				var tmp = e;
-				if (func.call(this) !== true) {
+				if (func.call(this, e) !== true) {
 					GEvent.stop(tmp);
 					return false;
 				}
@@ -3742,7 +3742,7 @@ window.$K = (function () {
 	};
 	var GElement = new GNative();
 	window.$G = function (e) {
-		return Object.isGElement(e) ? e : GElement.inint(e);
+		return Object.isGElement(e) ? e : GElement.init(e);
 	};
 	window.$E = function (e) {
 		e = Object.isString(e) ? document.getElementById(e) : e;

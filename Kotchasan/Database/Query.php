@@ -213,9 +213,9 @@ abstract class Query extends \Kotchasan\KBase
 		} else {
 			if ($fields == '*') {
 				$ret = '*';
-			} elseif (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $fields, $match)) {
+			} elseif (preg_match('/^(.*?)\(([^\)]+)\)((\s+as)?\s+`?([a-z0-9_]+)`?)?$/i', $fields, $match)) {
 				// (...) alias
-				$ret = "$match[1]($match[2]) AS `$match[5]`";
+				$ret = "$match[1]($match[2])".(isset($match[5]) ? " AS `$match[5]`" : '');
 			} elseif (preg_match('/^([0-9]+)([\s]+as)?[\s]+([a-z0-9_]+)$/i', $fields, $match)) {
 				// 0 as alias
 				$ret = $match[1].' AS `'.$match[3].'`';
@@ -334,9 +334,9 @@ abstract class Query extends \Kotchasan\KBase
 			$ret = $name;
 		} else {
 			$name = trim($name);
-			if (preg_match('/^(.*?)\((.*)\)(([\s]+as)?[\s]+`?([a-z0-9_]+)`?)$/i', $name, $match)) {
+			if (preg_match('/^(.*?)\(([^\)]+)\)((\s+as)?\s+`?([a-z0-9_]+)`?)?$/i', $name, $match)) {
 				// (...) as pos
-				$ret = "$match[1]($match[2]) AS `$match[5]`";
+				$ret = "$match[1]($match[2])".(isset($match[5]) ? " AS `$match[5]`" : '');
 			} elseif (preg_match('/^([A-Z0-9]{1,2})\.([\*a-zA-Z0-9_]+)((\s+(as|AS))?\s+([a-zA-Z0-9_]+))?$/', $name, $match)) {
 				// U.id as user_id
 				$ret = $match[1].'.'.($match[2] == '*' ? '*' : '`'.$match[2].'`').(isset($match[6]) ? ' AS `'.$match[6].'`' : '');
@@ -443,8 +443,8 @@ abstract class Query extends \Kotchasan\KBase
 			if (is_array($condition[0])) {
 				$qs = array();
 				$ps = array();
-				foreach ($condition as $item) {
-					$ret = $this->whereValue($item);
+				foreach ($condition as $i => $item) {
+					$ret = $this->whereValue($item, $i);
 					if (is_array($ret)) {
 						$qs[] = $ret[0];
 						$ps = ArrayTool::replace($ps, $ret[1]);
@@ -460,8 +460,8 @@ abstract class Query extends \Kotchasan\KBase
 				$qs = array($condition[0]);
 				$ps = array();
 				unset($condition[0]);
-				foreach ($condition as $item) {
-					$ret = $this->whereValue($item);
+				foreach ($condition as $i => $item) {
+					$ret = $this->whereValue($item, $i);
 					if (is_array($ret)) {
 						$qs[] = $ret[0];
 						$ps = ArrayTool::replace($ps, $ret[1]);
@@ -540,9 +540,10 @@ abstract class Query extends \Kotchasan\KBase
 	 * สร้างคำสั่ง WHERE
 	 *
 	 * @param array $params
+	 * @param int|null $i
 	 * @return array|string
 	 */
-	private function whereValue($params)
+	private function whereValue($params, $i = null)
 	{
 		$result = array();
 		if (is_array($params)) {
@@ -599,7 +600,7 @@ abstract class Query extends \Kotchasan\KBase
 				}
 			} else {
 				// value เป็น string
-				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key));
+				$q = ':'.preg_replace('/[\.`]/', '', strtolower($key)).($i === null ? '' : $i);
 				$result = array($key.' '.$operator.' '.$q, array($q => $value));
 			}
 		} else {

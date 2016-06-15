@@ -264,7 +264,9 @@ class Date
 	 */
 	public static function sqlDateTimeToMktime($date)
 	{
-		preg_match('/([0-9]+){1,4}-([0-9]+){1,2}-([0-9]+){1,2}(\s([0-9]+){1,2}:([0-9]+){1,2}:([0-9]+){1,2})?/', $date, $match);
-		return mktime(empty($match[4]) ? 0 : (int)$match[4], empty($match[5]) ? 0 : (int)$match[5], empty($match[6]) ? 0 : (int)$match[6], (int)$match[2], (int)$match[3], (int)$match[1]);
+		if (preg_match('/([0-9]+){1,4}-([0-9]+){1,2}-([0-9]+){1,2}(\s([0-9]+){1,2}:([0-9]+){1,2}:([0-9]+){1,2})?/', $date, $match)) {
+			return mktime(isset($match[5]) ? (int)$match[5] : 0, isset($match[6]) ? (int)$match[6] : 0, isset($match[7]) ? (int)$match[7] : 0, (int)$match[2], (int)$match[3], (int)$match[1]);
+		}
+		return 0;
 	}
 }

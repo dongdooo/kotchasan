@@ -24,7 +24,7 @@ abstract class Singleton
 
 	final private function __construct()
 	{
-		// inintial class
+		// initial class
 		static::init();
 	}
 

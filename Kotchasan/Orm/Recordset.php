@@ -84,7 +84,7 @@ class Recordset extends Query implements \Iterator
 		parent::__construct($this->field->getConn());
 		$this->sqls = array();
 		$this->values = array();
-		$this->inintTableName($this->field->getTable());
+		$this->initTableName($this->field->getTable());
 		if (method_exists($this->field, 'getConfig')) {
 			$result = $this->field->getConfig();
 			foreach ($result as $key => $value) {
@@ -369,7 +369,7 @@ class Recordset extends Query implements \Iterator
 	/**
 	 * ฟังก์ชั่นตรวจสอบชื่อตารางและชื่อรอง
 	 */
-	private function inintTableName($table)
+	private function initTableName($table)
 	{
 		if (empty($table)) {
 			$class = get_called_class();
@@ -617,6 +617,22 @@ class Recordset extends Query implements \Iterator
 			}
 			$this->sqls['where'] = $where;
 		}
+		return $this;
+	}
+
+	/**
+	 * จำกัดผลลัพท์ และกำหนดรายการเริ่มต้น
+	 *
+	 * @param int $count จำนวนผลลัท์ที่ต้องการ
+	 * @param int $start รายการเริ่มต้น
+	 * @return \static
+	 */
+	public function limit($count, $start = 0)
+	{
+		if (!empty($start)) {
+			$this->sqls['start'] = (int)$start;
+		}
+		$this->sqls['limit'] = (int)$count;
 		return $this;
 	}
 

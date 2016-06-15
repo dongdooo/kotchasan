@@ -52,6 +52,11 @@ class Router extends \Kotchasan\KBase
 			// คลาสจาก URL
 			$className = str_replace(' ', '\\', ucwords($modules['module'].' '.str_replace(array('\\', '/'), ' ', $modules['_dir']).' '.$modules['_mvc']));
 			$method = empty($modules['_method']) ? 'index' : $modules['_method'];
+		} elseif (isset($modules['_class']) && isset($modules['_method'])) {
+			// ระบุ Class และ Method มาตรงๆ
+			// ต้องเขียนกฏของ Router เองให้รัดกุม
+			$className = str_replace('/', '\\', $modules['_class']);
+			$method = $modules['_method'];
 		} else {
 			// ไม่ระบุเมธอดมา เรียกเมธอด index
 			$method = empty($modules['_method']) ? 'index' : $modules['_method'];

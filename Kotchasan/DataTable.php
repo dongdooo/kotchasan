@@ -185,14 +185,11 @@ class DataTable extends \Kotchasan\KBase
 	 */
 	public $sort;
 	/**
-	 * ประเภทของการเรียงลำดับ
-	 * asc เรียงลำดับ a-z
-	 * desc เรียงลำดับ z-a
-	 * none ไม่มีการเรียงลำดับ (default)
+	 * ข้อมูลการเรียงลำดับที่กำลังใช้งานอยู่
 	 *
-	 * @var string
+	 * @var array
 	 */
-	public $sortType = 'none';
+	protected $sorts = array();
 	/**
 	 * ปุ่มที่จะใส่ไว้ด้านหลังของแต่ละแถว
 	 *
@@ -279,7 +276,6 @@ class DataTable extends \Kotchasan\KBase
 			$this->headers = $headers;
 		}
 		$this->sort = self::$request->request('sort', $this->sort)->toString();
-		$this->sortType = self::$request->request('sort_type', $this->sortType)->toString();
 	}
 
 	/**
@@ -416,12 +412,25 @@ class DataTable extends \Kotchasan\KBase
 			$caption = str_replace(array(':search', ':count', ':start', ':end', ':page', ':total'), array($search, number_format($count), number_format($s), number_format($e), number_format($page), number_format($totalpage)), $caption);
 		}
 		// เรียงลำดับ
-		if (!empty($this->sort) && ($this->sortType == 'asc' || $this->sortType == 'desc') && in_array($this->sort, array_keys($this->columns))) {
+		if (!empty($this->sort)) {
+			$sorts = array();
+			foreach (explode(',', $this->sort) as $sort) {
+				if (preg_match('/^([a-z0-9_\-]+)([\s]+(desc|asc))?$/i', trim($sort), $match)) {
+					$sort = isset($this->headers[$match[1]]['sort']) ? $this->headers[$match[1]]['sort'] : $match[1];
+					$sortType = isset($match[3]) && strtolower($match[3]) == 'desc' ? 'desc' : 'asc';
+					$this->sorts[$sort] = $sortType;
+					$sorts[] = $sort.' '.$sortType;
+				}
+			}
+			$this->sort = implode(',', $sorts);
 			if (isset($this->model)) {
-				$sort = isset($this->headers[$this->sort]['sort']) ? $this->headers[$this->sort]['sort'] : $this->sort;
-				$query->order($sort.' '.$this->sortType);
-			} elseif (!empty($this->datas)) {
-				$this->datas = ArrayTool::sort($this->datas, $this->sort, $this->sortType == 'asc');
+				if (!empty($sorts)) {
+					$query->order($sorts);
+				}
+			} elseif (!empty($this->sorts)) {
+				reset($this->sorts);
+				$sort = key($this->sorts);
+				$this->datas = ArrayTool::sort($this->datas, $sort, $this->sorts[$sort]);
 			}
 		}
 		if (isset($this->model)) {
@@ -536,7 +545,6 @@ class DataTable extends \Kotchasan\KBase
 			'page' => $page,
 			'search' => $search,
 			'sort' => $this->sort,
-			'sort_type' => $this->sortType,
 			'action' => $this->action,
 			'actionCallback' => $this->actionCallback,
 			'actionConfirm' => $this->actionConfirm,
@@ -639,7 +647,7 @@ class DataTable extends \Kotchasan\KBase
 		$c = array();
 		$c['id'] = 'id="c'.$i.'"';
 		if (!empty($properties['sort'])) {
-			$sort = empty($this->sort) || $column != $this->sort ? 'none' : $this->sortType;
+			$sort = isset($this->sorts[$properties['sort']]) ? $this->sorts[$properties['sort']] : 'none';
 			$properties['class'] = 'sort_'.$sort.' col_'.$column.(empty($properties['class']) ? '' : ' '.$properties['class']);
 		}
 		foreach ($properties as $key => $value) {

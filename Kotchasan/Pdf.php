@@ -204,10 +204,11 @@ class Pdf extends \PDF\FPDF
 	{
 		if ($node->nodeName == '') {
 			// โหนดข้อความ
+			$node->attributes['DISPLAY'] = 'INLINE';
 			$lineHeight = empty($node->parentNode->attributes['LINE-HEIGHT']) ? $this->lineHeight : $node->parentNode->attributes['LINE-HEIGHT'];
 			if ($node->parentNode && $node->parentNode->attributes['DISPLAY'] !== 'INLINE' && sizeof($node->parentNode->childNodes) == 1) {
 				// block node
-				$align = empty($node->parentNode->attributes['TEXT-ALIGN']) ? '' : substr($node->parentNode->attributes['TEXT-ALIGN'], 0, 1);
+				$align = empty($node->parentNode->attributes['TEXT-ALIGN']) ? '' : $node->parentNode->attributes['TEXT-ALIGN'][0];
 				$border = empty($node->parentNode->attributes['BORDER-COLOR']) ? 0 : 1;
 				$fill = empty($node->parentNode->attributes['BACKGROUND-COLOR']) ? false : true;
 				$tPadding = empty($node->parentNode->attributes['PADDING-TOP']) ? 0 : $node->parentNode->attributes['PADDING-TOP'];
@@ -275,6 +276,8 @@ class Pdf extends \PDF\FPDF
 	 */
 	protected function loadStyle($node)
 	{
+		// display
+		$node->attributes['DISPLAY'] = $node->isInlineElement() ? 'INLINE' : 'BLOCK';
 		// style เริ่มต้น
 		if (isset($this->css[$node->nodeName])) {
 			foreach ($this->css[$node->nodeName] as $key => $value) {
@@ -297,11 +300,12 @@ class Pdf extends \PDF\FPDF
 				if (isset($this->cssClass[$class])) {
 					foreach ($this->cssClass[$class] as $key => $value) {
 						if (!isset($node->attributes[$key])) {
-							$node->attributes[$key] = strtoupper($value);
+							$node->attributes[$key] = $value;
 						}
 					}
 				}
 			}
+			unset($node->attributes['CLASS']);
 		}
 		// padding
 		if (!empty($node->attributes['PADDING'])) {
@@ -339,8 +343,8 @@ class Pdf extends \PDF\FPDF
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sr)?g/', $this->TextColor, $match)) {
 				$node->TextColor = array(
 					'r' => $match[1],
-					'g' => isset($match[3]) ? $match[3] : $match[3],
-					'b' => isset($match[4]) ? $match[4] : $match[4]
+					'g' => isset($match[3]) ? $match[3] : null,
+					'b' => isset($match[4]) ? $match[4] : null
 				);
 			}
 			list($r, $g, $b) = $this->colorToRGb($node->attributes['COLOR']);
@@ -351,8 +355,8 @@ class Pdf extends \PDF\FPDF
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sr)?g/', $this->FillColor, $match)) {
 				$node->FillColor = array(
 					'r' => $match[1],
-					'g' => isset($match[3]) ? $match[3] : $match[3],
-					'b' => isset($match[4]) ? $match[4] : $match[4]
+					'g' => isset($match[3]) ? $match[3] : null,
+					'b' => isset($match[4]) ? $match[4] : null
 				);
 			}
 			list($r, $g, $b) = $this->colorToRGb($node->attributes['BACKGROUND-COLOR']);
@@ -363,8 +367,8 @@ class Pdf extends \PDF\FPDF
 			if (preg_match('/([0-9\.]+)\s(([0-9\.]+)\s([0-9\.]+)\sR)?G/', $this->DrawColor, $match)) {
 				$node->DrawColor = array(
 					'r' => $match[1],
-					'g' => isset($match[3]) ? $match[3] : $match[3],
-					'b' => isset($match[4]) ? $match[4] : $match[4]
+					'g' => isset($match[3]) ? $match[3] : null,
+					'b' => isset($match[4]) ? $match[4] : null
 				);
 			}
 			list($r, $g, $b) = $this->colorToRGb($node->attributes['BORDER-COLOR']);
@@ -619,8 +623,6 @@ class Pdf extends \PDF\FPDF
 		if (!$this->lastBlock) {
 			$this->Ln();
 		}
-		// อ่าน CSS ของโหนด
-		$this->loadStyle($table);
 		// คำนวณความกว้างของ Cell
 		$columnSizes = $this->calculateColumnsWidth($table);
 		// กำหนด CSS
@@ -652,9 +654,9 @@ class Pdf extends \PDF\FPDF
 				foreach ($tr->childNodes as $col => $td) {
 					// กำหนด CSS
 					$this->applyCSS($td);
-					$align = 'L';
+					$align = '';
 					if (!empty($td->attributes['TEXT-ALIGN'])) {
-						$align = strtoupper(substr($td->attributes['TEXT-ALIGN'], 0, 1));
+						$align = $td->attributes['TEXT-ALIGN'][0];
 					}
 					// current x
 					$x = $this->x;

@@ -283,6 +283,8 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert select("(SELECT FROM) q")->text() [==] "SELECT (SELECT FROM) AS `q`"
 	 * @assert select()->text()  [==] "SELECT *"
 	 * @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain` = 'kotchasan.com'"
+	 * @assert select('YEAR(date) Y', 'MONTH(date) as D', 'DAY(`date`) as `today`')->text() [==] "SELECT YEAR(date) AS `Y`,MONTH(date) AS `D`,DAY(`date`) AS `today`"
+	 * @assert select('GROUP_CONCAT(P2.`reciever_id`)')->text() [==] "SELECT GROUP_CONCAT(P2.`reciever_id`)"
 	 */
 	public function select($fields = '*')
 	{
@@ -351,12 +353,13 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert update('user')->set(array('key1' => 'value1', 'key2' => 2))->where(1)->text() [==] "UPDATE `user` SET `key1`=:Skey1, `key2`=:Skey2 WHERE `id` = 1"
 	 * @assert update('user U')->set(array('U.key1' => 'value1', 'U.key2' => 2))->where(array('U.id', 1))->text() [==] "UPDATE `user` AS U SET U.`key1`=:SUkey1, U.`key2`=:SUkey2 WHERE U.`id` = 1"
 	 * @assert update('user')->set(array('key1' => '(...)'))->text() [==] "UPDATE `user` SET `key1`=(...)"
+	 * @assert update('user')->set(array('key1' => 'test (...)'))->text() [==] "UPDATE `user` SET `key1`=:Skey1"
 	 * @assert update('user')->set('`reply`=`reply`+1')->text() [==] "UPDATE `user` SET `reply`=`reply`+1"
 	 * @assert update('user')->set(array('id' => 1, '`reply`=`reply`+1'))->text() [==] "UPDATE `user` SET `id`=:Sid, `reply`=`reply`+1"
 	 */
 	public function set($datas)
 	{
-		if (is_array($datas)) {
+		if (is_array($datas) || is_object($datas)) {
 			$keys = array();
 			foreach ($datas as $key => $value) {
 				if (is_int($key)) {
@@ -366,7 +369,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 					$key = $this->aliasName($key, 'S');
 					if ($value instanceof QueryBuilder) {
 						$this->sqls['set'][$key] = $field.'=('.$value->text().')';
-					} elseif (strpos($value, '(') !== false) {
+					} elseif (strlen($value) > 2 && $value{0} === '(' && $value[strlen($value) - 1] === ')') {
 						$this->sqls['set'][$key] = $field.'='.$value;
 					} else {
 						$this->sqls['set'][$key] = $field.'='.$key;
@@ -430,6 +433,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert where(array('id', 'IN', array(1, 2, '3')))->text() [==] " WHERE `id` IN (1, 2, '3')"
 	 * @assert where(array('(...)', array('fb', '0')))->text() [==] " WHERE (...) AND `fb` = '0'"
 	 * @assert where(array(array('fb', '0'), '(...)'))->text() [==] " WHERE `fb` = '0' AND (...)"
+	 * @assert where(array(array('MONTH(create_date)', 1), array('YEAR(create_date)', 1)))->text() [==] " WHERE MONTH(create_date) = 1 AND YEAR(create_date) = 1"
 	 */
 	public function where($condition, $oprator = 'AND', $id = 'id')
 	{

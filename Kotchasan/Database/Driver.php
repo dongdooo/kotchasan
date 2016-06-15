@@ -161,11 +161,12 @@ abstract class Driver extends Query
 	 * @param string $table_name ชื่อตาราง
 	 * @param mixed $condition query WHERE
 	 * @param int $limit (option) จำนวนรายการที่ต้องการลบ 1 (default) รายการแรกที่เจอ, 0 หมายถึงลบทุกรายการ
+	 * @param string $operator (optional) เช่น AND หรือ OR
 	 * @return int|bool สำเร็จคืนค่าจำนวนแถวที่มีผล ไม่สำเร็จคืนค่า false
 	 */
-	public function delete($table_name, $condition, $limit = 1)
+	public function delete($table_name, $condition, $limit = 1, $operator = 'AND')
 	{
-		$condition = $this->buildWhere($condition);
+		$condition = $this->buildWhere($condition, $operator);
 		if (is_array($condition)) {
 			$values = $condition[1];
 			$condition = $condition[0];
