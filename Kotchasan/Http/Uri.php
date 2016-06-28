@@ -580,13 +580,38 @@ class Uri extends \Kotchasan\KBase implements UriInterface
 	/**
 	 * แปลง POST เป็น query string สำหรับการส่งกลับไปหน้าเดิม ที่มาจากการโพสต์ด้วยฟอร์ม
 	 *
-	 * @param string $url URL ที่ต้องการส่งกลับ
-	 * @param array $query_string query string ที่ต้องการส่งกลับไปด้วย
+	 * @param string $url URL ที่ต้องการส่งกลับ เช่น index.php
+	 * @param array $query_string query string ที่ต้องการส่งกลับไปด้วย array('key' => 'value', ...)
 	 * @return string URL+query string
 	 */
 	public function postBack($url, $query_string)
 	{
-		foreach (self::$request->getParsedBody() as $key => $value) {
+		return $this->createBack($url, self::$request->getParsedBody(), $query_string);
+	}
+
+	/**
+	 * แปลง GET เป็น query string สำหรับการส่งกลับไปหน้าเดิม ที่มาจากการโพสต์ด้วยฟอร์ม
+	 *
+	 * @param string $url URL ที่ต้องการส่งกลับ เช่น index.php
+	 * @param array $query_string query string ที่ต้องการส่งกลับไปด้วย array('key' => 'value', ...)
+	 * @return string URL+query string
+	 */
+	public function getBack($url, $query_string)
+	{
+		return $this->createBack($url, self::$request->getQueryParams(), $query_string);
+	}
+
+	/**
+	 * แปลง POST เป็น query string สำหรับการส่งกลับไปหน้าเดิม ที่มาจากการโพสต์ด้วยฟอร์ม
+	 *
+	 * @param string $url URL ที่ต้องการส่งกลับ เช่น index.php
+	 * @param array $source query string จาก $_POST หรือ $_GET
+	 * @param array $query_string query string ที่ต้องการส่งกลับไปด้วย array('key' => 'value', ...)
+	 * @return string URL+query string
+	 */
+	private function createBack($url, $source, $query_string)
+	{
+		foreach ($source as $key => $value) {
 			if (preg_match('/^_{1,}(.*)$/', $key, $match)) {
 				if (!key_exists($match[1], $query_string)) {
 					$query_string[$match[1]] = $value;

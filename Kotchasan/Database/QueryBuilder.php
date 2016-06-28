@@ -180,9 +180,24 @@ class QueryBuilder extends \Kotchasan\Database\Query
 		return $this;
 	}
 
-	public function having()
+	/**
+	 * HAVING
+	 *
+	 * @param mixed $condition query string หรือ array
+	 * @param string $oprator defaul AND
+	 * @return \static
+	 */
+	public function having($condition, $oprator = 'AND')
 	{
 
+		$ret = $this->buildWhere($condition, $oprator);
+		if (is_array($ret)) {
+			$this->sqls['having'] = $ret[0];
+			$this->values = ArrayTool::replace($this->values, $ret[1]);
+		} else {
+			$this->sqls['having'] = $ret;
+		}
+		return $this;
 	}
 
 	/**
@@ -285,6 +300,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	 * @assert select()->where(array('domain', 'kotchasan.com'))->text() [==] "SELECT * WHERE `domain` = 'kotchasan.com'"
 	 * @assert select('YEAR(date) Y', 'MONTH(date) as D', 'DAY(`date`) as `today`')->text() [==] "SELECT YEAR(date) AS `Y`,MONTH(date) AS `D`,DAY(`date`) AS `today`"
 	 * @assert select('GROUP_CONCAT(P2.`reciever_id`)')->text() [==] "SELECT GROUP_CONCAT(P2.`reciever_id`)"
+	 * @assert select("(CASE WHEN ISNULL(U1.`id`) THEN Q.`email` WHEN U1.`displayname`='' THEN U1.`email` ELSE U1.`displayname` END) sender")->text() [==] "SELECT (CASE WHEN ISNULL(U1.`id`) THEN Q.`email` WHEN U1.`displayname`='' THEN U1.`email` ELSE U1.`displayname` END) AS `sender`"
 	 */
 	public function select($fields = '*')
 	{

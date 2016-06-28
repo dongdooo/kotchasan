@@ -31,17 +31,17 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	public static $login_message;
 	/**
 	 * ชื่อ Input ที่ต้องการให้ active
-	 * login_email หรือ login_password
+	 * login_username หรือ login_password
 	 *
 	 * @var string
 	 */
 	public static $login_input;
 	/**
-	 * ข้อความใน Input login_email
+	 * ข้อความใน Input login_username
 	 *
 	 * @var string
 	 */
-	public static $text_email;
+	public static $text_username;
 	/**
 	 * ข้อความใน Input login_password
 	 *
@@ -75,8 +75,22 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 		$pw = new Password(self::$cfg->password_key);
 		// ชื่อฟิลด์สำหรับการรับค่าเป็นรายการแรกของ login_fields
 		$field_name = reset(self::$cfg->login_fields);
+		// อ่านข้อมูลจากฟอร์ม login ฟิลด์ login_username
+		self::$text_username = self::$request->post('login_username', null)->toString();
+		if (self::$text_username === null) {
+			if (isset($_SESSION['login']) && isset($_SESSION['login'][$field_name])) {
+				// from session
+				self::$text_username = $_SESSION['login'][$field_name];
+			} else {
+				// from cookie
+				$datas = self::$request->getCookieParams();
+				self::$text_username = isset($datas['login_'.$field_name]) ? $pw->decode($datas['login_'.$field_name]) : null;
+			}
+		} else {
+			$login->from_submit = true;
+		}
+		self::$text_username = Text::username(self::$text_username);
 		// ค่าที่ส่งมา
-		self::$text_email = Text::username($login->get($field_name, $pw));
 		self::$text_password = $login->get('password', $pw);
 		$login_remember = $login->get('remember', $pw) == 1 ? 1 : 0;
 		// ตรวจสอบการ login
@@ -92,10 +106,10 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			return $login->forgot(self::$request);
 		} else {
 			// ตรวจสอบค่าที่ส่งมา
-			if (self::$text_email == '') {
+			if (self::$text_username == '') {
 				if ($login->from_submit) {
 					self::$login_message = Language::get('Please fill out this form');
-					self::$login_input = 'login_'.$field_name;
+					self::$login_input = 'login_username';
 				}
 			} elseif (self::$text_password == '') {
 				if ($login->from_submit) {
@@ -104,10 +118,10 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 				}
 			} else {
 				// ตรวจสอบการ login กับฐานข้อมูล
-				$login_result = $login->checkLogin(self::$text_email, self::$text_password);
+				$login_result = $login->checkLogin(self::$text_username, self::$text_password);
 				if (is_string($login_result)) {
 					// ข้อความผิดพลาด
-					self::$login_input = self::$login_input == 'password' ? 'login_password' : 'login_'.$field_name;
+					self::$login_input = self::$login_input == 'password' ? 'login_password' : 'login_username';
 					self::$login_message = Language::get($login_result);
 					// logout ลบ session และ cookie
 					unset($_SESSION['login']);
@@ -121,7 +135,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 					// save login cookie
 					$time = time() + 2592000;
 					if ($login_remember == 1) {
-						setcookie('login_'.$field_name, $pw->encode(self::$text_email), $time, '/');
+						setcookie('login_'.$field_name, $pw->encode(self::$text_username), $time, '/');
 						setcookie('login_password', $pw->encode(self::$text_password), $time, '/');
 						setcookie('login_remember', $login_remember, $time, '/');
 					}
@@ -137,10 +151,10 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 	 * เจออันไหนก่อนใช้อันนั้น
 	 *
 	 * @param string $name
-	 * @param Password $pwd
+	 * @param Password $pw
 	 * @return string|null คืนค่าข้อความ ไม่พบคืนค่า null
 	 */
-	protected function get($name, Password $pwd)
+	protected function get($name, Password $pw)
 	{
 		$datas = self::$request->getParsedBody();
 		if (isset($datas['login_'.$name])) {
@@ -150,7 +164,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
 			return (string)$_SESSION['login'][$name];
 		}
 		$datas = self::$request->getCookieParams();
-		return isset($datas['login_'.$name]) ? $pwd->decode($datas['login_'.$name]) : null;
+		return isset($datas['login_'.$name]) ? $pw->decode($datas['login_'.$name]) : null;
 	}
 
 	/**

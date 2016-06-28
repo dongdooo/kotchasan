@@ -27,39 +27,44 @@ final class Database
 	/**
 	 * Create Database Connection
 	 *
-	 * @param string $name ชื่อของการเชื่อมต่อกำหนดค่าใน config
+	 * @param string|array $name ชื่อของการเชื่อมต่อกำหนดค่าใน config หรือ array ของค่ากำหนดของฐานข้อมูล
 	 * @return \static
 	 */
 	public static function create($name = 'mysql')
 	{
-		if (empty(self::$instances[$name])) {
-			$param = (object)array(
-					'settings' => (object)array(
-						'char_set' => 'utf8',
-						'dbdriver' => 'mysql',
-						'hostname' => 'localhost'
-					),
-					'tables' => (object)array(
-					)
-			);
+		$param = (object)array(
+				'settings' => (object)array(
+					'char_set' => 'utf8',
+					'dbdriver' => 'mysql',
+					'hostname' => 'localhost'
+				),
+				'tables' => (object)array(
+				)
+		);
+		if (is_string($name) && empty(self::$instances[$name])) {
 			if (is_file(APP_PATH.'settings/database.php')) {
 				$config = include APP_PATH.'settings/database.php';
 			} elseif (is_file(ROOT_PATH.'settings/database.php')) {
 				$config = include ROOT_PATH.'settings/database.php';
 			}
-			if (isset($config)) {
-				foreach ($config as $key => $values) {
-					if ($key == $name) {
-						foreach ($values as $k => $v) {
-							$param->settings->$k = $v;
-						}
-					} elseif ($key == 'tables') {
-						foreach ($values as $k => $v) {
-							$param->tables->$k = $v;
-						}
+			foreach ($config as $key => $values) {
+				if ($key == $name) {
+					foreach ($values as $k => $v) {
+						$param->settings->$k = $v;
+					}
+				} elseif ($key == 'tables') {
+					foreach ($values as $k => $v) {
+						$param->tables->$k = $v;
 					}
 				}
 			}
+		} elseif (is_array($name)) {
+			foreach ($name as $k => $v) {
+				$param->settings->$k = $v;
+			}
+			$name = 'custom';
+		}
+		if (empty(self::$instances[$name])) {
 			// โหลด driver (base)
 			require_once VENDOR_DIR.'Database/Driver.php';
 			// โหลด driver ตาม config ถ้าไม่พบ ใช้ PdoMysqlDriver

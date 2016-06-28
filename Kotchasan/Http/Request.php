@@ -231,7 +231,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	public function get($name, $default = null)
 	{
-		return $this->createInputItem($this->getQueryParams(), $name, $default);
+		return $this->createInputItem($this->getQueryParams(), $name, $default, 'GET');
 	}
 
 	/**
@@ -243,7 +243,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	public function post($name, $default = null)
 	{
-		return $this->createInputItem($this->getParsedBody(), $name, $default);
+		return $this->createInputItem($this->getParsedBody(), $name, $default, 'POST');
 	}
 
 	/**
@@ -255,14 +255,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	public function request($name, $default = null)
 	{
-		$datas = $this->getParsedBody();
-		if (!isset($datas[$name])) {
-			$datas = $this->getQueryParams();
-			if (!isset($datas[$name])) {
-				$datas = $this->getCookieParams();
-			}
-		}
-		return $this->createInputItem($datas, $name, $default);
+		return $this->globals(array('POST', 'GET', 'COOKIE'), $name, $default);
 	}
 
 	/**
@@ -274,7 +267,35 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	public function session($name, $default = null)
 	{
-		return $this->createInputItem($_SESSION, $name, $default);
+		return $this->createInputItem($_SESSION, $name, $default, 'SESSION');
+	}
+
+	/**
+	 * อ่านค่าจากตัวแปร GLOBALS $_POST $_GET $_SESSION $_COOKIE ตามลำดับ
+	 *
+	 * @param array $keys ชื่อตัวแปรที่ต้องการอ่าน ตัวพิมพ์ใหญ่ เช่น array('POST', 'GET') หมายถึงอ่านค่าจาก $_POST ก่อน
+	 * ถ้าไม่พบจะอ่านจาก $_GET และถ้าไม่พบอีกจะใช้ค่า $default
+	 * @param string $name ชื่อตัวแปร
+	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
+	 */
+	public function globals($keys, $name, $default = null)
+	{
+		foreach ($keys as $key) {
+			if ($key == 'POST') {
+				$datas = $this->getParsedBody();
+			} elseif ($key == 'GET') {
+				$datas = $this->getQueryParams();
+			} elseif ($key == 'SESSION') {
+				$datas = $_SESSION;
+			} elseif ($key == 'COOKIE') {
+				$datas = $this->getCookieParams();
+			}
+			if (isset($datas[$name])) {
+				return is_array($datas[$name]) ? new Inputs($datas[$name], $key) : new InputItem($datas[$name], $key);
+			}
+		}
+		return is_array($default) ? new Inputs($default) : new InputItem($default);
 	}
 
 	/**
@@ -299,8 +320,7 @@ class Request extends AbstractRequest implements RequestInterface
 	 */
 	public function cookie($name, $default = '')
 	{
-		$datas = $this->getCookieParams();
-		return $this->createInputItem($datas, $name, $default);
+		return $this->createInputItem($this->getCookieParams(), $name, $default, 'COOKIE');
 	}
 
 	/**
@@ -413,13 +433,15 @@ class Request extends AbstractRequest implements RequestInterface
 	 * @param string $name ชื่อตัวแปร
 	 * @param mixed $default ค่าเริ่มต้นหากไม่พบตัวแปร
 	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
+	 * @param string|null $type ประเภท Input เช่น GET POST SESSION COOKIE หรือ null ถ้าไม่ได้มาจากรายการข้างต้น
+	 * @return InputItem|Inputs InputItem หรือ Collection ของ InputItem
 	 */
-	private function createInputItem($source, $name, $default)
+	private function createInputItem($source, $name, $default, $type)
 	{
 		if (isset($source[$name])) {
-			return is_array($source[$name]) ? new Inputs($source[$name], true) : new InputItem($source[$name], true);
+			return is_array($source[$name]) ? new Inputs($source[$name], $type) : new InputItem($source[$name], $type);
 		} else {
-			return is_array($default) ? new Inputs($default, false) : new InputItem($default, false);
+			return is_array($default) ? new Inputs($default) : new InputItem($default);
 		}
 	}
 }

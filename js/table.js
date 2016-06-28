@@ -206,7 +206,7 @@
 					}
 				} else if (c == 'icon-minus') {
 					var tr = $G(this.parentNode.parentNode.parentNode);
-					var tbody = tr.parentNode;
+					var tbody = $G(tr.parentNode);
 					if (tbody.elems('tr').length > 1 && confirm(trans('You want to delete ?'))) {
 						tr.remove();
 						temp.initTR(tbody);

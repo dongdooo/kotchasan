@@ -1687,7 +1687,6 @@ html[dir="rtl"] .topmenu > ul ul ul {
 	position: relative;
 	top: 1px;
 	padding: 0 !important;
-	z-index: 1;
 	list-style-type: none;
 }
 .btntab > ul {
@@ -1791,7 +1790,6 @@ html[dir="rtl"] .tab > ul > li:first-child > a {
 	background-color: #FFF;
 	overflow: hidden;
 	clear: both;
-	z-index: 1;
 }
 .gtab > .tab_content > .item,
 .gtab > input[type=radio] {

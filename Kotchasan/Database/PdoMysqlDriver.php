@@ -32,26 +32,26 @@ class PdoMysqlDriver extends Driver
 	public function connect($param)
 	{
 		$this->options = array(
-			PDO::ATTR_STRINGIFY_FETCHES => 0,
-			PDO::ATTR_EMULATE_PREPARES => 0,
-			PDO::ATTR_PERSISTENT => 1,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+			\PDO::ATTR_STRINGIFY_FETCHES => 0,
+			\PDO::ATTR_EMULATE_PREPARES => 0,
+			\PDO::ATTR_PERSISTENT => 1,
+			\PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		foreach ($param as $key => $value) {
 			$this->$key = $value;
 		}
 		if ($this->settings->dbdriver == 'mysql') {
-			$this->options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES '.$this->settings->char_set;
+			$this->options[\PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES '.$this->settings->char_set;
 		}
+		$sql = $this->settings->dbdriver.':host='.$this->settings->hostname;
+		$sql .= empty($this->settings->port) ? '' : ';port='.$this->settings->port;
+		$sql .= empty($this->settings->dbname) ? '' : ';dbname='.$this->settings->dbname;
 		try {
-			$sql = $this->settings->dbdriver.':host='.$this->settings->hostname;
-			$sql .= empty($this->settings->port) ? '' : ';port='.$this->settings->port;
-			$sql .= empty($this->settings->dbname) ? '' : ';dbname='.$this->settings->dbname;
-			$this->connection = new PDO($sql, $this->settings->username, $this->settings->password, $this->options);
-			return $this;
-		} catch (PDOException $e) {
+			$this->connection = new \PDO($sql, $this->settings->username, $this->settings->password, $this->options);
+		} catch (\PDOException $e) {
 			$this->logError(__FUNCTION__, $e->getMessage());
 		}
+		return $this;
 	}
 
 	/**
@@ -223,6 +223,9 @@ class PdoMysqlDriver extends Driver
 			}
 			if (isset($sqls['group'])) {
 				$sql .= ' GROUP BY '.$sqls['group'];
+			}
+			if (isset($sqls['having'])) {
+				$sql .= ' HAVING '.$sqls['having'];
 			}
 			if (isset($sqls['order'])) {
 				$sql .= ' ORDER BY '.$sqls['order'];

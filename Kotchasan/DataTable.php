@@ -237,18 +237,29 @@ class DataTable extends \Kotchasan\KBase
 		if (!empty($this->actions) && $this->checkCol == -1) {
 			$this->checkCol = 1;
 		}
-		// รายการต่อหน้ามาจากการ POST หรือ GET
-		if (isset($this->perPage)) {
-			$this->perPage = self::$request->request('count', 30)->toInt();
+		// รายการต่อหน้า มาจากการเลือกภายในตารง
+		$count = self::$request->request('count')->toInt();
+		if ($count > 0) {
+			$this->perPage = $count;
 		}
 		// header ของตาราง มาจาก model หรือมาจากข้อมูล หรือ มาจากการกำหนดเอง
 		if (isset($this->model)) {
 			// create Recordset
 			$this->rs = new Recordset($this->model);
 			// ฟิลด์ที่กำหนด (หากแตกต่างจาก Model)
-			$this->rs->first($this->fields);
+			$first = $this->rs->first($this->fields);
 			// อ่านคอลัมน์ของตาราง
-			$this->columns = $this->rs->getFields();
+			if ($first === false) {
+				if (!empty($this->fields)) {
+					foreach ($this->fields as $field) {
+						if (preg_match('/(.*?[`\s]+)?([a-z0-9_]+)`?$/i', $field, $match)) {
+							$this->columns[$match[2]] = array('text' => $match[2]);
+						}
+					}
+				}
+			} else {
+				$this->columns = $this->rs->getFields();
+			}
 		} elseif (isset($this->datas)) {
 			// อ่านคอลัมน์จากข้อมูลเราการแรก
 			$this->columns = array();
@@ -525,11 +536,15 @@ class DataTable extends \Kotchasan\KBase
 				$table_nav[] = $this->addAction($item);
 			}
 			if (!empty($this->addNew)) {
+				$prop = array();
+				foreach ($this->addNew as $k => $v) {
+					$prop[$k] = $k.'="'.$v.'"';
+				}
 				if (preg_match('/^((.*)\s+)?(icon-[a-z0-9\-_]+)(\s+(.*))?$/', $this->addNew['class'], $match)) {
-					$match[2] = trim($match[2].' '.(isset($match[5]) ? $match[5] : ''));
-					$table_nav[] = '<a class="'.$match[2].'" href="'.$this->addNew['href'].'"><span class="'.$match[3].'">'.$this->addNew['text'].'</span></a>';
+					$prop['class'] = 'class="'.trim($match[2].' '.(isset($match[5]) ? $match[5] : '')).'"';
+					$table_nav[] = '<a '.implode(' ', $prop).'><span class="'.$match[3].'">'.$this->addNew['text'].'</span></a>';
 				} else {
-					$table_nav[] = '<a class="'.$this->addNew['class'].'" href="'.$this->addNew['href'].'">'.$this->addNew['text'].'</a>';
+					$table_nav[] = '<a '.implode(' ', $prop).'>'.$this->addNew['text'].'</a>';
 				}
 			}
 			if (!empty($table_nav)) {

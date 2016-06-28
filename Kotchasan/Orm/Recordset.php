@@ -609,7 +609,7 @@ class Recordset extends Query implements \Iterator
 	 */
 	public function where($where = array(), $oprator = 'AND')
 	{
-		if ((is_string($where) && $where != '') || !empty($where)) {
+		if (is_int($where) || (is_string($where) && $where != '') || (is_array($where) && !empty($where))) {
 			$where = $this->buildWhere($where, $oprator, $this->table_alias.'.'.$this->field->getPrimarykey());
 			if (is_array($where)) {
 				$this->values = ArrayTool::replace($this->values, $where[1]);

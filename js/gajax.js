@@ -1553,53 +1553,57 @@ window.$K = (function () {
 		show: function (value) {
 			this.body.style.height = 'auto';
 			this.body.setHTML(value);
-			var imgs = this.body.getElementsByTagName('img');
 			var self = this;
-			var viewport_width = document.viewport.getWidth();
-			var viewport_height = document.viewport.getHeight();
-			forEach(imgs, function () {
-				new preload(this, function () {
-					dm = self.body.getDimensions();
-					hOffset = dm.height - self.body.getClientHeight() + parseInt(self.body.getStyle('marginTop')) + parseInt(self.body.getStyle('marginBottom')) + 20;
-					wOffset = dm.width - self.body.getClientWidth() + parseInt(self.body.getStyle('marginLeft')) + parseInt(self.body.getStyle('marginRight')) + 20;
-					h = viewport_height - hOffset;
-					if (dm.height > h) {
-						self.body.style.height = h + 'px';
-					}
-					w = viewport_width - wOffset;
-					if (dm.width > w) {
-						self.body.style.width = w + 'px';
-					}
-					self.div.center();
+			window.setTimeout(function () {
+				var imgs = self.body.getElementsByTagName('img');
+				var viewport_width = document.viewport.getWidth();
+				var viewport_height = document.viewport.getHeight();
+				forEach(imgs, function () {
+					new preload(this, function () {
+						dm = self.body.getDimensions();
+						hOffset = dm.height - self.body.getClientHeight() + parseInt(self.body.getStyle('marginTop')) + parseInt(self.body.getStyle('marginBottom')) + 20;
+						wOffset = dm.width - self.body.getClientWidth() + parseInt(self.body.getStyle('marginLeft')) + parseInt(self.body.getStyle('marginRight')) + 20;
+						h = viewport_height - hOffset;
+						if (dm.height > h) {
+							self.body.style.height = h + 'px';
+						}
+						w = viewport_width - wOffset;
+						if (dm.width > w) {
+							self.body.style.width = w + 'px';
+						}
+						self.div.center();
+					});
 				});
-			});
-			this.div.style.display = 'block';
-			var dm = this.body.getDimensions();
-			var hOffset = dm.height - this.body.getClientHeight() + parseInt(this.body.getStyle('marginTop')) + parseInt(this.body.getStyle('marginBottom')) + 20;
-			var wOffset = dm.width - this.body.getClientWidth() + parseInt(this.body.getStyle('marginLeft')) + parseInt(this.body.getStyle('marginRight')) + 20;
-			var h = document.viewport.getHeight() - hOffset;
-			if (dm.height > h) {
-				this.body.style.height = h + 'px';
-			}
-			var w = document.viewport.getWidth() - wOffset;
-			if (dm.width > w) {
-				this.body.style.width = w + 'px';
-			}
-			this.div.center();
-			this.overlay();
-			var _modalComplete = function () {
-				if (window.ActiveXObject) {
-					this.style.filter = "none";
+				self.div.style.display = 'block';
+				var dm = self.body.getDimensions();
+				var hOffset = dm.height - self.body.getClientHeight() + parseInt(self.body.getStyle('marginTop')) + parseInt(self.body.getStyle('marginBottom')) + 20;
+				var wOffset = dm.width - self.body.getClientWidth() + parseInt(self.body.getStyle('marginLeft')) + parseInt(self.body.getStyle('marginRight')) + 20;
+				var h = document.viewport.getHeight() - hOffset;
+				if (dm.height > h) {
+					self.body.style.height = h + 'px';
 				}
-			};
-			new GFade(this.div).play({
-				'from': 0,
-				'to': 100,
-				'speed': 1,
-				'duration': 20,
-				'onComplete': _modalComplete
-			});
-			this.div.style.zIndex = 1000;
+				var w = document.viewport.getWidth() - wOffset;
+				if (dm.width > w) {
+					self.body.style.width = w + 'px';
+				}
+				self.div.center();
+				self.overlay();
+				var _modalComplete = function () {
+					if (window.ActiveXObject) {
+						self.style.filter = "none";
+					}
+				};
+				new GFade(self.div).play({
+					'from': 0,
+					'to': 100,
+					'speed': 1,
+					'duration': 20,
+					'onComplete': _modalComplete
+				});
+				self.div.style.zIndex = 1000;
+				var size = self.div.getDimensions();
+				self.div.style.width = size.width + 'px';
+			}, 1);
 			return this;
 		},
 		hide: function () {
@@ -1641,6 +1645,7 @@ window.$K = (function () {
 			return this;
 		},
 		_hide: function () {
+			this.div.style.width = 'auto';
 			this.iframe.style.display = 'none';
 			this.div.style.display = 'none';
 			this.body.innerHTML = '';

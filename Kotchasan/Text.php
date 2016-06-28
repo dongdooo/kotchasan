@@ -53,12 +53,29 @@ class Text
 	}
 
 	/**
+	 * ฟังก์ชั่น ลบช่องว่าง และ ตัวอักษรขึ้นบรรทัดใหม่ ที่ติดกันเกินกว่า 1 ตัว
+	 *
+	 * @param string $text  ข้อความ
+	 * @param int $len จำนวนตัวอักษรสูงสุดที่ต้องการ, 0 (default) คืนค่าทั้งหมด
+	 * @return string คืนค่าข้อความที่ไม่มีตัวอักษรขึ้นบรรทัดใหม่
+	 *
+	 * @assert (" \tทดสอบ\r\nภาษาไทย") [==] 'ทดสอบ ภาษาไทย'
+	 */
+	public static function oneLine($text, $len = 0)
+	{
+		return self::cut(trim(preg_replace('/[\r\n\t\s]+/', ' ', $text)), $len);
+	}
+
+	/**
 	 * ฟังก์ชั่น ตัดสตริงค์ตามความยาวที่กำหนด
 	 * หากข้อความที่นำมาตัดยาวกว่าที่กำหนด จะตัดข้อความที่เกินออก และเติม .. ข้างท้าย
 	 *
 	 * @param string $source ข้อความ
 	 * @param int $len ความยาวของข้อความที่ต้องการ  (จำนวนตัวอักษรรวมจุด)
 	 * @return string
+	 *
+	 * @assert ('สวัสดี ประเทศไทย', 8) [==] 'สวัสดี..'
+	 * @assert ('123456789', 8) [==] '123456..'
 	 */
 	public static function cut($source, $len)
 	{
@@ -75,6 +92,12 @@ class Text
 	 * @param int $bytes ขนาดของไฟล์ เป็น byte
 	 * @param int $precision จำนวนหลักหลังจุดทศนิยม (default 2)
 	 * @return string คืนค่าขนาดของไฟล์เป็น KB MB
+	 *
+	 * @assert (256) [==] '256 Bytes'
+	 * @assert (1024) [==] '1 KB'
+	 * @assert (1024 * 1024) [==] '1 MB'
+	 * @assert (1024 * 1024 * 1024) [==] '1 GB'
+	 * @assert (1024 * 1024 * 1024 * 1024) [==] '1 TB'
 	 */
 	public static function formatFileSize($bytes, $precision = 2)
 	{

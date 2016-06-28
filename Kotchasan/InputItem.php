@@ -24,34 +24,34 @@ class InputItem
 	 */
 	protected $value;
 	/**
-	 * ตัวแปรสำหรับบอกว่ามี input ส่งมา
+	 * ตัวแปรบอกประเภท Input เช่น GET POST SESSION COOKIE
 	 *
-	 * @var bool
+	 * @var string|null
 	 */
-	protected $exists;
+	protected $type;
 
 	/**
 	 * Class Constructer
 	 *
 	 * @param mixed $value null (default)
-	 * @param boolean $exists true (default) มี input ส่งมา, false ใช้ค่า default
+	 * @param string|null $type ประเภท Input เช่น GET POST SESSION COOKIE หรือ null ถ้าไม่ได้มาจากรายการข้างต้น
 	 */
-	public function __construct($value = null, $exists = true)
+	public function __construct($value = null, $type = null)
 	{
 		$this->value = $value;
-		$this->exists = $exists;
+		$this->type = $type;
 	}
 
 	/**
 	 * สร้าง Object
 	 *
 	 * @param mixed $value
-	 * @param boolean $exists true (default) มี input ส่งมา, false ใช้ค่า default
+	 * @param string|null $type ประเภท Input เช่น GET POST SESSION COOKIE หรือ null ถ้าไม่ได้มาจากรายการข้างต้น
 	 * @return \static
 	 */
-	public static function create($value, $exists = true)
+	public static function create($value, $type = null)
 	{
-		return new static($value, $exists);
+		return new static($value, $type);
 	}
 
 	/**
@@ -65,17 +65,53 @@ class InputItem
 	}
 
 	/**
-	 * ตรวจสอบว่ามี input ส่งมาหรือไม่
+	 * ตรวจสอบว่ามาจาก $_GET หรือไม่
 	 *
-	 * @return boolean คืนค่า true ถ้ามี input ส่งมา, false ใช้ค่า default
+	 * @return boolean คืนค่า true ถ้ามาจาก $_GET
+	 */
+	public function isGet()
+	{
+		return $this->type === 'GET';
+	}
+
+	/**
+	 * ตรวจสอบว่ามาจาก $_POST หรือไม่
 	 *
-	 * @assert create(null)->exists() [==] true
-	 * @assert create(null, true)->exists() [==] true
-	 * @assert create(null, false)->exists() [==] false
+	 * @return boolean คืนค่า true ถ้ามาจาก $_POST
+	 */
+	public function isPost()
+	{
+		return $this->type === 'POST';
+	}
+
+	/**
+	 * ตรวจสอบว่ามาจาก $_SESSION หรือไม่
+	 *
+	 * @return boolean คืนค่า true ถ้ามาจาก $_SESSION
+	 */
+	public function isSession()
+	{
+		return $this->type === 'SESSION';
+	}
+
+	/**
+	 * ตรวจสอบว่ามาจาก $_COOKIE หรือไม่
+	 *
+	 * @return boolean คืนค่า true ถ้ามาจาก $_COOKIE
+	 */
+	public function isCookie()
+	{
+		return $this->type === 'COOKIE';
+	}
+
+	/**
+	 * ตรวจสอบว่ามีตัวแปรส่งมาหรือไม่
+	 *
+	 * @return boolean คืนค่า true ถ้ามีตัวแปรส่งมา
 	 */
 	public function exists()
 	{
-		return $this->exists;
+		return $this->type !== null;
 	}
 
 	/**

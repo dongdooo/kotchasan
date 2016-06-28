@@ -35,7 +35,7 @@ class Config
 	 *
 	 * @var array
 	 */
-	public $languages = array('en');
+	public $languages = array('th');
 	/**
 	 * template ที่กำลังใช้งานอยู่ (ชื่อโฟลเดอร์)
 	 *
@@ -66,7 +66,7 @@ class Config
 	 *
 	 * @var string
 	 */
-	public $noreply_email = 'no-replay@locahost';
+	public $noreply_email = 'no-reply@locahost';
 	/**
 	 * ระบุรหัสภาษาของอีเมล์ที่ส่ง เช่น tis-620
 	 *
@@ -109,13 +109,13 @@ class Config
 	 *
 	 * @var string
 	 */
-	public $email_Username;
+	public $email_Username = '';
 	/**
 	 * รหัสผ่าน mailserver
 	 *
 	 * @var string
 	 */
-	public $email_Password;
+	public $email_Password = '';
 	/**
 	 * คีย์สำหรับการเข้ารหัสข้อความ
 	 *
@@ -144,14 +144,18 @@ class Config
 	{
 		if (is_file(ROOT_PATH.'settings/config.php')) {
 			$config = include (ROOT_PATH.'settings/config.php');
-			foreach ($config as $key => $value) {
-				$this->$key = $value;
+			if (is_array($config)) {
+				foreach ($config as $key => $value) {
+					$this->$key = $value;
+				}
 			}
 		}
 		if (ROOT_PATH != APP_PATH && is_file(APP_PATH.'settings/config.php')) {
 			$config = include (APP_PATH.'settings/config.php');
-			foreach ($config as $key => $value) {
-				$this->$key = $value;
+			if (is_array($config)) {
+				foreach ($config as $key => $value) {
+					$this->$key = $value;
+				}
 			}
 		}
 	}
@@ -244,13 +248,18 @@ class Config
 				$list[] = '\''.$key."' => array(\n    ".implode(",\n    ", $save)."\n  )";
 			} elseif (is_string($value)) {
 				$list[] = '\''.$key.'\' => \''.($value).'\'';
+			} elseif (is_bool($value)) {
+				$list[] = '\''.$key.'\' => '.($value ? 'true' : 'false');
 			} else {
 				$list[] = '\''.$key.'\' => '.$value;
 			}
 		}
 		$f = @fopen($file, 'wb');
 		if ($f !== false) {
-			fwrite($f, "<"."?php\n/* config.php */\nreturn array(\n  ".implode(",\n  ", $list)."\n);");
+			if (!preg_match('/^.*\/([^\/]+)\.php?/', $file, $match)) {
+				$match[1] = 'config';
+			}
+			fwrite($f, "<"."?php\n/* $match[1].php */\nreturn array(\n  ".implode(",\n  ", $list)."\n);");
 			fclose($f);
 			return true;
 		} else {

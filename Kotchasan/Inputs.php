@@ -30,14 +30,15 @@ class Inputs implements \Iterator
 	 * Class Constructer
 	 *
 	 * @param array $items รายการ input
+	 * @param string|null $type ประเภท Input เช่น GET POST SESSION COOKIE หรือ null ถ้าไม่ได้มาจากรายการข้างต้น
 	 */
-	public function __construct(array $items = array())
+	public function __construct(array $items = array(), $type)
 	{
 		foreach ($items as $key => $value) {
 			if (is_array($value)) {
-				$this->datas[$key] = new static($value);
+				$this->datas[$key] = new static($value, $type);
 			} else {
-				$this->datas[$key] = InputItem::create($value);
+				$this->datas[$key] = InputItem::create($value, $type);
 			}
 		}
 	}
