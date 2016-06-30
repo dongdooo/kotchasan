@@ -198,6 +198,8 @@ class PdoMysqlDriver extends Driver
 			$keys = array_keys($sqls['values']);
 			$sql = 'INSERT INTO '.$sqls['insert'].' (`'.implode('`, `', $keys);
 			$sql .= "`) VALUES (:".implode(", :", $keys).")";
+		} elseif (isset($sqls['union'])) {
+			$sql = '('.implode(') UNION (', $sqls['union']).')';
 		} else {
 			if (isset($sqls['select'])) {
 				$sql = 'SELECT '.$sqls['select'];

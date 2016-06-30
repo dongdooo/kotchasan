@@ -113,7 +113,7 @@ class Image
 	 */
 	public static function resize($source, $target, $name, $width, $watermark = '')
 	{
-		$info = getImageSize($source);
+		$info = @getImageSize($source);
 		if ($info[0] > $width || $info[1] > $width) {
 			if ($info[0] <= $info[1]) {
 				$h = $width;
@@ -176,7 +176,7 @@ class Image
 		$imgsrc = imageCreateFromJPEG($source);
 		if (function_exists('exif_read_data')) {
 			// read image exif and rotate
-			$exif = exif_read_data($source);
+			$exif = @exif_read_data($source);
 			if (!isset($exif['Orientation'])) {
 				return $imgsrc;
 			} elseif ($exif['Orientation'] == 2) {

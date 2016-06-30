@@ -93,6 +93,9 @@ img:-moz-broken {
 	width: 24px;
 	height: 24px;
 }
+#map_canvas img, .gmnoprint img {
+	max-width: none;
+}
 audio,
 canvas,
 video {

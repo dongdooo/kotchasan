@@ -32,7 +32,7 @@ class Inputs implements \Iterator
 	 * @param array $items รายการ input
 	 * @param string|null $type ประเภท Input เช่น GET POST SESSION COOKIE หรือ null ถ้าไม่ได้มาจากรายการข้างต้น
 	 */
-	public function __construct(array $items = array(), $type)
+	public function __construct(array $items = array(), $type = null)
 	{
 		foreach ($items as $key => $value) {
 			if (is_array($value)) {

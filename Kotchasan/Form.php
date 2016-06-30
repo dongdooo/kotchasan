@@ -10,6 +10,7 @@ namespace Kotchasan;
 
 use \Kotchasan\Html;
 use \Kotchasan\Antispam;
+use \Kotchasan\Mime;
 
 /**
  * Form class
@@ -65,6 +66,7 @@ class Form extends \Kotchasan\KBase
 				case 'value':
 				case 'dataPreview':
 				case 'previewSrc':
+				case 'accept':
 				case 'options':
 				case 'optgroup':
 				case 'validator':
@@ -147,6 +149,9 @@ class Form extends \Kotchasan\KBase
 		}
 		if (isset($dataPreview)) {
 			$prop['data-preview'] = 'data-preview="'.$dataPreview.'"';
+		}
+		if (isset($accept)) {
+			$prop['accept'] = 'accept="'.Mime::getEccept($accept).'"';
 		}
 		$prop = implode(' ', $prop);
 		if ($this->tag == 'input') {

@@ -159,7 +159,7 @@ class QueryBuilder extends \Kotchasan\Database\Query
 	/**
 	 * GROUP BY
 	 *
-	 * @param array $fields
+	 * @param string $fields รายชื่อฟิล์ด เช่น field1, field2,  ...
 	 * @return \static
 	 *
 	 * @assert select()->from('user')->groupBy('U.id')->text() [==] 'SELECT * FROM `user` GROUP BY U.`id`'
@@ -411,9 +411,27 @@ class QueryBuilder extends \Kotchasan\Database\Query
 		return $this;
 	}
 
-	public function union(QueryBuilder $query1, QueryBuilder $query2)
+	/**
+	 * UNION
+	 *
+	 * @param array $querys แอเรย์ของ QueryBuilder หรือ Query String ที่จะนำม่า UNION
+	 * @return \static
+	 */
+	public function union($querys)
 	{
 
+		$this->sqls['union'] = array();
+		foreach ($querys as $item) {
+			if ($item instanceof QueryBuilder) {
+				$this->sqls['union'][] = $item->text();
+			} elseif (is_string($item)) {
+				$this->sqls['union'][] = $item;
+			} else {
+				$this->logError($item, 'Invalid arguments in UNION');
+			}
+		}
+		$this->sqls['function'] = 'customQuery';
+		return $this;
 	}
 
 	/**
